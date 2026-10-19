@@ -962,7 +962,7 @@
       submitBtn.innerHTML = `<span class="spinner" style="display:inline-block;width:16px;height:16px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin 0.6s linear infinite;margin-right:8px;"></span> Menyimpan...`;
 
       const payload = {
-        action: 'registerPeserta',
+        action: 'daftarPeserta',
         nama: nama,
         sekolah: sekolah,
         tglDaftar: tgl,
@@ -979,6 +979,10 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
+
+        if (!response.ok) {
+          throw new Error(`HTTP Error ${response.status}: Gagal menyimpan data.`);
+        }
 
         const result = await response.json();
 
@@ -1207,11 +1211,17 @@
 
       try {
         const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '/api';
-        const response = await fetch(`${apiUrl}?action=cekStatus&q=${encodeURIComponent(keyword)}`);
+        const response = await fetch(`${apiUrl}?action=cekStatus&keyword=${encodeURIComponent(keyword)}&q=${encodeURIComponent(keyword)}`);
+        if (!response.ok) {
+          throw new Error(`HTTP Error ${response.status}: Gagal memuat status.`);
+        }
         const result = await response.json();
 
         if (result.status === 'success' && result.data) {
-          const item = result.data;
+          const item = Array.isArray(result.data) ? result.data[0] : result.data;
+          if (!item) {
+            throw new Error('Data tidak ditemukan');
+          }
           const isVerified = (item.status === 'Terverifikasi');
           const badgeClass = isVerified ? 'background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0;' : 'background: #fef3c7; color: #b45309; border: 1px solid #fde68a;';
           

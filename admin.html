@@ -1166,17 +1166,32 @@
         if (result.isConfirmed) {
           const val = result.value;
           const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '/api';
-          await fetch(apiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              action: 'updatePeserta',
-              noPendaftaran: p.noPendaftaran,
-              ...val
-            })
+          Swal.fire({
+            title: 'Menyimpan Perubahan...',
+            allowOutsideClick: false,
+            didOpen: () => { Swal.showLoading(); }
           });
-          Swal.fire({ icon: 'success', title: 'Data Diperbarui!', timer: 1500, showConfirmButton: false });
-          loadAllDashboardData();
+          try {
+            const res = await fetch(apiUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                action: 'updatePeserta',
+                noPendaftaran: p.noPendaftaran,
+                ...val
+              })
+            });
+            if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+            const data = await res.json();
+            if (data.status === 'success') {
+              Swal.fire({ icon: 'success', title: 'Data Diperbarui!', text: data.message || 'Perubahan berhasil disimpan.', timer: 1500, showConfirmButton: false });
+              loadAllDashboardData();
+            } else {
+              Swal.fire({ icon: 'error', title: 'Gagal', text: data.message || 'Gagal memperbarui data peserta.' });
+            }
+          } catch (e) {
+            Swal.fire({ icon: 'error', title: 'Error', text: e.message || 'Gagal menyimpan perubahan ke server.' });
+          }
         }
       });
     }
@@ -1195,16 +1210,27 @@
       }).then(async (res) => {
         if (res.isConfirmed) {
           const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '/api';
+          Swal.fire({
+            title: 'Menghapus Peserta...',
+            allowOutsideClick: false,
+            didOpen: () => { Swal.showLoading(); }
+          });
           try {
-            await fetch(apiUrl, {
+            const response = await fetch(apiUrl, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ action: 'deletePeserta', noPendaftaran: noReg })
             });
-            Swal.fire({ icon: 'success', title: 'Terhapus', text: 'Data peserta berhasil dihapus.', timer: 1500, showConfirmButton: false });
-            loadAllDashboardData();
+            if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+            const data = await response.json();
+            if (data.status === 'success') {
+              Swal.fire({ icon: 'success', title: 'Terhapus', text: data.message || 'Data peserta berhasil dihapus.', timer: 1500, showConfirmButton: false });
+              loadAllDashboardData();
+            } else {
+              Swal.fire({ icon: 'error', title: 'Gagal', text: data.message || 'Gagal menghapus data dari spreadsheet.' });
+            }
           } catch (e) {
-            Swal.fire({ icon: 'error', title: 'Gagal', text: 'Gagal menghapus data.' });
+            Swal.fire({ icon: 'error', title: 'Gagal', text: e.message || 'Gagal menghapus data dari server.' });
           }
         }
       });

@@ -22,97 +22,132 @@ var SHEET_NAMES = {
   LOG_AKTIVITAS: "LOG_AKTIVITAS"
 };
 
+// --- MENU SETUP UNTUK GOOGLE SHEETS WORKSPACE ---
+function onOpen() {
+  var ui = SpreadsheetApp.getUi();
+  ui.createMenu("OMEGA PLUS 2026")
+    .addItem("Inisialisasi Database", "setupDatabase")
+    .addItem("Hitung Ulang Counter & Statistik", "recalculateCountersAndStats")
+    .addSeparator()
+    .addItem("Buka Portal Web Resmi", "openWebPortalDialog")
+    .addToUi();
+}
+
+function openWebPortalDialog() {
+  var html = HtmlService.createHtmlOutput(
+    '<div style="font-family: Arial, sans-serif; padding: 15px; text-align: center;">' +
+    '  <h3 style="color: #19365f; margin-top: 0;">Portal Panitia OMEGA PLUS 2026</h3>' +
+    '  <p style="color: #475569; font-size: 13px;">Akses landing page, formulir pendaftaran, dan dashboard realtime melalui tautan di bawah ini:</p>' +
+    '  <div style="margin: 20px 0;">' +
+    '    <a href="https://omegaplus.pages.dev" target="_blank" style="background: #285891; color: #ffffff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px;">Buka omegaplus.pages.dev &rarr;</a>' +
+    '  </div>' +
+    '</div>'
+  ).setWidth(380).setHeight(180);
+  SpreadsheetApp.getUi().showModalDialog(html, "Portal Web OMEGA PLUS");
+}
+
 /**
  * 1. FUNGSI OTOMATISASI SETUP DATABASE & INISIALISASI COUNTER
  */
 function setupDatabase() {
-  var ss;
-  var props = PropertiesService.getScriptProperties();
-  var savedId = props.getProperty("SPREADSHEET_ID") || SPREADSHEET_ID;
+  try {
+    var ss;
+    var props = PropertiesService.getScriptProperties();
+    var savedId = props.getProperty("SPREADSHEET_ID") || SPREADSHEET_ID;
 
-  if (savedId) {
-    try {
-      ss = SpreadsheetApp.openById(savedId);
-      Logger.log("Menggunakan Spreadsheet yang ada: " + ss.getUrl());
-    } catch (e) {
-      ss = null;
+    if (savedId) {
+      try {
+        ss = SpreadsheetApp.openById(savedId);
+        Logger.log("Menggunakan Spreadsheet yang ada: " + ss.getUrl());
+      } catch (e) {
+        ss = null;
+      }
     }
+
+    if (!ss) {
+      ss = SpreadsheetApp.create("DATABASE_OMEGA_PLUS_2026");
+      props.setProperty("SPREADSHEET_ID", ss.getId());
+      Logger.log("BERHASIL MEMBUAT DATABASE BARU: " + ss.getUrl());
+    } else {
+      props.setProperty("SPREADSHEET_ID", ss.getId());
+    }
+
+    // --- SHEET 1: PESERTA ---
+    var sheetPeserta = getOrCreateSheet(ss, SHEET_NAMES.PESERTA);
+    var headersPeserta = [
+      "Timestamp",
+      "No_Pendaftaran",
+      "Nama_Peserta",
+      "Asal_Sekolah",
+      "Tanggal_Daftar",
+      "Nomor_HP",
+      "Email",
+      "Level",
+      "Mata_Pelajaran",
+      "Kode_Peserta_Mapel",
+      "Status_Verifikasi",
+      "Catatan_Panitia",
+      "Waktu_Verifikasi",
+      "Status_Email"
+    ];
+    styleHeader(sheetPeserta, headersPeserta, "#19365f", "#ffffff");
+
+    // --- SHEET 2: PENGATURAN ---
+    var sheetPengaturan = getOrCreateSheet(ss, SHEET_NAMES.PENGATURAN);
+    var headersPengaturan = ["Parameter", "Nilai", "Keterangan"];
+    styleHeader(sheetPengaturan, headersPengaturan, "#285891", "#ffffff");
+
+    var defaultSettings = [
+      ["Nama_Event", "OMEGA PLUS 2026", "Nama resmi olimpiade"],
+      ["Penyelenggara", "SMP Negeri 1 Pamekasan", "Sekolah penyelenggara"],
+      ["Tahun", "2026", "Tahun pelaksanaan"],
+      ["Admin_PIN", "123456", "PIN keamanan untuk login admin panitia"],
+      ["Biaya_Pendaftaran", "40000", "Biaya pendaftaran per peserta (Rupiah)"],
+      ["Rekening_Pembayaran", "BRI 0055-01-012345-50-1 a.n PANITIA OMEGA PLUS", "Informasi transfer bank"],
+      ["Kontak_1", "087781587155 (Bapak Rasyidi)", "Narahubung 1"],
+      ["Kontak_2", "085259349169 (Bapak Indra)", "Narahubung 2"],
+      ["Kontak_3", "081235922003 (Ibu Dwi Elly)", "Narahubung 3"],
+      ["Status_Pendaftaran", "BUKA", "Status form pendaftaran (BUKA / TUTUP)"],
+      ["Sesi_1", "IPA & IPS (07.30 - 08.30 WIB)", "Jadwal Ujian Sesi 1"],
+      ["Sesi_2", "Matematika & Bahasa Inggris (09.00 - 10.00 WIB)", "Jadwal Ujian Sesi 2"]
+    ];
+
+    if (sheetPengaturan.getLastRow() <= 1) {
+      sheetPengaturan.getRange(2, 1, defaultSettings.length, 3).setValues(defaultSettings);
+      sheetPengaturan.autoResizeColumns(1, 3);
+    }
+
+    // --- SHEET 3: LOG_EMAIL ---
+    var sheetLogEmail = getOrCreateSheet(ss, SHEET_NAMES.LOG_EMAIL);
+    var headersLogEmail = ["Timestamp", "No_Pendaftaran", "Email_Tujuan", "Tahap_Email", "Status_Kirim", "Pesan_Error"];
+    styleHeader(sheetLogEmail, headersLogEmail, "#475569", "#ffffff");
+
+    // --- SHEET 4: LOG_AKTIVITAS ---
+    var sheetLogAkt = getOrCreateSheet(ss, SHEET_NAMES.LOG_AKTIVITAS);
+    var headersLogAkt = ["Timestamp", "Aksi", "Admin", "Detail_Perubahan"];
+    styleHeader(sheetLogAkt, headersLogAkt, "#475569", "#ffffff");
+
+    // Sync flush data ke spreadsheet
+    SpreadsheetApp.flush();
+
+    // Hitung ulang dan inisialisasi counter di memori
+    recalculateCountersAndStats(ss);
+
+    Logger.log("SETUP DATABASE & MEMORY COUNTERS SELESAI!");
+    Logger.log("URL SPREADSHEET: " + ss.getUrl());
+    return {
+      status: "success",
+      message: "Setup database & turbo counters berhasil",
+      spreadsheetId: ss.getId(),
+      url: ss.getUrl()
+    };
+  } catch (err) {
+    Logger.log("Error setupDatabase: " + err.toString());
+    return {
+      status: "error",
+      message: "Gagal inisialisasi database: " + err.toString()
+    };
   }
-
-  if (!ss) {
-    ss = SpreadsheetApp.create("DATABASE_OMEGA_PLUS_2026");
-    props.setProperty("SPREADSHEET_ID", ss.getId());
-    Logger.log("BERHASIL MEMBUAT DATABASE BARU: " + ss.getUrl());
-  } else {
-    props.setProperty("SPREADSHEET_ID", ss.getId());
-  }
-
-  // --- SHEET 1: PESERTA ---
-  var sheetPeserta = getOrCreateSheet(ss, SHEET_NAMES.PESERTA);
-  var headersPeserta = [
-    "Timestamp",
-    "No_Pendaftaran",
-    "Nama_Peserta",
-    "Asal_Sekolah",
-    "Tanggal_Daftar",
-    "Nomor_HP",
-    "Email",
-    "Level",
-    "Mata_Pelajaran",
-    "Kode_Peserta_Mapel",
-    "Status_Verifikasi",
-    "Catatan_Panitia",
-    "Waktu_Verifikasi",
-    "Status_Email"
-  ];
-  styleHeader(sheetPeserta, headersPeserta, "#19365f", "#ffffff");
-
-  // --- SHEET 2: PENGATURAN ---
-  var sheetPengaturan = getOrCreateSheet(ss, SHEET_NAMES.PENGATURAN);
-  var headersPengaturan = ["Parameter", "Nilai", "Keterangan"];
-  styleHeader(sheetPengaturan, headersPengaturan, "#285891", "#ffffff");
-
-  var defaultSettings = [
-    ["Nama_Event", "OMEGA PLUS 2026", "Nama resmi olimpiade"],
-    ["Penyelenggara", "SMP Negeri 1 Pamekasan", "Sekolah penyelenggara"],
-    ["Tahun", "2026", "Tahun pelaksanaan"],
-    ["Admin_PIN", "123456", "PIN keamanan untuk login admin panitia"],
-    ["Biaya_Pendaftaran", "40000", "Biaya pendaftaran per peserta (Rupiah)"],
-    ["Rekening_Pembayaran", "BRI 0055-01-012345-50-1 a.n PANITIA OMEGA PLUS", "Informasi transfer bank"],
-    ["Kontak_1", "087781587155 (Bapak Rasyidi)", "Narahubung 1"],
-    ["Kontak_2", "085259349169 (Bapak Indra)", "Narahubung 2"],
-    ["Kontak_3", "081235922003 (Ibu Dwi Elly)", "Narahubung 3"],
-    ["Status_Pendaftaran", "BUKA", "Status form pendaftaran (BUKA / TUTUP)"],
-    ["Sesi_1", "IPA & IPS (07.30 - 08.30 WIB)", "Jadwal Ujian Sesi 1"],
-    ["Sesi_2", "Matematika & Bahasa Inggris (09.00 - 10.00 WIB)", "Jadwal Ujian Sesi 2"]
-  ];
-
-  if (sheetPengaturan.getLastRow() <= 1) {
-    sheetPengaturan.getRange(2, 1, defaultSettings.length, 3).setValues(defaultSettings);
-    sheetPengaturan.autoResizeColumns(1, 3);
-  }
-
-  // --- SHEET 3: LOG_EMAIL ---
-  var sheetLogEmail = getOrCreateSheet(ss, SHEET_NAMES.LOG_EMAIL);
-  var headersLogEmail = ["Timestamp", "No_Pendaftaran", "Email_Tujuan", "Tahap_Email", "Status_Kirim", "Pesan_Error"];
-  styleHeader(sheetLogEmail, headersLogEmail, "#475569", "#ffffff");
-
-  // --- SHEET 4: LOG_AKTIVITAS ---
-  var sheetLogAkt = getOrCreateSheet(ss, SHEET_NAMES.LOG_AKTIVITAS);
-  var headersLogAkt = ["Timestamp", "Aksi", "Admin", "Detail_Perubahan"];
-  styleHeader(sheetLogAkt, headersLogAkt, "#475569", "#ffffff");
-
-  // Hitung ulang dan inisialisasi counter di memori
-  recalculateCountersAndStats(ss);
-
-  Logger.log("SETUP DATABASE & MEMORY COUNTERS SELESAI!");
-  Logger.log("URL SPREADSHEET: " + ss.getUrl());
-  return {
-    status: "success",
-    message: "Setup database & turbo counters berhasil",
-    spreadsheetId: ss.getId(),
-    url: ss.getUrl()
-  };
 }
 
 /**
@@ -258,7 +293,8 @@ function doGet(e) {
         break;
 
       case "cekStatus":
-        result = handleCekStatus(e.parameter.keyword);
+        var keyword = (e && e.parameter) ? (e.parameter.keyword || e.parameter.q || "") : "";
+        result = handleCekStatus(keyword);
         break;
 
       case "recalc":
@@ -298,6 +334,7 @@ function doPost(e) {
 
     switch (action) {
       case "daftarPeserta":
+      case "registerPeserta":
         result = handleDaftarPesertaTurbo(payload);
         break;
 
@@ -389,132 +426,143 @@ function handleVerifyAdminPin(inputPin) {
  * Menggunakan PropertiesService lock instan sehingga proses registrasi selesai dalam < 400ms!
  */
 function handleDaftarPesertaTurbo(data) {
-  var nama = String(data.nama || "").trim().toUpperCase();
-  var sekolah = String(data.sekolah || "").trim().toUpperCase();
-  var tglDaftar = data.tglDaftar || Utilities.formatDate(new Date(), "Asia/Jakarta", "yyyy-MM-dd");
-  var noHp = String(data.noHp || "").trim();
-  var email = String(data.email || "").trim().toLowerCase();
-  var level = String(data.level || "").trim();
-  var mapelArray = Array.isArray(data.mapel) ? data.mapel : (data.mapel ? [data.mapel] : []);
-
-  if (!nama || !sekolah || !noHp || !email || !level || mapelArray.length === 0) {
-    return { status: "error", message: "Semua kolom bertanda bintang (*) wajib diisi!" };
-  }
-
-  var lock = LockService.getScriptLock();
-  lock.waitLock(5000); // Kunci hanya 5 detik maksimal
-
-  var noPendaftaran = "";
-  var kodePesertaStr = "";
-  var mapelStr = "";
-
   try {
-    var props = PropertiesService.getScriptProperties();
-    var countersRaw = props.getProperty("OMEGA_COUNTERS");
-    var counters = countersRaw ? JSON.parse(countersRaw) : null;
+    var nama = String(data.nama || "").trim().toUpperCase();
+    var sekolah = String(data.sekolah || "").trim().toUpperCase();
+    var tglDaftar = data.tglDaftar || Utilities.formatDate(new Date(), "Asia/Jakarta", "yyyy-MM-dd");
+    var noHp = String(data.noHp || "").trim();
+    var email = String(data.email || "").trim().toLowerCase();
+    var level = String(data.level || "").trim();
+    var mapelArray = Array.isArray(data.mapel) ? data.mapel : (data.mapel ? [data.mapel] : []);
 
-    if (!counters) {
-      recalculateCountersAndStats();
-      counters = JSON.parse(props.getProperty("OMEGA_COUNTERS"));
+    if (!nama || !sekolah || !noHp || !email || !level || mapelArray.length === 0) {
+      return { status: "error", message: "Semua kolom bertanda bintang (*) wajib diisi!" };
     }
 
-    // Increment Master Number
-    counters.master = (counters.master || 0) + 1;
-    var yearStr = Utilities.formatDate(new Date(), "Asia/Jakarta", "yyyy");
-    noPendaftaran = "OMP-" + yearStr + "-" + padZero(counters.master, 4);
+    var lock = LockService.getScriptLock();
+    lock.waitLock(5000); // Kunci hanya 5 detik maksimal
 
-    // Kodifikasi XX-YY-ZZZ
-    var levelCode = (level.indexOf("1") !== -1) ? "01" : "02";
-    var mapelCodesMap = {
-      "Matematika": "01",
-      "Bahasa Inggris": "02",
-      "IPA": "03",
-      "IPS": "04"
+    var noPendaftaran = "";
+    var kodePesertaStr = "";
+    var mapelStr = "";
+
+    try {
+      var props = PropertiesService.getScriptProperties();
+      var countersRaw = props.getProperty("OMEGA_COUNTERS");
+      var counters = countersRaw ? JSON.parse(countersRaw) : null;
+
+      if (!counters) {
+        recalculateCountersAndStats();
+        counters = JSON.parse(props.getProperty("OMEGA_COUNTERS"));
+      }
+
+      // Increment Master Number
+      counters.master = (counters.master || 0) + 1;
+      var yearStr = Utilities.formatDate(new Date(), "Asia/Jakarta", "yyyy");
+      noPendaftaran = "OMP-" + yearStr + "-" + padZero(counters.master, 4);
+
+      // Kodifikasi XX-YY-ZZZ
+      var levelCode = (level.indexOf("1") !== -1) ? "01" : "02";
+      var mapelCodesMap = {
+        "Matematika": "01",
+        "Bahasa Inggris": "02",
+        "IPA": "03",
+        "IPS": "04"
+      };
+
+      var kodePesertaList = [];
+      var mapelCleanList = [];
+
+      for (var m = 0; m < mapelArray.length; m++) {
+        var mapelName = mapelArray[m].trim();
+        var codeYY = mapelCodesMap[mapelName];
+        if (!codeYY) continue;
+
+        mapelCleanList.push(mapelName);
+        var comboKey = levelCode + "-" + codeYY;
+        counters[comboKey] = (counters[comboKey] || 0) + 1;
+        var codeZZZ = padZero(counters[comboKey], 3);
+        kodePesertaList.push(levelCode + "-" + codeYY + "-" + codeZZZ);
+      }
+
+      kodePesertaStr = kodePesertaList.join(", ");
+      mapelStr = mapelCleanList.join(", ");
+
+      // Simpan counter terbaru ke PropertiesService
+      props.setProperty("OMEGA_COUNTERS", JSON.stringify(counters));
+
+      // Update Statistik Realtime di Cache (O(1))
+      var statsRaw = props.getProperty("DASHBOARD_STATS");
+      var stats = statsRaw ? JSON.parse(statsRaw) : { total: 0, level1: 0, level2: 0, matematika: 0, bahasaInggris: 0, ipa: 0, ips: 0, verified: 0, pending: 0 };
+      stats.total = (stats.total || 0) + 1;
+      if (levelCode === "01") stats.level1++; else stats.level2++;
+      for (var c = 0; c < mapelCleanList.length; c++) {
+        var nm = mapelCleanList[c];
+        if (nm === "Matematika") stats.matematika++;
+        if (nm === "Bahasa Inggris") stats.bahasaInggris++;
+        if (nm === "IPA") stats.ipa++;
+        if (nm === "IPS") stats.ips++;
+      }
+      stats.pending++;
+      props.setProperty("DASHBOARD_STATS", JSON.stringify(stats));
+      CacheService.getScriptCache().put("DASHBOARD_STATS", JSON.stringify(stats), 21600);
+
+    } finally {
+      lock.releaseLock(); // Buka kunci secepat kilat!
+    }
+
+    // Tulis 1 Baris Baru ke Sheet PESERTA (Sangat Cepat, Tanpa Baca Seluruh Baris)
+    var ss = getDatabase();
+    var sheet = ss.getSheetByName(SHEET_NAMES.PESERTA);
+    var timestamp = new Date();
+    var statusVerif = "Menunggu Verifikasi";
+
+    sheet.appendRow([
+      timestamp,
+      noPendaftaran,
+      nama,
+      sekolah,
+      tglDaftar,
+      noHp,
+      email,
+      level,
+      mapelStr,
+      kodePesertaStr,
+      statusVerif,
+      "Pendaftaran via Web Portal",
+      "-",
+      "Terkirim"
+    ]);
+
+    // Sinkronisasi paksa ke Google Spreadsheet
+    SpreadsheetApp.flush();
+
+    // Kirim Email Konfirmasi Terstruktur (Cepat & Ringan)
+    sendEmailKonfirmasiTahap1(email, nama, noPendaftaran, sekolah, level, mapelStr, kodePesertaStr);
+
+    return {
+      status: "success",
+      message: "Pendaftaran berhasil disimpan!",
+      data: {
+        noPendaftaran: noPendaftaran,
+        nama: nama,
+        sekolah: sekolah,
+        tglDaftar: tglDaftar,
+        noHp: noHp,
+        email: email,
+        level: level,
+        mapel: mapelStr,
+        kodePeserta: kodePesertaStr,
+        statusVerifikasi: statusVerif
+      }
     };
-
-    var kodePesertaList = [];
-    var mapelCleanList = [];
-
-    for (var m = 0; m < mapelArray.length; m++) {
-      var mapelName = mapelArray[m].trim();
-      var codeYY = mapelCodesMap[mapelName];
-      if (!codeYY) continue;
-
-      mapelCleanList.push(mapelName);
-      var comboKey = levelCode + "-" + codeYY;
-      counters[comboKey] = (counters[comboKey] || 0) + 1;
-      var codeZZZ = padZero(counters[comboKey], 3);
-      kodePesertaList.push(levelCode + "-" + codeYY + "-" + codeZZZ);
-    }
-
-    kodePesertaStr = kodePesertaList.join(", ");
-    mapelStr = mapelCleanList.join(", ");
-
-    // Simpan counter terbaru ke PropertiesService
-    props.setProperty("OMEGA_COUNTERS", JSON.stringify(counters));
-
-    // Update Statistik Realtime di Cache (O(1))
-    var statsRaw = props.getProperty("DASHBOARD_STATS");
-    var stats = statsRaw ? JSON.parse(statsRaw) : { total: 0, level1: 0, level2: 0, matematika: 0, bahasaInggris: 0, ipa: 0, ips: 0, verified: 0, pending: 0 };
-    stats.total = (stats.total || 0) + 1;
-    if (levelCode === "01") stats.level1++; else stats.level2++;
-    for (var c = 0; c < mapelCleanList.length; c++) {
-      var nm = mapelCleanList[c];
-      if (nm === "Matematika") stats.matematika++;
-      if (nm === "Bahasa Inggris") stats.bahasaInggris++;
-      if (nm === "IPA") stats.ipa++;
-      if (nm === "IPS") stats.ips++;
-    }
-    stats.pending++;
-    props.setProperty("DASHBOARD_STATS", JSON.stringify(stats));
-    CacheService.getScriptCache().put("DASHBOARD_STATS", JSON.stringify(stats), 21600);
-
-  } finally {
-    lock.releaseLock(); // Buka kunci secepat kilat!
+  } catch (err) {
+    Logger.log("Error handleDaftarPesertaTurbo: " + err.toString());
+    return {
+      status: "error",
+      message: "Gagal menyimpan pendaftaran: " + err.toString()
+    };
   }
-
-  // Tulis 1 Baris Baru ke Sheet PESERTA (Sangat Cepat, Tanpa Baca Seluruh Baris)
-  var ss = getDatabase();
-  var sheet = ss.getSheetByName(SHEET_NAMES.PESERTA);
-  var timestamp = new Date();
-  var statusVerif = "Menunggu Verifikasi";
-
-  sheet.appendRow([
-    timestamp,
-    noPendaftaran,
-    nama,
-    sekolah,
-    tglDaftar,
-    noHp,
-    email,
-    level,
-    mapelStr,
-    kodePesertaStr,
-    statusVerif,
-    "Pendaftaran via Web Portal",
-    "-",
-    "Terkirim"
-  ]);
-
-  // Kirim Email Konfirmasi Terstruktur (Cepat & Ringan)
-  sendEmailKonfirmasiTahap1(email, nama, noPendaftaran, sekolah, level, mapelStr, kodePesertaStr);
-
-  return {
-    status: "success",
-    message: "Pendaftaran berhasil disimpan!",
-    data: {
-      noPendaftaran: noPendaftaran,
-      nama: nama,
-      sekolah: sekolah,
-      tglDaftar: tglDaftar,
-      noHp: noHp,
-      email: email,
-      level: level,
-      mapel: mapelStr,
-      kodePeserta: kodePesertaStr,
-      statusVerifikasi: statusVerif
-    }
-  };
 }
 
 /**
@@ -664,116 +712,148 @@ function handleCekStatus(keyword) {
  * 8. VERIFIKASI PESERTA (Admin Action)
  */
 function handleVerifikasiPeserta(payload) {
-  var ss = getDatabase();
-  var sheet = ss.getSheetByName(SHEET_NAMES.PESERTA);
-  var noPendaftaran = String(payload.noPendaftaran || "").trim();
-  var statusBaru = payload.status || "Terverifikasi";
-  var catatan = payload.catatan || "Telah diverifikasi oleh Panitia OMEGA PLUS";
+  try {
+    var ss = getDatabase();
+    var sheet = ss.getSheetByName(SHEET_NAMES.PESERTA);
+    var noPendaftaran = String(payload.noPendaftaran || "").trim();
+    var statusBaru = payload.status || "Terverifikasi";
+    var catatan = payload.catatan || "Telah diverifikasi oleh Panitia OMEGA PLUS";
 
-  if (!noPendaftaran) {
-    return { status: "error", message: "Nomor pendaftaran wajib disertakan!" };
-  }
-
-  var lastRow = sheet.getLastRow();
-  var dataRange = sheet.getRange(2, 2, lastRow - 1, 1).getValues(); // Hanya baca kolom No_Pendaftaran
-  var targetRow = -1;
-
-  for (var i = 0; i < dataRange.length; i++) {
-    if (String(dataRange[i][0]).trim() === noPendaftaran) {
-      targetRow = i + 2;
-      break;
+    if (!noPendaftaran) {
+      return { status: "error", message: "Nomor pendaftaran wajib disertakan!" };
     }
-  }
 
-  if (targetRow === -1) {
-    return { status: "error", message: "Peserta tidak ditemukan!" };
-  }
+    var lastRow = sheet.getLastRow();
+    if (lastRow < 2) {
+      return { status: "error", message: "Database masih kosong!" };
+    }
 
-  var waktuNow = Utilities.formatDate(new Date(), "Asia/Jakarta", "yyyy-MM-dd HH:mm:ss");
-  sheet.getRange(targetRow, 11).setValue(statusBaru);
-  sheet.getRange(targetRow, 12).setValue(catatan);
-  sheet.getRange(targetRow, 13).setValue(waktuNow);
+    var dataRange = sheet.getRange(2, 2, lastRow - 1, 1).getValues(); // Hanya baca kolom No_Pendaftaran
+    var targetRow = -1;
 
-  // Ambil data untuk email verifikasi
-  var fullRow = sheet.getRange(targetRow, 1, 1, 10).getValues()[0];
-  var nama = String(fullRow[2]);
-  var sekolah = String(fullRow[3]);
-  var email = String(fullRow[6]);
-  var level = String(fullRow[7]);
-  var mapel = String(fullRow[8]);
-  var kodePeserta = String(fullRow[9]);
+    for (var i = 0; i < dataRange.length; i++) {
+      if (String(dataRange[i][0]).trim() === noPendaftaran) {
+        targetRow = i + 2;
+        break;
+      }
+    }
 
-  // Update counter verifikasi di statistik memori
-  var props = PropertiesService.getScriptProperties();
-  var statsRaw = props.getProperty("DASHBOARD_STATS");
-  if (statsRaw) {
-    var stats = JSON.parse(statsRaw);
+    if (targetRow === -1) {
+      return { status: "error", message: "Peserta tidak ditemukan!" };
+    }
+
+    var waktuNow = Utilities.formatDate(new Date(), "Asia/Jakarta", "yyyy-MM-dd HH:mm:ss");
+    // Performa: Gunakan batch write (setValues) untuk kolom 11 s/d 13
+    sheet.getRange(targetRow, 11, 1, 3).setValues([[statusBaru, catatan, waktuNow]]);
+    // Sync data: Pastikan commit ke sheet langsung
+    SpreadsheetApp.flush();
+
+    // Ambil data untuk email verifikasi
+    var fullRow = sheet.getRange(targetRow, 1, 1, 10).getValues()[0];
+    var nama = String(fullRow[2]);
+    var sekolah = String(fullRow[3]);
+    var email = String(fullRow[6]);
+    var level = String(fullRow[7]);
+    var mapel = String(fullRow[8]);
+    var kodePeserta = String(fullRow[9]);
+
+    // Update counter verifikasi di statistik memori
+    var props = PropertiesService.getScriptProperties();
+    var statsRaw = props.getProperty("DASHBOARD_STATS");
+    if (statsRaw) {
+      var stats = JSON.parse(statsRaw);
+      if (statusBaru === "Terverifikasi") {
+        stats.verified = (stats.verified || 0) + 1;
+        stats.pending = Math.max(0, (stats.pending || 1) - 1);
+      }
+      props.setProperty("DASHBOARD_STATS", JSON.stringify(stats));
+      CacheService.getScriptCache().put("DASHBOARD_STATS", JSON.stringify(stats), 21600);
+    }
+
     if (statusBaru === "Terverifikasi") {
-      stats.verified = (stats.verified || 0) + 1;
-      stats.pending = Math.max(0, (stats.pending || 1) - 1);
+      sendEmailTahap2(email, nama, noPendaftaran, sekolah, level, mapel, kodePeserta);
     }
-    props.setProperty("DASHBOARD_STATS", JSON.stringify(stats));
-    CacheService.getScriptCache().put("DASHBOARD_STATS", JSON.stringify(stats), 21600);
-  }
 
-  if (statusBaru === "Terverifikasi") {
-    sendEmailTahap2(email, nama, noPendaftaran, sekolah, level, mapel, kodePeserta);
+    return { status: "success", message: "Status berhasil diperbarui menjadi: " + statusBaru };
+  } catch (err) {
+    Logger.log("Error in handleVerifikasiPeserta: " + err.toString());
+    return { status: "error", message: "Gagal memproses verifikasi: " + err.message };
   }
-
-  return { status: "success", message: "Status berhasil diperbarui menjadi: " + statusBaru };
 }
 
 /**
  * 9. UPDATE DATA PESERTA
  */
 function handleUpdatePeserta(payload) {
-  var ss = getDatabase();
-  var sheet = ss.getSheetByName(SHEET_NAMES.PESERTA);
-  var noReg = String(payload.noPendaftaran || "").trim();
-  var lastRow = sheet.getLastRow();
+  try {
+    var ss = getDatabase();
+    var sheet = ss.getSheetByName(SHEET_NAMES.PESERTA);
+    var noReg = String(payload.noPendaftaran || "").trim();
+    var lastRow = sheet.getLastRow();
 
-  var dataRange = sheet.getRange(2, 2, lastRow - 1, 1).getValues();
-  var targetRow = -1;
-  for (var i = 0; i < dataRange.length; i++) {
-    if (String(dataRange[i][0]).trim() === noReg) {
-      targetRow = i + 2;
-      break;
+    if (lastRow < 2) return { status: "error", message: "Database masih kosong!" };
+
+    var dataRange = sheet.getRange(2, 2, lastRow - 1, 1).getValues();
+    var targetRow = -1;
+    for (var i = 0; i < dataRange.length; i++) {
+      if (String(dataRange[i][0]).trim() === noReg) {
+        targetRow = i + 2;
+        break;
+      }
     }
+
+    if (targetRow === -1) return { status: "error", message: "Data tidak ditemukan!" };
+
+    // Performa: Batch read kolom 3 s/d 7 (Nama, Sekolah, Kelas, NoHp, Email)
+    var rowData = sheet.getRange(targetRow, 3, 1, 5).getValues()[0];
+    if (payload.nama) rowData[0] = String(payload.nama).toUpperCase();
+    if (payload.sekolah) rowData[1] = String(payload.sekolah).toUpperCase();
+    if (payload.kelas) rowData[2] = String(payload.kelas);
+    if (payload.noHp) rowData[3] = String(payload.noHp);
+    if (payload.email) rowData[4] = String(payload.email).toLowerCase();
+
+    // Performa: Batch write 1 operasi dan sync flush
+    sheet.getRange(targetRow, 3, 1, 5).setValues([rowData]);
+    SpreadsheetApp.flush();
+
+    return { status: "success", message: "Data peserta berhasil diperbarui!" };
+  } catch (err) {
+    Logger.log("Error in handleUpdatePeserta: " + err.toString());
+    return { status: "error", message: "Gagal memperbarui data peserta: " + err.message };
   }
-
-  if (targetRow === -1) return { status: "error", message: "Data tidak ditemukan!" };
-
-  if (payload.nama) sheet.getRange(targetRow, 3).setValue(String(payload.nama).toUpperCase());
-  if (payload.sekolah) sheet.getRange(targetRow, 4).setValue(String(payload.sekolah).toUpperCase());
-  if (payload.noHp) sheet.getRange(targetRow, 6).setValue(String(payload.noHp));
-  if (payload.email) sheet.getRange(targetRow, 7).setValue(String(payload.email).toLowerCase());
-
-  return { status: "success", message: "Data peserta berhasil diperbarui!" };
 }
 
 /**
  * 10. HAPUS DATA PESERTA
  */
 function handleDeletePeserta(payload) {
-  var ss = getDatabase();
-  var sheet = ss.getSheetByName(SHEET_NAMES.PESERTA);
-  var noReg = String(payload.noPendaftaran || "").trim();
-  var lastRow = sheet.getLastRow();
+  try {
+    var ss = getDatabase();
+    var sheet = ss.getSheetByName(SHEET_NAMES.PESERTA);
+    var noReg = String(payload.noPendaftaran || "").trim();
+    var lastRow = sheet.getLastRow();
 
-  var dataRange = sheet.getRange(2, 2, lastRow - 1, 1).getValues();
-  var targetRow = -1;
-  for (var i = 0; i < dataRange.length; i++) {
-    if (String(dataRange[i][0]).trim() === noReg) {
-      targetRow = i + 2;
-      break;
+    if (lastRow < 2) return { status: "error", message: "Database masih kosong!" };
+
+    var dataRange = sheet.getRange(2, 2, lastRow - 1, 1).getValues();
+    var targetRow = -1;
+    for (var i = 0; i < dataRange.length; i++) {
+      if (String(dataRange[i][0]).trim() === noReg) {
+        targetRow = i + 2;
+        break;
+      }
     }
+
+    if (targetRow === -1) return { status: "error", message: "Data tidak ditemukan!" };
+
+    sheet.deleteRow(targetRow);
+    SpreadsheetApp.flush();
+    recalculateCountersAndStats(ss);
+    return { status: "success", message: "Data peserta berhasil dihapus." };
+  } catch (err) {
+    Logger.log("Error in handleDeletePeserta: " + err.toString());
+    return { status: "error", message: "Gagal menghapus data peserta: " + err.message };
   }
-
-  if (targetRow === -1) return { status: "error", message: "Data tidak ditemukan!" };
-
-  sheet.deleteRow(targetRow);
-  recalculateCountersAndStats(ss);
-  return { status: "success", message: "Data peserta berhasil dihapus." };
 }
 
 /**
