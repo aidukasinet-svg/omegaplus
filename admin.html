@@ -501,18 +501,23 @@
     /* ==========================================================================
        LOGIN PIN MODAL OVERLAY
        ========================================================================== */
+    /* ==========================================================================
+       LOGIN PIN MODAL OVERLAY & CARD
+       ========================================================================== */
     .pin-modal-overlay {
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: rgba(15, 23, 42, 0.7);
-      backdrop-filter: blur(6px);
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 9999;
+      transition: opacity 0.35s ease, visibility 0.35s ease;
     }
 
     .pin-modal-card {
@@ -522,7 +527,9 @@
       max-width: 420px;
       width: 90%;
       text-align: center;
-      box-shadow: var(--shadow-modal);
+      box-shadow: 0 20px 50px rgba(15, 23, 42, 0.3);
+      position: relative;
+      overflow: hidden;
     }
 
     .pin-input {
@@ -534,12 +541,83 @@
       font-weight: 700;
       border: 2px solid var(--color-border-input);
       border-radius: var(--radius-sm);
-      margin: 1.25rem 0;
+      margin: 1rem 0;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
     .pin-input:focus {
       outline: none;
       border-color: var(--color-primary-royal);
+      box-shadow: 0 0 0 3px rgba(40, 88, 145, 0.15);
+    }
+
+    /* In-Card Loading Spinner & Success Badge */
+    .pin-auth-spinner {
+      width: 44px;
+      height: 44px;
+      margin: 0 auto;
+      border: 3.5px solid rgba(40, 88, 145, 0.15);
+      border-top-color: var(--color-primary-royal);
+      border-right-color: var(--color-accent-gold);
+      border-radius: 50%;
+      animation: pinSpin 0.75s linear infinite;
+    }
+
+    @keyframes pinSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    .pin-auth-success-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto;
+      border-radius: 50%;
+      background: #ecfdf5;
+      border: 2px solid #a7f3d0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #047857;
+      animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.6); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .pin-error-alert {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+      font-size: 0.8125rem;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      margin: -4px 0 14px;
+      text-align: center;
+      font-weight: 600;
+      animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pinShake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+
+    .pin-shake {
+      animation: pinShake 0.4s ease-in-out;
+      border-color: #ef4444 !important;
+    }
+
+    /* SweetAlert Highest Priority Layer */
+    .swal2-container {
+      z-index: 100000 !important;
     }
 
     @media (max-width: 768px) {
@@ -568,13 +646,23 @@
       <h2 style="font-size: 1.25rem; font-weight: 700; color: #19365f; margin-bottom: 4px;">Autentikasi Panitia</h2>
       <p style="font-size: 0.8125rem; color: #657c94;">Masukkan PIN Keamanan untuk membuka portal admin.</p>
       
-      <input type="password" id="adminPinInput" class="pin-input" placeholder="••••••" maxlength="10" autofocus onkeypress="if(event.key==='Enter') submitPinLogin()">
-      
-      <button type="button" class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="submitPinLogin()">
-        <i data-lucide="unlock" style="width: 16px; height: 16px;"></i> Masuk Dashboard
-      </button>
-      <div style="margin-top: 1rem;">
-        <a href="/" style="font-size: 0.8125rem; color: #657c94; text-decoration: none;">&larr; Kembali ke Beranda Utama</a>
+      <!-- PIN FORM FIELDS -->
+      <div id="pinFormFields">
+        <input type="password" id="adminPinInput" class="pin-input" placeholder="••••••" maxlength="10" autofocus onkeypress="if(event.key==='Enter') submitPinLogin()">
+        <div id="pinErrorAlert" class="pin-error-alert" style="display: none;"></div>
+        <button type="button" id="btnSubmitPin" class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="submitPinLogin()">
+          <i data-lucide="unlock" style="width: 16px; height: 16px;"></i> Masuk Dashboard
+        </button>
+        <div style="margin-top: 1rem;">
+          <a href="/" style="font-size: 0.8125rem; color: #657c94; text-decoration: none;">&larr; Kembali ke Beranda Utama</a>
+        </div>
+      </div>
+
+      <!-- IN-CARD SLEEK LOADING STATE (No confusing background modal) -->
+      <div id="pinLoadingState" style="display: none; padding: 1.5rem 0 0.5rem; text-align: center;">
+        <div class="pin-auth-spinner"></div>
+        <h3 id="pinLoadingTitle" style="font-size: 1.05rem; font-weight: 700; color: #19365f; margin: 1rem 0 4px;">Memverifikasi PIN...</h3>
+        <p id="pinLoadingDesc" style="font-size: 0.8125rem; color: #657c94; margin: 0;">Menghubungkan ke server Google Apps Script</p>
       </div>
     </div>
   </div>
@@ -784,24 +872,33 @@
       }
     });
 
-    // Login PIN Admin
+    // Login PIN Admin (In-Card Smooth Transition & Feedback)
     async function submitPinLogin() {
-      const pin = document.getElementById('adminPinInput').value.trim();
+      const pinInput = document.getElementById('adminPinInput');
+      const errorAlert = document.getElementById('pinErrorAlert');
+      const formFields = document.getElementById('pinFormFields');
+      const loadingState = document.getElementById('pinLoadingState');
+      const loadingTitle = document.getElementById('pinLoadingTitle');
+      const loadingDesc = document.getElementById('pinLoadingDesc');
+
+      const pin = pinInput.value.trim();
       if (!pin) {
-        Swal.fire({
-          icon: 'warning',
-          title: 'PIN Belum Diisi',
-          text: 'Silakan ketik PIN keamanan panitia.',
-          confirmButtonColor: '#285891'
-        });
+        errorAlert.innerText = 'Silakan ketik PIN keamanan panitia.';
+        errorAlert.style.display = 'block';
+        pinInput.classList.add('pin-shake');
+        setTimeout(() => pinInput.classList.remove('pin-shake'), 400);
+        pinInput.focus();
         return;
       }
 
-      Swal.fire({
-        title: 'Memverifikasi PIN...',
-        allowOutsideClick: false,
-        didOpen: () => { Swal.showLoading(); }
-      });
+      // Sembunyikan pesan error sebelumnya
+      errorAlert.style.display = 'none';
+
+      // Transisi ke tampilan loading di dalam kartu (Bersih & Elegan, tidak ada modal bertumpuk)
+      formFields.style.display = 'none';
+      loadingState.style.display = 'block';
+      loadingTitle.innerText = 'Memverifikasi PIN...';
+      loadingDesc.innerText = 'Menghubungkan ke server Google Apps Script';
 
       try {
         const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '/api';
@@ -813,33 +910,52 @@
         const result = await res.json();
 
         if (result.status === 'success' && result.authorized) {
-          sessionStorage.setItem('omegaAdminAuth', 'true');
-          document.getElementById('pinOverlay').style.display = 'none';
-          Swal.close();
-          loadAllDashboardData();
+          handlePinSuccess();
         } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'PIN Salah!',
-            text: 'PIN keamanan yang Anda masukkan tidak cocok.',
-            confirmButtonColor: '#285891'
-          });
+          handlePinError('PIN keamanan yang Anda masukkan tidak cocok.');
         }
       } catch (err) {
         // Fallback untuk offline/lokal default PIN
         if (pin === '123456') {
-          sessionStorage.setItem('omegaAdminAuth', 'true');
-          document.getElementById('pinOverlay').style.display = 'none';
-          Swal.close();
-          loadAllDashboardData();
+          handlePinSuccess();
         } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Gagal Terhubung',
-            text: 'Tidak dapat memverifikasi PIN ke server.',
-            confirmButtonColor: '#285891'
-          });
+          handlePinError('Tidak dapat terhubung ke server atau PIN salah.');
         }
+      }
+
+      function handlePinSuccess() {
+        sessionStorage.setItem('omegaAdminAuth', 'true');
+        loadingState.innerHTML = `
+          <div class="pin-auth-success-icon">
+            <i data-lucide="check" style="width: 26px; height: 26px;"></i>
+          </div>
+          <h3 style="font-size: 1.05rem; font-weight: 700; color: #047857; margin: 0.75rem 0 4px;">Akses Diterima!</h3>
+          <p style="font-size: 0.8125rem; color: #657c94; margin: 0;">Membuka Dashboard Panitia...</p>
+        `;
+        lucide.createIcons();
+
+        // Fade out overlay dengan transisi halus
+        const overlay = document.getElementById('pinOverlay');
+        setTimeout(() => {
+          overlay.style.transition = 'opacity 0.35s ease';
+          overlay.style.opacity = '0';
+          setTimeout(() => {
+            overlay.style.display = 'none';
+            loadAllDashboardData();
+          }, 350);
+        }, 600);
+      }
+
+      function handlePinError(message) {
+        // Kembalikan form secara instan
+        loadingState.style.display = 'none';
+        formFields.style.display = 'block';
+        errorAlert.innerText = message;
+        errorAlert.style.display = 'block';
+        pinInput.classList.add('pin-shake');
+        setTimeout(() => pinInput.classList.remove('pin-shake'), 400);
+        pinInput.value = '';
+        pinInput.focus();
       }
     }
 

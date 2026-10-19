@@ -97,129 +97,478 @@
     }
 
     /* ==========================================================================
-       STICKY TOP NAVIGATION BAR
+       STICKY TOP NAVIGATION BAR (DESKTOP & MOBILE RESPONSIVE SYSTEM)
        ========================================================================== */
     .navbar {
       position: sticky;
       top: 0;
       z-index: 1000;
-      background: rgba(25, 54, 95, 0.94);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-      transition: all 0.3s ease;
+      background: rgba(14, 34, 61, 0.94);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 20px rgba(7, 18, 33, 0.35);
+      transition: background 0.3s ease, border-color 0.3s ease;
     }
 
-    .navbar-inner {
+    .navbar-container {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 0 1.25rem;
+      height: 68px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      height: 74px;
+      gap: 1rem;
     }
 
+    /* Brand Logo & Typography */
     .brand-link {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 11px;
       text-decoration: none;
       color: #ffffff;
+      flex-shrink: 0;
+      user-select: none;
     }
 
     .brand-logo-img {
-      width: 46px;
-      height: 46px;
+      width: 42px;
+      height: 42px;
       object-fit: contain;
       border-radius: 50%;
       background: #ffffff;
       padding: 2px;
       border: 2px solid var(--color-accent-gold);
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.28);
+      flex-shrink: 0;
     }
 
-    .brand-text h2 {
-      font-size: 1.05rem;
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      line-height: 1.15;
+    }
+
+    .brand-title-main {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.025rem;
       font-weight: 800;
-      letter-spacing: 0.5px;
-      margin: 0;
+      letter-spacing: 0.3px;
       color: #ffffff;
-      line-height: 1.2;
+      white-space: nowrap;
     }
 
-    .brand-text p {
-      font-size: 0.75rem;
+    .brand-subtitle {
+      font-size: 0.7rem;
       color: var(--color-accent-gold);
-      font-weight: 600;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      white-space: nowrap;
       margin-top: 1px;
     }
 
+    /* Desktop Navigation Links */
     .nav-links {
       display: flex;
       align-items: center;
-      gap: 1.75rem;
+      gap: 1.35rem;
       list-style: none;
+      margin: 0;
+      padding: 0;
     }
 
     .nav-links a {
-      color: rgba(255, 255, 255, 0.85);
+      color: rgba(226, 232, 240, 0.85);
       text-decoration: none;
-      font-size: 0.875rem;
+      font-size: 0.825rem;
       font-weight: 600;
+      letter-spacing: 0.15px;
+      white-space: nowrap;
       transition: color 0.2s ease;
+      padding: 6px 2px;
+      position: relative;
     }
 
     .nav-links a:hover {
       color: var(--color-accent-gold);
     }
 
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--color-accent-gold);
+      border-radius: 2px;
+      transition: width 0.2s ease;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    /* Desktop Action Buttons (Refined & Anti-Wrap) */
     .nav-actions {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 10px;
+      flex-shrink: 0;
     }
 
     .btn-nav-status {
       padding: 8px 16px;
       font-size: 0.8125rem;
       font-weight: 600;
-      color: #ffffff;
-      background: rgba(255, 255, 255, 0.12);
-      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #e2e8f0;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.18);
       border-radius: var(--radius-pill);
       text-decoration: none;
-      transition: all 0.2s ease;
+      white-space: nowrap;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
+      backdrop-filter: blur(8px);
     }
 
     .btn-nav-status:hover {
-      background: rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.16);
+      border-color: rgba(231, 181, 94, 0.45);
       color: #ffffff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
 
     .btn-nav-register {
-      padding: 9px 20px;
-      font-size: 0.875rem;
+      padding: 8.5px 18px;
+      font-size: 0.8125rem;
       font-weight: 700;
-      color: var(--color-primary-navy);
-      background: var(--color-accent-gold);
+      color: #0e223d;
+      background: linear-gradient(135deg, #f7cb75 0%, #e7b55e 50%, #d49f45 100%);
+      border: 1px solid rgba(255, 255, 255, 0.35);
       border-radius: var(--radius-pill);
       text-decoration: none;
-      box-shadow: 0 4px 14px rgba(231, 181, 94, 0.35);
-      transition: all 0.2s ease;
+      white-space: nowrap;
+      box-shadow: 0 4px 14px rgba(231, 181, 94, 0.3);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       display: inline-flex;
       align-items: center;
       gap: 6px;
     }
 
     .btn-nav-register:hover {
-      background: #f4c673;
+      filter: brightness(1.06);
       transform: translateY(-1px);
-      box-shadow: 0 6px 18px rgba(231, 181, 94, 0.45);
+      box-shadow: 0 6px 20px rgba(231, 181, 94, 0.45);
     }
 
-    @media (max-width: 900px) {
+    .btn-nav-register:active, .btn-nav-status:active {
+      transform: translateY(0);
+    }
+
+    /* Mobile Controls (Visible on Tablet/Mobile) */
+    .nav-mobile-controls {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .btn-nav-mobile-cta {
+      padding: 6.5px 13px;
+      font-size: 0.775rem;
+      font-weight: 700;
+      color: #0e223d;
+      background: linear-gradient(135deg, #f7cb75 0%, #e7b55e 100%);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: var(--radius-pill);
+      text-decoration: none;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 2px 8px rgba(231, 181, 94, 0.3);
+    }
+
+    .btn-menu-toggle {
+      width: 38px;
+      height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 10px;
+      color: #ffffff;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      padding: 0;
+    }
+
+    .btn-menu-toggle:active {
+      transform: scale(0.94);
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    /* Mobile Drawer & Backdrop Overlay */
+    .mobile-drawer-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(7, 18, 33, 0.68);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 1001;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .mobile-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 86%;
+      max-width: 360px;
+      height: 100vh;
+      height: 100dvh;
+      background: #0e223d;
+      border-left: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: -8px 0 30px rgba(0, 0, 0, 0.5);
+      z-index: 1002;
+      transform: translateX(100%);
+      transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .navbar.menu-open .mobile-drawer-backdrop {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .navbar.menu-open .mobile-drawer {
+      transform: translateX(0);
+    }
+
+    .mobile-drawer-inner {
+      padding: 1.25rem 1.25rem 1.75rem;
+      height: 100%;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+
+    .mobile-drawer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .mobile-drawer-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .mobile-drawer-logo {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+      border-radius: 50%;
+      background: #ffffff;
+      padding: 2px;
+      border: 1.5px solid var(--color-accent-gold);
+    }
+
+    .btn-drawer-close {
+      width: 36px;
+      height: 36px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      color: #ffffff;
+      cursor: pointer;
+    }
+
+    .btn-drawer-close:active {
+      transform: scale(0.92);
+    }
+
+    .mobile-nav-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .mobile-nav-list a {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 11px 14px;
+      border-radius: var(--radius-md);
+      color: #e2e8f0;
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      transition: all 0.2s ease;
+    }
+
+    .mobile-nav-list a:active, .mobile-nav-list a:hover {
+      background: rgba(231, 181, 94, 0.12);
+      border-color: rgba(231, 181, 94, 0.3);
+      color: var(--color-accent-gold);
+      transform: translateX(3px);
+    }
+
+    .mobile-nav-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--color-accent-gold);
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+
+    .mobile-nav-label {
+      flex: 1;
+      text-align: left;
+    }
+
+    .mobile-nav-arrow {
+      color: rgba(255, 255, 255, 0.35);
+      transition: transform 0.2s ease;
+    }
+
+    .mobile-nav-list a:hover .mobile-nav-arrow {
+      color: var(--color-accent-gold);
+      transform: translateX(2px);
+    }
+
+    .mobile-drawer-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-mobile-drawer-primary {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, #f7cb75 0%, #e7b55e 100%);
+      color: #0e223d;
+      font-weight: 700;
+      font-size: 0.875rem;
+      text-decoration: none;
+      box-shadow: 0 4px 14px rgba(231, 181, 94, 0.3);
+    }
+
+    .btn-mobile-drawer-secondary {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-decoration: none;
+    }
+
+    .mobile-drawer-tagline {
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.45);
+      text-align: center;
+      margin-top: 4px;
+    }
+
+    /* Responsive Breakpoints */
+    @media (max-width: 1040px) {
       .nav-links {
-        display: none;
+        gap: 1rem;
+      }
+      .nav-links a {
+        font-size: 0.8rem;
+      }
+      .btn-nav-status {
+        padding: 7px 12px;
+        font-size: 0.775rem;
+      }
+      .btn-nav-register {
+        padding: 7.5px 14px;
+        font-size: 0.775rem;
+      }
+    }
+
+    @media (max-width: 920px) {
+      .nav-links, .nav-actions {
+        display: none !important;
+      }
+      .nav-mobile-controls {
+        display: flex;
+      }
+      .navbar-container {
+        height: 60px;
+        padding: 0 1rem;
+      }
+      .brand-logo-img {
+        width: 36px;
+        height: 36px;
+      }
+      .brand-title-main {
+        font-size: 0.925rem;
+      }
+      .brand-subtitle {
+        font-size: 0.65rem;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .brand-link {
+        gap: 8px;
+      }
+      .brand-title-main {
+        font-size: 0.875rem;
+      }
+      .brand-subtitle {
+        font-size: 0.625rem;
+        letter-spacing: 0.4px;
+      }
+      .btn-nav-mobile-cta {
+        padding: 5.5px 10px;
+        font-size: 0.725rem;
       }
     }
 
@@ -229,9 +578,15 @@
     .hero-section {
       background: linear-gradient(135deg, var(--color-dark-navy) 0%, var(--color-primary-navy) 40%, var(--color-primary-royal) 100%);
       color: var(--color-text-inverse);
-      padding: 4.5rem 0 5rem;
+      padding: 3.25rem 0 4.5rem;
       position: relative;
       overflow: hidden;
+    }
+
+    @media (max-width: 768px) {
+      .hero-section {
+        padding: 2.25rem 0 3.5rem;
+      }
     }
 
     .hero-section::before {
@@ -1064,32 +1419,128 @@
   <!-- ==========================================================================
        STICKY NAVIGATION
        ========================================================================== -->
-  <nav class="navbar">
-    <div class="container navbar-inner">
-      <a href="/" class="brand-link">
+  <nav class="navbar" id="siteNavbar">
+    <div class="navbar-container">
+      
+      <!-- Brand Logo & Identity -->
+      <a href="/" class="brand-link" aria-label="Beranda OMEGA PLUS 2026">
         <img src="https://file.garden/aehADr1aKQol7cT9/Omega%20Plus%20Pamekasan%20Emblem.png" onerror="this.src='logo.png'" class="brand-logo-img" alt="Logo OMEGA PLUS" />
         <div class="brand-text">
-          <h2>OMEGA PLUS 2026</h2>
-          <p>SMP NEGERI 1 PAMEKASAN</p>
+          <span class="brand-title-main">OMEGA PLUS 2026</span>
+          <span class="brand-subtitle">SMP NEGERI 1 PAMEKASAN</span>
         </div>
       </a>
 
+      <!-- Desktop Navigation Menu -->
       <ul class="nav-links">
-        <li><a href="#keunggulan">Hadiah & Golden Ticket</a></li>
+        <li><a href="#keunggulan">Hadiah & Tiket</a></li>
         <li><a href="#mapel">Bidang & Sesi</a></li>
         <li><a href="#jadwal">Jadwal & Biaya</a></li>
-        <li><a href="#alur">Alur Pendaftaran</a></li>
+        <li><a href="#alur">Alur</a></li>
         <li><a href="#faq">FAQ</a></li>
         <li><a href="#kontak">Kontak</a></li>
       </ul>
 
+      <!-- Desktop Action Buttons (Cek Status & Daftar Sekarang) -->
       <div class="nav-actions">
         <a href="pendaftaran.html#status" class="btn-nav-status">
-          <i data-lucide="search" style="width: 14px; height: 14px;"></i> Cek Status
+          <i data-lucide="search" style="width: 14px; height: 14px;"></i>
+          <span>Cek Status</span>
         </a>
         <a href="pendaftaran.html" class="btn-nav-register">
-          Daftar Sekarang <i data-lucide="arrow-right" style="width: 15px; height: 15px;"></i>
+          <span>Daftar Sekarang</span>
+          <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
         </a>
+      </div>
+
+      <!-- Mobile Right Controls (Compact Daftar + Hamburger Button) -->
+      <div class="nav-mobile-controls">
+        <a href="pendaftaran.html" class="btn-nav-mobile-cta">
+          <span>Daftar</span>
+          <i data-lucide="arrow-right" style="width: 13px; height: 13px;"></i>
+        </a>
+        <button type="button" class="btn-menu-toggle" id="menuToggleBtn" aria-label="Buka menu navigasi" aria-expanded="false" onclick="toggleMobileNav()">
+          <i data-lucide="menu" id="menuIcon" style="width: 20px; height: 20px;"></i>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Mobile Drawer Overlay Menu -->
+    <div class="mobile-drawer-backdrop" id="mobileDrawerBackdrop" onclick="toggleMobileNav(false)"></div>
+    <div class="mobile-drawer" id="mobileDrawer" aria-hidden="true">
+      <div class="mobile-drawer-inner">
+        <div class="mobile-drawer-header">
+          <div class="mobile-drawer-brand">
+            <img src="https://file.garden/aehADr1aKQol7cT9/Omega%20Plus%20Pamekasan%20Emblem.png" onerror="this.src='logo.png'" alt="Logo" class="mobile-drawer-logo" />
+            <div>
+              <div style="font-weight: 800; font-size: 0.95rem; color: #ffffff;">OMEGA PLUS 2026</div>
+              <div style="font-size: 0.72rem; color: var(--color-accent-gold); font-weight: 700;">SMPN 1 PAMEKASAN</div>
+            </div>
+          </div>
+          <button type="button" class="btn-drawer-close" onclick="toggleMobileNav(false)" aria-label="Tutup menu">
+            <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+          </button>
+        </div>
+
+        <ul class="mobile-nav-list">
+          <li>
+            <a href="#keunggulan" onclick="handleMobileLinkClick(event, '#keunggulan')">
+              <span class="mobile-nav-icon"><i data-lucide="award" style="width: 17px; height: 17px;"></i></span>
+              <span class="mobile-nav-label">Hadiah & Golden Ticket</span>
+              <i data-lucide="chevron-right" class="mobile-nav-arrow" style="width: 16px; height: 16px;"></i>
+            </a>
+          </li>
+          <li>
+            <a href="#mapel" onclick="handleMobileLinkClick(event, '#mapel')">
+              <span class="mobile-nav-icon"><i data-lucide="book-open" style="width: 17px; height: 17px;"></i></span>
+              <span class="mobile-nav-label">Bidang Lomba & Sesi</span>
+              <i data-lucide="chevron-right" class="mobile-nav-arrow" style="width: 16px; height: 16px;"></i>
+            </a>
+          </li>
+          <li>
+            <a href="#jadwal" onclick="handleMobileLinkClick(event, '#jadwal')">
+              <span class="mobile-nav-icon"><i data-lucide="calendar" style="width: 17px; height: 17px;"></i></span>
+              <span class="mobile-nav-label">Jadwal Pelaksanaan & Biaya</span>
+              <i data-lucide="chevron-right" class="mobile-nav-arrow" style="width: 16px; height: 16px;"></i>
+            </a>
+          </li>
+          <li>
+            <a href="#alur" onclick="handleMobileLinkClick(event, '#alur')">
+              <span class="mobile-nav-icon"><i data-lucide="git-merge" style="width: 17px; height: 17px;"></i></span>
+              <span class="mobile-nav-label">Alur Pendaftaran</span>
+              <i data-lucide="chevron-right" class="mobile-nav-arrow" style="width: 16px; height: 16px;"></i>
+            </a>
+          </li>
+          <li>
+            <a href="#faq" onclick="handleMobileLinkClick(event, '#faq')">
+              <span class="mobile-nav-icon"><i data-lucide="help-circle" style="width: 17px; height: 17px;"></i></span>
+              <span class="mobile-nav-label">Tanya Jawab (FAQ)</span>
+              <i data-lucide="chevron-right" class="mobile-nav-arrow" style="width: 16px; height: 16px;"></i>
+            </a>
+          </li>
+          <li>
+            <a href="#kontak" onclick="handleMobileLinkClick(event, '#kontak')">
+              <span class="mobile-nav-icon"><i data-lucide="message-circle" style="width: 17px; height: 17px;"></i></span>
+              <span class="mobile-nav-label">Kontak Narahubung Panitia</span>
+              <i data-lucide="chevron-right" class="mobile-nav-arrow" style="width: 16px; height: 16px;"></i>
+            </a>
+          </li>
+        </ul>
+
+        <div class="mobile-drawer-actions">
+          <a href="pendaftaran.html" class="btn-mobile-drawer-primary">
+            <i data-lucide="user-plus" style="width: 17px; height: 17px;"></i>
+            <span>Daftar Peserta Sekarang</span>
+          </a>
+          <a href="pendaftaran.html#status" class="btn-mobile-drawer-secondary">
+            <i data-lucide="search" style="width: 16px; height: 16px;"></i>
+            <span>Cek Status Pendaftaran</span>
+          </a>
+          <div class="mobile-drawer-tagline">
+            Olimpiade SD/MI Terbesar Se-Madura • SMPN 1 Pamekasan
+          </div>
+        </div>
       </div>
     </div>
   </nav>
@@ -1658,6 +2109,51 @@
   <script>
     // Initialize Lucide Icons
     lucide.createIcons();
+
+    // Toggle Mobile Navigation Drawer
+    function toggleMobileNav(forceState) {
+      const navbar = document.getElementById('siteNavbar');
+      const toggleBtn = document.getElementById('menuToggleBtn');
+      const drawer = document.getElementById('mobileDrawer');
+      const isOpen = typeof forceState === 'boolean' ? !forceState : navbar.classList.contains('menu-open');
+
+      if (!isOpen) {
+        navbar.classList.add('menu-open');
+        toggleBtn.setAttribute('aria-expanded', 'true');
+        drawer.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      } else {
+        navbar.classList.remove('menu-open');
+        toggleBtn.setAttribute('aria-expanded', 'false');
+        drawer.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+    }
+
+    // Handle Mobile Link Click (Close drawer and smooth scroll to target)
+    function handleMobileLinkClick(e, targetId) {
+      e.preventDefault();
+      toggleMobileNav(false);
+      setTimeout(() => {
+        const target = document.querySelector(targetId);
+        if (target) {
+          const navHeight = 68;
+          const elementPosition = target.getBoundingClientRect().top + window.pageYOffset;
+          const offsetPosition = elementPosition - navHeight;
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }
+      }, 300);
+    }
+
+    // Close on Escape Key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        toggleMobileNav(false);
+      }
+    });
 
     // Toggle FAQ Accordion
     function toggleFaq(el) {
