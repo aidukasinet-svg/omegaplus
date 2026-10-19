@@ -12,7 +12,7 @@
  */
 
 // Ganti URL ini dengan URL Web App Deployment Google Apps Script Anda (berakhiran /exec)
-const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbwYOUR_APP_SCRIPT_ID_HERE/exec";
+const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbwsvjH5vK-g5UJF0sI4knpOal8jdGzYC6Z82lP0ecXW2yWGA4wIKmtoa4YRNXgz-g13vg/exec";
 
 export default {
   async fetch(request, env, ctx) {
