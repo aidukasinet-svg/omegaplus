@@ -783,9 +783,11 @@ function handleDeletePeserta(payload) {
 function sendEmailKonfirmasiTahap1(email, nama, noReg, sekolah, level, mapel, kodePeserta) {
   try {
     var subject = "[OMEGA PLUS 2026] Bukti Pendaftaran Diterima - " + nama + " (" + noReg + ")";
+    var logoUrl = "https://raw.githubusercontent.com/aidukasinet-svg/omegaplus/main/logo.png";
     var htmlBody = "" +
       "<div style='font-family: Arial, sans-serif; max-width: 620px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05);'>" +
       "  <div style='background-color: #19365f; color: #ffffff; padding: 24px; text-align: center;'>" +
+      "    <img src='" + logoUrl + "' width='70' height='70' style='display: block; margin: 0 auto 10px; border-radius: 50%; border: 2px solid #e7b55e; background: #ffffff;' alt='Logo OMEGA PLUS' />" +
       "    <h2 style='margin: 0; font-size: 20px; letter-spacing: 0.5px;'>SMP NEGERI 1 PAMEKASAN</h2>" +
       "    <p style='margin: 4px 0 0; color: #e7b55e; font-weight: bold; font-size: 14px;'>OLIMPIADE AKADEMIK OMEGA PLUS 2026</p>" +
       "    <p style='margin: 2px 0 0; font-size: 12px; color: #d7e7fa;'>Matematika, Bahasa Inggris, IPA, dan IPS SD/MI Se-Madura</p>" +
@@ -832,9 +834,11 @@ function sendEmailKonfirmasiTahap1(email, nama, noReg, sekolah, level, mapel, ko
 function sendEmailTahap2(email, nama, noReg, sekolah, level, mapel, kodePeserta) {
   try {
     var subject = "[RESMI] Kartu Peserta Ujian OMEGA PLUS 2026 - " + nama + " (" + noReg + ")";
+    var logoUrl = "https://raw.githubusercontent.com/aidukasinet-svg/omegaplus/main/logo.png";
     var htmlBody = "" +
       "<div style='font-family: Arial, sans-serif; max-width: 620px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;'>" +
       "  <div style='background-color: #047857; color: #ffffff; padding: 22px; text-align: center;'>" +
+      "    <img src='" + logoUrl + "' width='65' height='65' style='display: block; margin: 0 auto 10px; border-radius: 50%; border: 2px solid #e7b55e; background: #ffffff;' alt='Logo OMEGA PLUS' />" +
       "    <h2 style='margin: 0; font-size: 20px;'>PENDAFTARAN RESMI TERVERIFIKASI</h2>" +
       "    <p style='margin: 4px 0 0; font-size: 13px; color: #d1fae5;'>SMP Negeri 1 Pamekasan — OMEGA PLUS 2026</p>" +
       "  </div>" +
@@ -864,10 +868,11 @@ function sendEmailTahap2(email, nama, noReg, sekolah, level, mapel, kodePeserta)
 }
 
 /**
- * GENERATOR KARTU PESERTA RESMI PDF (Dengan QR Code)
+ * GENERATOR KARTU PESERTA RESMI PDF (Dengan QR Code & Logo Resmi)
  */
 function generateKartuPesertaResmiPDF(noReg, nama, sekolah, level, mapel, kodePeserta) {
   var qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=" + encodeURIComponent(noReg + "|" + nama + "|" + kodePeserta);
+  var logoUrl = "https://raw.githubusercontent.com/aidukasinet-svg/omegaplus/main/logo.png";
   var html = "" +
     "<html><head><style>" +
     "  body { font-family: Arial, sans-serif; margin: 25px; font-size: 10pt; color: #0f172a; }" +
@@ -879,9 +884,12 @@ function generateKartuPesertaResmiPDF(noReg, nama, sekolah, level, mapel, kodePe
     "  .qr-box { border: 1px dashed #64748b; padding: 6px; text-align: center; border-radius: 6px; }" +
     "</style></head><body>" +
     "  <div class='card'>" +
-    "    <div class='header'>" +
-    "      <h2 style='margin: 0; color: #19365f; font-size: 14pt;'>KARTU PESERTA RESMI OMEGA PLUS 2026</h2>" +
-    "      <div style='color: #285891; font-weight: bold; font-size: 10pt;'>SMP NEGERI 1 PAMEKASAN</div>" +
+    "    <div class='header' style='display: flex; align-items: center; justify-content: center; gap: 10px;'>" +
+    "      <img src='" + logoUrl + "' width='50' height='50' style='float: left; margin-right: 10px;' />" +
+    "      <div style='text-align: center;'>" +
+    "        <h2 style='margin: 0; color: #19365f; font-size: 14pt;'>KARTU PESERTA RESMI OMEGA PLUS 2026</h2>" +
+    "        <div style='color: #285891; font-weight: bold; font-size: 10pt;'>SMP NEGERI 1 PAMEKASAN</div>" +
+    "      </div>" +
     "    </div>" +
     "    <table><tr>" +
     "      <td style='width: 72%;'>" +
