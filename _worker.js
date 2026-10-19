@@ -108,22 +108,7 @@ export default {
       }
     }
 
-    // =========================================================================
-    // ROUTING RAMAH PENGGUNA (CLEAN REDIRECTS & CANONICAL PATHS)
-    // =========================================================================
-    const cleanPath = url.pathname.toLowerCase().replace(/\/$/, "");
-
-    // Alias Pendaftaran (/daftar, /formpendaftaran) -> /pendaftaran
-    if (cleanPath === '/daftar' || cleanPath === '/formpendaftaran') {
-      return Response.redirect(new URL('/pendaftaran', request.url), 302);
-    }
-
-    // Alias Portal Panitia (/login, /panitia) -> /admin
-    if (cleanPath === '/login' || cleanPath === '/panitia') {
-      return Response.redirect(new URL('/admin', request.url), 302);
-    }
-
-    // Default: Sajikan aset statis Cloudflare Pages (otomatis melayani /pendaftaran -> pendaftaran.html, /admin -> admin.html)
+    // Default: Sajikan aset statis Cloudflare Pages (otomatis melayani /pendaftaran, /login, /admin, dll)
     if (env && env.ASSETS) {
       return env.ASSETS.fetch(request);
     }
