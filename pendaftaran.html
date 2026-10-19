@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulir Pendaftaran OMEGA PLUS 2026 — SMP Negeri 1 Pamekasan</title>
+  <meta name="description" content="Formulir Pendaftaran Resmi dan Cek Status Peserta OMEGA PLUS 2026. Olimpiade Matematika, IPA, Bahasa Inggris, dan IPS SD/MI Se-Madura.">
+
+  <!-- OpenGraph Metadata for WhatsApp, Facebook, Social Sharing -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Pendaftaran OMEGA PLUS 2026 — SMP Negeri 1 Pamekasan">
+  <meta property="og:description" content="Daftar sekarang di ajang olimpiade SD/MI terbesar se-Madura. Rebut Tiket Emas Kelas Unggulan SMPN 1 Pamekasan tanpa tes & beasiswa buku seragam 3 tahun!">
+  <meta property="og:image" content="https://file.garden/aehADr1aKQol7cT9/Omega%20Plus%20Pamekasan%20Emblem.png">
+  <meta property="og:image:width" content="600">
+  <meta property="og:image:height" content="600">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://file.garden/aehADr1aKQol7cT9/Omega%20Plus%20Pamekasan%20Emblem.png">
+
+  <!-- Favicon Official Emblem -->
+  <link rel="icon" href="https://file.garden/aehADr1aKQol7cT9/Omega%20Plus%20Pamekasan%20Emblem.png" type="image/png">
+  <link rel="shortcut icon" href="logo.png" type="image/png">
+
+  <!-- Google Fonts: Work Sans & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Work+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- SweetAlert2 (Anti-Alert Bawaan) -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Konfigurasi Global -->
+  <script src="config.js"></script>
+
+  <style>
+    /* ==========================================================================
+       DESIGN SYSTEM CSS TOKENS (OMEGA PLUS BRAND IDENTITY)
+       ========================================================================== */
+    :root {
+      --color-primary-navy:     #19365f;
+      --color-primary-royal:    #285891;
+      --color-accent-gold:      #e7b55e;
+      --color-accent-gold-dark: #b88628;
+
+      --color-bg-page:          #f5f8fc;
+      --color-bg-surface:       #ffffff;
+      --color-bg-tint:          #e7f0fb;
+      --color-bg-tint-light:    #f8fafc;
+
+      --color-text-main:        #193047;
+      --color-text-muted:       #657c94;
+      --color-text-inverse:     #ffffff;
+
+      --color-border-subtle:    rgba(25, 54, 95, 0.12);
+      --color-border-input:     #cbd5e1;
+      --color-border-focus:     #285891;
+
+      --radius-sm:   8px;
+      --radius-md:   12px;
+      --radius-lg:   18px;
+      --radius-xl:   24px;
+      --radius-pill: 9999px;
+
+      --shadow-sm:   0 1px 3px rgba(25, 54, 95, 0.05);
+      --shadow-card: 0 6px 24px rgba(25, 54, 95, 0.07);
+      --shadow-lift: 0 12px 28px rgba(25, 54, 95, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Work Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--color-bg-page);
+      color: var(--color-text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+
+    /* ==========================================================================
+       HEADER & BRAND BAR
+       ========================================================================== */
+    .header-hero {
+      background: linear-gradient(135deg, var(--color-primary-navy) 0%, #1e4573 50%, var(--color-primary-royal) 100%);
+      color: var(--color-text-inverse);
+      padding: 2rem 1.5rem 1.75rem;
+      position: relative;
+      box-shadow: 0 4px 20px rgba(25, 54, 95, 0.2);
+    }
+
+    .header-container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .school-identity {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .school-logo-badge {
+      width: 54px;
+      height: 54px;
+      background: #ffffff;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+      border: 2px solid var(--color-accent-gold);
+      overflow: hidden;
+    }
+
+    .school-logo-badge img {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+    }
+
+    .school-text h3 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      margin: 0;
+      color: #ffffff;
+    }
+
+    .school-text p {
+      font-size: 0.8125rem;
+      color: var(--color-accent-gold);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .header-nav {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-back-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #ffffff;
+      padding: 8px 18px;
+      border-radius: var(--radius-pill);
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      backdrop-filter: blur(8px);
+    }
+
+    .btn-back-home:hover {
+      background: rgba(255, 255, 255, 0.22);
+      transform: translateX(-2px);
+    }
+
+    .hero-main {
+      text-align: left;
+      max-width: 820px;
+    }
+
+    .kicker-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(231, 181, 94, 0.2);
+      border: 1px solid var(--color-accent-gold);
+      color: var(--color-accent-gold);
+      padding: 4px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+    }
+
+    .hero-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: clamp(1.8rem, 4vw, 2.3rem);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-desc {
+      font-size: clamp(0.9rem, 2.2vw, 1.05rem);
+      color: #d7e7fa;
+      line-height: 1.45;
+    }
+
+    /* Tab Switcher in Hero */
+    .hero-tabs-wrap {
+      display: flex;
+      gap: 8px;
+      margin-top: 1.5rem;
+    }
+
+    .tab-pill {
+      padding: 10px 22px;
+      border-radius: var(--radius-pill);
+      font-size: 0.875rem;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      background: rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .tab-pill:hover {
+      background: rgba(255, 255, 255, 0.22);
+    }
+
+    .tab-pill.active {
+      background: #ffffff;
+      color: var(--color-primary-navy);
+      border-color: #ffffff;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+    }
+
+    /* ==========================================================================
+       MAIN CONTENT CONTAINER
+       ========================================================================== */
+    .main-content {
+      max-width: 1100px;
+      margin: -1rem auto 3rem;
+      padding: 0 1rem;
+      width: 100%;
+      flex: 1;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* ==========================================================================
+       CARD CONTAINERS (FORM & CHECK STATUS)
+       ========================================================================== */
+    .card-panel {
+      background: var(--color-bg-surface);
+      border-radius: var(--radius-lg);
+      padding: 2.25rem 2rem;
+      box-shadow: var(--shadow-card);
+      border: 1px solid var(--color-border-subtle);
+      margin-bottom: 2rem;
+    }
+
+    .card-header-box {
+      margin-bottom: 1.75rem;
+      border-bottom: 1px solid var(--color-border-subtle);
+      padding-bottom: 1.25rem;
+    }
+
+    .card-eyebrow {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--color-primary-royal);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .card-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--color-primary-navy);
+    }
+
+    .card-intro {
+      font-size: 0.9375rem;
+      color: var(--color-text-muted);
+      margin-top: 4px;
+    }
+
+    /* ==========================================================================
+       FORM STYLING
+       ========================================================================== */
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    @media (max-width: 768px) {
+      .form-grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 1.25rem;
+    }
+
+    .form-label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--color-text-main);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .form-label .req {
+      color: #dc2626;
+      font-weight: bold;
+    }
+
+    .form-control {
+      height: 48px;
+      border: 1.5px solid var(--color-border-input);
+      border-radius: var(--radius-sm);
+      padding: 0 14px;
+      font-size: 0.9375rem;
+      color: var(--color-text-main);
+      background-color: #ffffff;
+      transition: all 0.2s ease;
+      width: 100%;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--color-primary-royal);
+      box-shadow: 0 0 0 3.5px rgba(40, 88, 145, 0.15);
+    }
+
+    .form-hint {
+      font-size: 0.775rem;
+      color: var(--color-text-muted);
+      margin-top: 2px;
+    }
+
+    /* Checkbox Cards for Subjects */
+    .subjects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 1rem;
+      margin-top: 8px;
+    }
+
+    .subject-check-card {
+      border: 1.5px solid var(--color-border-input);
+      border-radius: var(--radius-md);
+      padding: 1.1rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: #ffffff;
+      user-select: none;
+    }
+
+    .subject-check-card:hover {
+      border-color: var(--color-primary-royal);
+      background: var(--color-bg-tint-light);
+    }
+
+    .subject-check-card input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin-top: 2px;
+      accent-color: var(--color-primary-royal);
+      cursor: pointer;
+    }
+
+    .subject-info strong {
+      display: block;
+      font-size: 0.9375rem;
+      color: var(--color-text-main);
+    }
+
+    .subject-info span {
+      font-size: 0.775rem;
+      color: var(--color-text-muted);
+      display: block;
+      margin-top: 2px;
+    }
+
+    .subject-check-card.checked {
+      border-color: var(--color-primary-royal);
+      background-color: var(--color-bg-tint);
+    }
+
+    /* Action Buttons Row */
+    .button-group-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1.75rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--color-border-subtle);
+    }
+
+    .btn {
+      height: 46px;
+      padding: 0 22px;
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    .btn-primary {
+      background-color: var(--color-primary-royal);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(40, 88, 145, 0.25);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--color-primary-navy);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(25, 54, 95, 0.3);
+    }
+
+    .btn-secondary {
+      background-color: var(--color-bg-tint);
+      color: var(--color-primary-navy);
+    }
+
+    .btn-secondary:hover {
+      background-color: #d5e5f7;
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      border: 1.5px solid var(--color-primary-royal);
+      color: var(--color-primary-royal);
+    }
+
+    .btn-outline:hover {
+      background-color: var(--color-bg-tint);
+    }
+
+    /* Info Cards Bottom */
+    .info-boxes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 1.25rem;
+      margin-top: 2rem;
+    }
+
+    .info-box {
+      background: #ffffff;
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--color-border-subtle);
+    }
+
+    .info-box-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--color-primary-navy);
+      margin-bottom: 0.875rem;
+    }
+
+    .info-box-header i {
+      color: var(--color-primary-royal);
+    }
+
+    .info-box ul {
+      list-style: none;
+      font-size: 0.85rem;
+      color: var(--color-text-main);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .info-box ul li strong {
+      color: var(--color-primary-navy);
+    }
+
+    /* Footer Clean Institutional */
+    .footer-clean {
+      background-color: var(--color-primary-navy);
+      color: rgba(255, 255, 255, 0.8);
+      padding: 2.25rem 1.5rem;
+      margin-top: auto;
+      text-align: center;
+      border-top: 3px solid var(--color-accent-gold);
+      font-size: 0.85rem;
+    }
+
+    .footer-clean a {
+      color: var(--color-accent-gold);
+      text-decoration: none;
+    }
+
+    .footer-clean a:hover {
+      text-decoration: underline;
+    }
+
+    /* Print Stylesheet */
+    @media print {
+      body {
+        background: #ffffff;
+        color: #000000;
+      }
+      .header-hero, .hero-tabs-wrap, .button-group-row, .info-boxes-grid, .footer-clean, .btn-back-home {
+        display: none !important;
+      }
+      .main-content {
+        margin: 0;
+        padding: 0;
+        max-width: 100%;
+      }
+      .card-panel {
+        box-shadow: none;
+        border: none;
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================================================
+       HEADER HERO
+       ========================================================================== -->
+  <header class="header-hero">
+    <div class="header-container">
+      <div class="header-top">
+        <a href="/" class="school-identity">
+          <div class="school-logo-badge">
+            <img src="https://file.garden/aehADr1aKQol7cT9/Omega%20Plus%20Pamekasan%20Emblem.png" onerror="this.src='logo.png'" alt="Logo OMEGA PLUS" />
+          </div>
+          <div class="school-text">
+            <h3>SMP NEGERI 1 PAMEKASAN</h3>
+            <p>Penyelenggara Olimpiade Akademik SD/MI Se-Madura</p>
+          </div>
+        </a>
+
+        <div class="header-nav">
+          <a href="/" class="btn-back-home">
+            <i data-lucide="arrow-left" style="width: 16px; height: 16px;"></i> Kembali ke Beranda
+          </a>
+        </div>
+      </div>
+
+      <div class="hero-main">
+        <div class="kicker-tag">
+          <i data-lucide="award" style="width: 14px; height: 14px;"></i> Formulir Resmi OMEGA PLUS 2026
+        </div>
+        <h1 class="hero-title">Portal Pendaftaran Peserta & Status</h1>
+        <p class="hero-desc">
+          Lengkapi identitas peserta untuk mengikuti Olimpiade Matematika, Bahasa Inggris, IPA, dan IPS. Dapatkan bukti registrasi instan dan tiket resmi ujian.
+        </p>
+
+        <!-- Tab Switcher -->
+        <div class="hero-tabs-wrap">
+          <button type="button" class="tab-pill active" id="tabBtnForm" onclick="switchTab('form')">
+            <i data-lucide="user-plus" style="width: 16px; height: 16px;"></i> Formulir Pendaftaran
+          </button>
+          <button type="button" class="tab-pill" id="tabBtnStatus" onclick="switchTab('status')">
+            <i data-lucide="search" style="width: 16px; height: 16px;"></i> Cek Status Peserta
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       MAIN CONTENT
+       ========================================================================== -->
+  <main class="main-content">
+
+    <!-- PANEL 1: FORMULIR PENDAFTARAN -->
+    <div id="panelForm" class="card-panel">
+      <div class="card-header-box">
+        <div class="card-eyebrow">Formulir Peserta</div>
+        <h2 class="card-title">Isi Data Peserta Olimpiade</h2>
+        <p class="card-intro">Mohon isi data dengan teliti. Data ini akan dicetak pada Surat Panduan dan Kartu Peserta Ujian Resmi.</p>
+      </div>
+
+      <form id="omegaRegistrationForm" onsubmit="handleFormSubmit(event)">
+        
+        <div class="form-grid-2">
+          <!-- Nama Peserta -->
+          <div class="form-group">
+            <label class="form-label" for="namaPeserta">
+              Nama Lengkap Peserta <span class="req">*</span>
+            </label>
+            <input type="text" id="namaPeserta" class="form-control" placeholder="Contoh: Muhammad Farhan" required />
+            <span class="form-hint">Gunakan huruf kapital sesuai akta kelahiran/rapor.</span>
+          </div>
+
+          <!-- Asal Sekolah -->
+          <div class="form-group">
+            <label class="form-label" for="asalSekolah">
+              Asal Sekolah (SD/MI) <span class="req">*</span>
+            </label>
+            <input type="text" id="asalSekolah" class="form-control" placeholder="Contoh: SDN Lawangan Daya 2 Pamekasan" required />
+            <span class="form-hint">Tuliskan nama lengkap sekolah asal.</span>
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <!-- Tanggal Pendaftaran -->
+          <div class="form-group">
+            <label class="form-label" for="tglPendaftaran">
+              Tanggal Pendaftaran <span class="req">*</span>
+            </label>
+            <input type="date" id="tglPendaftaran" class="form-control" required />
+            <span class="form-hint">Default terisi tanggal hari ini.</span>
+          </div>
+
+          <!-- Nomor HP / WhatsApp -->
+          <div class="form-group">
+            <label class="form-label" for="noHp">
+              Nomor WhatsApp / HP Aktif <span class="req">*</span>
+            </label>
+            <input type="tel" id="noHp" class="form-control" placeholder="Contoh: 081234567890" required />
+            <span class="form-hint">Pastikan nomor aktif untuk konfirmasi panitia.</span>
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <!-- Email Peserta / Wali -->
+          <div class="form-group">
+            <label class="form-label" for="emailPeserta">
+              Alamat Email Aktif <span class="req">*</span>
+            </label>
+            <input type="email" id="emailPeserta" class="form-control" placeholder="Contoh: orangtua@gmail.com" required />
+            <span class="form-hint">Bukti pendaftaran dan Kartu Ujian Resmi PDF akan dikirimkan ke email ini.</span>
+          </div>
+
+          <!-- Tingkatan Level -->
+          <div class="form-group">
+            <label class="form-label" for="levelPeserta">
+              Tingkatan Olimpiade <span class="req">*</span>
+            </label>
+            <select id="levelPeserta" class="form-control" required>
+              <option value="" disabled selected>Pilih level olimpiade</option>
+              <option value="Level 1">Level 1 (Kelas 1, 2, dan 3 SD/MI)</option>
+              <option value="Level 2">Level 2 (Kelas 4, 5, dan 6 SD/MI)</option>
+            </select>
+            <span class="form-hint">Sesuai tingkatan kelas peserta saat ini.</span>
+          </div>
+        </div>
+
+        <!-- Checkbox Mata Pelajaran -->
+        <div class="form-group" style="margin-top: 0.5rem;">
+          <label class="form-label">
+            Jenis Mata Pelajaran <span class="req">* (Pilih minimal 1, diperbolehkan lintas sesi)</span>
+          </label>
+          <div class="subjects-grid">
+            
+            <label class="subject-check-card" id="cardMatematika">
+              <input type="checkbox" name="mapelCheck" value="Matematika" onchange="toggleSubjectCard(this, 'cardMatematika')" />
+              <div class="subject-info">
+                <strong>Matematika</strong>
+                <span>Sesi 2 (09.00 - 10.00 WIB)</span>
+              </div>
+            </label>
+
+            <label class="subject-check-card" id="cardBing">
+              <input type="checkbox" name="mapelCheck" value="Bahasa Inggris" onchange="toggleSubjectCard(this, 'cardBing')" />
+              <div class="subject-info">
+                <strong>Bahasa Inggris</strong>
+                <span>Sesi 2 (09.00 - 10.00 WIB)</span>
+              </div>
+            </label>
+
+            <label class="subject-check-card" id="cardIpa">
+              <input type="checkbox" name="mapelCheck" value="IPA" onchange="toggleSubjectCard(this, 'cardIpa')" />
+              <div class="subject-info">
+                <strong>IPA</strong>
+                <span>Sesi 1 (07.30 - 08.30 WIB)</span>
+              </div>
+            </label>
+
+            <label class="subject-check-card" id="cardIps">
+              <input type="checkbox" name="mapelCheck" value="IPS" onchange="toggleSubjectCard(this, 'cardIps')" />
+              <div class="subject-info">
+                <strong>IPS</strong>
+                <span>Sesi 1 (07.30 - 08.30 WIB)</span>
+              </div>
+            </label>
+
+          </div>
+          <span class="form-hint" style="margin-top: 6px;">
+            ✦ Tips: Peserta dapat mengikuti 2 mata pelajaran sekaligus bila berbeda sesi (contoh: IPA di Sesi 1 dan Matematika di Sesi 2).
+          </span>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="button-group-row">
+          <button type="submit" id="btnSubmitForm" class="btn btn-primary">
+            <i data-lucide="check-circle" style="width: 18px; height: 18px;"></i> Simpan Pendaftaran
+          </button>
+          
+          <button type="button" class="btn btn-secondary" onclick="resetForm()">
+            <i data-lucide="rotate-ccw" style="width: 18px; height: 18px;"></i> Reset Formulir
+          </button>
+
+          <button type="button" class="btn btn-outline" onclick="cetakFormulirKosong()">
+            <i data-lucide="printer" style="width: 18px; height: 18px;"></i> Cetak Formulir Kosong
+          </button>
+
+          <button type="button" id="btnCetakBukti" class="btn btn-outline" onclick="cetakBuktiTerakhir()" style="display: none;">
+            <i data-lucide="file-check" style="width: 18px; height: 18px;"></i> Cetak Bukti Pendaftaran
+          </button>
+
+          <button type="button" id="btnEksporDoc" class="btn btn-outline" onclick="eksporDocTerakhir()" style="display: none;">
+            <i data-lucide="file-text" style="width: 18px; height: 18px;"></i> Ekspor Dokumen DOC
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- PANEL 2: CEK STATUS PENDAFTARAN MANDIRI -->
+    <div id="panelStatus" class="card-panel" style="display: none;">
+      <div class="card-header-box">
+        <div class="card-eyebrow">Pencarian Mandiri</div>
+        <h2 class="card-title">Cek Status & Unduh Kartu Peserta</h2>
+        <p class="card-intro">Masukkan Nomor Pendaftaran (misal: OMP-2026-0001) atau Nomor WhatsApp yang didaftarkan.</p>
+      </div>
+
+      <div style="display: flex; gap: 10px; max-width: 600px; margin-bottom: 1.5rem;">
+        <input type="text" id="inputCariStatus" class="form-control" placeholder="Nomor Pendaftaran / Nomor HP / Email" onkeypress="if(event.key==='Enter') cariStatusPeserta()" />
+        <button type="button" class="btn btn-primary" onclick="cariStatusPeserta()">
+          <i data-lucide="search" style="width: 18px; height: 18px;"></i> Cari
+        </button>
+      </div>
+
+      <div id="statusSearchResultArea">
+        <div style="text-align: center; padding: 2.5rem 1rem; color: #657c94; background: #f8fafc; border-radius: 12px; border: 1px dashed #cbd5e1;">
+          <i data-lucide="info" style="width: 32px; height: 32px; margin: 0 auto 8px; display: block; color: var(--color-primary-royal);"></i>
+          <p>Ketikkan Nomor Registrasi atau Nomor WhatsApp Anda untuk melihat perkembangan verifikasi panitia.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- INFORMASI BANTUAN DI BAWAH FORM -->
+    <div class="info-boxes-grid">
+      <!-- Jadwal Sesi -->
+      <div class="info-box">
+        <div class="info-box-header">
+          <i data-lucide="clock"></i>
+          <span>Jadwal & Sesi Pelaksanaan</span>
+        </div>
+        <ul>
+          <li><strong>Sesi 1 (07.30 - 08.30 WIB):</strong> IPA & IPS</li>
+          <li><strong>Sesi 2 (09.00 - 10.00 WIB):</strong> Matematika & Bahasa Inggris</li>
+          <li><strong>Lokasi:</strong> Kampus SMP Negeri 1 Pamekasan</li>
+          <li><strong>Ketentuan:</strong> Hadir 30 menit sebelum sesi ujian dimulai.</li>
+        </ul>
+      </div>
+
+      <!-- Biaya & Rekening -->
+      <div class="info-box">
+        <div class="info-box-header">
+          <i data-lucide="credit-card"></i>
+          <span>Biaya & Pembayaran</span>
+        </div>
+        <ul>
+          <li><strong>Biaya:</strong> Rp 40.000,- / peserta / mapel</li>
+          <li><strong>Bank BRI:</strong> 0055-01-012345-50-1</li>
+          <li><strong>Atas Nama:</strong> PANITIA OMEGA PLUS</li>
+          <li>Verifikasi otomatis diperbarui panitia setelah konfirmasi pembayaran.</li>
+        </ul>
+      </div>
+
+      <!-- Narahubung -->
+      <div class="info-box">
+        <div class="info-box-header">
+          <i data-lucide="phone-call"></i>
+          <span>Narahubung Resmi (WhatsApp)</span>
+        </div>
+        <ul>
+          <li><strong>Bapak Rasyidi:</strong> <a href="https://wa.me/6287781587155" target="_blank" style="color: var(--color-primary-royal); font-weight: 600;">0877-8158-7155</a></li>
+          <li><strong>Bapak Indra:</strong> <a href="https://wa.me/6285259349169" target="_blank" style="color: var(--color-primary-royal); font-weight: 600;">0852-5934-9169</a></li>
+          <li><strong>Ibu Dwi Elly:</strong> <a href="https://wa.me/6281235922003" target="_blank" style="color: var(--color-primary-royal); font-weight: 600;">0812-3592-2003</a></li>
+          <li>Layanan konsultasi panitia dibuka pukul 08.00 - 16.00 WIB.</li>
+        </ul>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ==========================================================================
+       FOOTER (CLEAN INSTITUTIONAL — NO ADMIN LINK)
+       ========================================================================== -->
+  <footer class="footer-clean">
+    <div style="max-width: 1100px; margin: 0 auto;">
+      <p style="font-weight: 700; color: #ffffff; font-size: 0.95rem; margin-bottom: 4px;">
+        OMEGA PLUS 2026 • SMP NEGERI 1 PAMEKASAN
+      </p>
+      <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.8125rem;">
+        Jl. Raden Abdul Azis No. 24, Gladak Anyar, Kab. Pamekasan, Madura, Jawa Timur 69317
+      </p>
+      <p style="margin-top: 10px; font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">
+        © 2026 Panitia Olimpiade OMEGA PLUS SMPN 1 Pamekasan. Hak Cipta Dilindungi.
+      </p>
+    </div>
+  </footer>
+
+  <!-- ==========================================================================
+       JAVASCRIPT LOGIC
+       ========================================================================== -->
+  <script>
+    // Inisialisasi Lucide Icons
+    lucide.createIcons();
+
+    // Data Pendaftaran Terakhir
+    let lastSubmissionData = null;
+
+    // Set Default Tanggal Hari Ini & Cek URL Hash
+    document.addEventListener("DOMContentLoaded", function() {
+      const today = new Date().toISOString().split('T')[0];
+      const tglInput = document.getElementById("tglPendaftaran");
+      if (tglInput) tglInput.value = today;
+
+      // Cek apakah ada hash #status di URL
+      if (window.location.hash === '#status') {
+        switchTab('status');
+      }
+    });
+
+    // Switch Tab: Formulir vs Cek Status
+    function switchTab(tab) {
+      const panelForm = document.getElementById("panelForm");
+      const panelStatus = document.getElementById("panelStatus");
+      const tabBtnForm = document.getElementById("tabBtnForm");
+      const tabBtnStatus = document.getElementById("tabBtnStatus");
+
+      if (tab === 'form') {
+        panelForm.style.display = "block";
+        panelStatus.style.display = "none";
+        tabBtnForm.classList.add("active");
+        tabBtnStatus.classList.remove("active");
+        window.location.hash = 'form';
+      } else {
+        panelForm.style.display = "none";
+        panelStatus.style.display = "block";
+        tabBtnForm.classList.remove("active");
+        tabBtnStatus.classList.add("active");
+        window.location.hash = 'status';
+        setTimeout(() => {
+          document.getElementById('inputCariStatus').focus();
+        }, 150);
+      }
+    }
+
+    // Toggle Class Card saat Checkbox diubah
+    function toggleSubjectCard(checkbox, cardId) {
+      const card = document.getElementById(cardId);
+      if (card) {
+        if (checkbox.checked) {
+          card.classList.add('checked');
+        } else {
+          card.classList.remove('checked');
+        }
+      }
+    }
+
+    // Reset Form
+    function resetForm() {
+      Swal.fire({
+        title: 'Reset Formulir?',
+        text: 'Seluruh isian data yang belum tersimpan akan dikosongkan.',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Kosongkan',
+        cancelButtonText: 'Batal',
+        confirmButtonColor: '#285891',
+        cancelButtonColor: '#657c94'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          document.getElementById('omegaRegistrationForm').reset();
+          document.querySelectorAll('.subject-check-card').forEach(c => c.classList.remove('checked'));
+          const today = new Date().toISOString().split('T')[0];
+          document.getElementById("tglPendaftaran").value = today;
+          Swal.fire({
+            icon: 'info',
+            title: 'Formulir Dikosongkan',
+            timer: 1200,
+            showConfirmButton: false
+          });
+        }
+      });
+    }
+
+    // Submit Pendaftaran
+    async function handleFormSubmit(event) {
+      event.preventDefault();
+
+      const nama = document.getElementById('namaPeserta').value.trim();
+      const sekolah = document.getElementById('asalSekolah').value.trim();
+      const tgl = document.getElementById('tglPendaftaran').value;
+      const noHp = document.getElementById('noHp').value.trim();
+      const email = document.getElementById('emailPeserta').value.trim();
+      const level = document.getElementById('levelPeserta').value;
+
+      // Ambil mata pelajaran terpilih
+      const mapelBoxes = document.querySelectorAll('input[name="mapelCheck"]:checked');
+      if (mapelBoxes.length === 0) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Pilih Mata Pelajaran',
+          text: 'Harap pilih minimal satu jenis mata pelajaran yang akan diikuti!',
+          confirmButtonColor: '#285891'
+        });
+        return;
+      }
+
+      const mapelList = Array.from(mapelBoxes).map(cb => cb.value);
+
+      // Loading State
+      const submitBtn = document.getElementById('btnSubmitForm');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span class="spinner" style="display:inline-block;width:16px;height:16px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin 0.6s linear infinite;margin-right:8px;"></span> Menyimpan...`;
+
+      const payload = {
+        action: 'registerPeserta',
+        nama: nama,
+        sekolah: sekolah,
+        tglDaftar: tgl,
+        noHp: noHp,
+        email: email,
+        level: level,
+        mapel: mapelList
+      };
+
+      try {
+        const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '/api';
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (result.status === 'success') {
+          lastSubmissionData = {
+            noPendaftaran: result.noPendaftaran,
+            nama: nama,
+            sekolah: sekolah,
+            level: level,
+            mapel: mapelList.join(', '),
+            kodePeserta: result.kodePesertaString || '',
+            tglDaftar: tgl
+          };
+
+          // Tampilkan tombol cetak & doc
+          document.getElementById('btnCetakBukti').style.display = 'inline-flex';
+          document.getElementById('btnEksporDoc').style.display = 'inline-flex';
+
+          Swal.fire({
+            icon: 'success',
+            title: 'Pendaftaran Berhasil!',
+            html: `
+              <div style="text-align: left; font-size: 14px; line-height: 1.6; margin-top: 10px;">
+                <p>Selamat, formulir Anda telah sah tercatat di database panitia.</p>
+                <div style="background: #e7f0fb; padding: 12px; border-radius: 8px; margin: 12px 0;">
+                  <strong>Nomor Pendaftaran:</strong> <span style="color: #285891; font-size: 16px; font-weight: bold;">${result.noPendaftaran}</span><br>
+                  <strong>Nomor Peserta Ujian:</strong> <span style="color: #047857; font-weight: bold;">${result.kodePesertaString}</span>
+                </div>
+                <p style="font-size: 13px; color: #475569;">
+                  Surat konfirmasi telah dikirimkan ke <strong>${email}</strong>. Anda dapat mencetak Bukti Pendaftaran sekarang atau mengekspornya ke format Dokumen Word.
+                </p>
+              </div>
+            `,
+            confirmButtonText: 'Cetak Bukti Sekarang',
+            showCancelButton: true,
+            cancelButtonText: 'Tutup',
+            confirmButtonColor: '#285891',
+            cancelButtonColor: '#657c94'
+          }).then((res) => {
+            if (res.isConfirmed) {
+              cetakBuktiTerakhir();
+            }
+          });
+
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Gagal Menyimpan',
+            text: result.message || 'Terjadi kesalahan saat menyimpan data.',
+            confirmButtonColor: '#285891'
+          });
+        }
+      } catch (err) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Koneksi Terkendala',
+          text: 'Gagal terhubung ke server. Silakan periksa koneksi internet Anda.',
+          confirmButtonColor: '#285891'
+        });
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<i data-lucide="check-circle" style="width: 18px; height: 18px;"></i> Simpan Pendaftaran`;
+        lucide.createIcons();
+      }
+    }
+
+    // Cetak Formulir Kosong (Format A4)
+    function cetakFormulirKosong() {
+      const w = window.open('', '_blank');
+      const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Formulir Pendaftaran Kosong - OMEGA PLUS 2026</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 40px; font-size: 11pt; color: #000; }
+            .kop { text-align: center; border-bottom: 3px double #000; padding-bottom: 10px; margin-bottom: 20px; }
+            .kop h2 { margin: 0; font-size: 14pt; }
+            .kop h3 { margin: 4px 0; font-size: 16pt; }
+            .kop p { margin: 2px 0; font-size: 10pt; }
+            .title { text-align: center; font-weight: bold; font-size: 12pt; text-decoration: underline; margin-bottom: 25px; }
+            table.form-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+            table.form-table td { padding: 8px 6px; vertical-align: top; }
+            .dot-line { border-bottom: 1px dotted #000; display: inline-block; width: 95%; height: 18px; }
+            .box-choice { display: inline-block; width: 14px; height: 14px; border: 1px solid #000; margin-right: 6px; vertical-align: middle; }
+            .ttd-table { width: 100%; margin-top: 40px; }
+            .ttd-table td { text-align: center; vertical-align: top; width: 50%; }
+          </style>
+        </head>
+        <body onload="window.print();">
+          <div class="kop" style="display: flex; align-items: center; justify-content: center; gap: 15px;">
+            <img src="https://file.garden/aehADr1aKQol7cT9/Omega%20Plus%20Pamekasan%20Emblem.png" width="65" height="65" style="object-fit: contain;" />
+            <div>
+              <h2>PANITIA OLIMPIADE AKADEMIK SD/MI SE-MADURA</h2>
+              <h3>OMEGA PLUS 2026 — SMP NEGERI 1 PAMEKASAN</h3>
+              <p>Jl. Raden Abdul Azis No. 24, Pamekasan, Madura | Kontak: 0877-8158-7155 / 0852-5934-9169</p>
+            </div>
+          </div>
+          <div class="title">FORMULIR PENDAFTARAN PESERTA OFFLINE</div>
+          <table class="form-table">
+            <tr><td style="width: 25%;">1. Nama Lengkap</td><td style="width: 3%;">:</td><td><span class="dot-line"></span></td></tr>
+            <tr><td>2. Asal Sekolah</td><td>:</td><td><span class="dot-line"></span></td></tr>
+            <tr><td>3. Tingkatan Level</td><td>:</td><td><span class="box-choice"></span> Level 1 (Kelas 1-3) &nbsp;&nbsp;&nbsp;&nbsp; <span class="box-choice"></span> Level 2 (Kelas 4-6)</td></tr>
+            <tr><td>4. Nomor WhatsApp</td><td>:</td><td><span class="dot-line"></span></td></tr>
+            <tr><td>5. Alamat Email</td><td>:</td><td><span class="dot-line"></span></td></tr>
+            <tr><td>6. Mata Pelajaran</td><td>:</td><td>
+              <span class="box-choice"></span> Matematika (Sesi 2) &nbsp;&nbsp;&nbsp;&nbsp;
+              <span class="box-choice"></span> Bahasa Inggris (Sesi 2)<br><br>
+              <span class="box-choice"></span> IPA (Sesi 1) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <span class="box-choice"></span> IPS (Sesi 1)
+            </td></tr>
+          </table>
+          <table class="ttd-table">
+            <tr>
+              <td>Mengetahui,<br>Kepala Sekolah / Guru Pendamping<br><br><br><br>___________________________</td>
+              <td>Pamekasan, ........................... 2026<br>Calon Peserta / Orang Tua<br><br><br><br>___________________________</td>
+            </tr>
+          </table>
+        </body>
+        </html>
+      `;
+      w.document.write(html);
+      w.document.close();
+    }
+
+    // Cetak Bukti Pendaftaran Terakhir
+    function cetakBuktiTerakhir() {
+      if (!lastSubmissionData) {
+        Swal.fire({ icon: 'info', title: 'Belum Ada Data Pendaftaran Baru' });
+        return;
+      }
+      const p = lastSubmissionData;
+      const w = window.open('', '_blank');
+      const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Bukti Pendaftaran - ${p.nama}</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 35px; font-size: 11pt; color: #1e293b; }
+            .card { border: 2px solid #19365f; border-radius: 8px; padding: 25px; }
+            .header { text-align: center; border-bottom: 2px solid #285891; padding-bottom: 12px; margin-bottom: 20px; }
+            table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+            td { padding: 8px 10px; border-bottom: 1px solid #e2e8f0; }
+            .field { width: 35%; font-weight: bold; color: #334155; }
+            .footer-note { font-size: 9pt; color: #64748b; margin-top: 25px; border-top: 1px dashed #cbd5e1; padding-top: 10px; }
+          </style>
+        </head>
+        <body onload="window.print();">
+          <div class="card">
+            <div class="header" style="display: flex; align-items: center; justify-content: center; gap: 15px;">
+              <img src="https://file.garden/aehADr1aKQol7cT9/Omega%20Plus%20Pamekasan%20Emblem.png" width="60" height="60" style="object-fit: contain;" />
+              <div>
+                <h2 style="margin: 0; color: #19365f; font-size: 15pt;">TANDA BUKTI PENDAFTARAN RESMI</h2>
+                <h3 style="margin: 3px 0; color: #285891; font-size: 12pt;">OMEGA PLUS 2026 — SMP NEGERI 1 PAMEKASAN</h3>
+              </div>
+            </div>
+            <table>
+              <tr><td class="field">Nomor Registrasi</td><td>: <strong style="font-size: 14pt; color: #285891;">${p.noPendaftaran}</strong></td></tr>
+              <tr><td class="field">Nama Peserta</td><td>: <strong>${p.nama}</strong></td></tr>
+              <tr><td class="field">Asal Sekolah</td><td>: ${p.sekolah}</td></tr>
+              <tr><td class="field">Tingkatan Level</td><td>: ${p.level}</td></tr>
+              <tr><td class="field">Mata Pelajaran</td><td>: ${p.mapel}</td></tr>
+              <tr><td class="field">Nomor Peserta Ujian</td><td>: <strong style="color: #047857;">${p.kodePeserta}</strong></td></tr>
+              <tr><td class="field">Status</td><td>: <span style="background: #fef3c7; color: #b45309; padding: 2px 8px; border-radius: 4px; font-weight: bold;">Tercatat (Menunggu Verifikasi)</span></td></tr>
+            </table>
+            <div class="footer-note">
+              <strong>Informasi Penting:</strong> Harap simpan lembar ini sebagai tanda bukti pendaftaran sah. Setelah panitia memverifikasi pembayaran Anda, Kartu Ujian Resmi ber-QR Code akan diterbitkan.
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
+      w.document.write(html);
+      w.document.close();
+    }
+
+    // Ekspor ke Dokumen Microsoft Word (DOC)
+    function eksporDocTerakhir() {
+      if (!lastSubmissionData) {
+        Swal.fire({ icon: 'info', title: 'Belum Ada Data Pendaftaran Baru' });
+        return;
+      }
+      const p = lastSubmissionData;
+      const htmlContent = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+        <head><title>Bukti Pendaftaran</title></head>
+        <body style="font-family: Arial; padding: 30px;">
+          <h2 style="color: #19365f; text-align: center;">TANDA BUKTI PENDAFTARAN OMEGA PLUS 2026</h2>
+          <h3 style="color: #285891; text-align: center;">SMP NEGERI 1 PAMEKASAN</h3>
+          <hr/>
+          <table border="1" cellpadding="8" style="border-collapse: collapse; width: 100%;">
+            <tr><td width="35%"><b>Nomor Pendaftaran</b></td><td>${p.noPendaftaran}</td></tr>
+            <tr><td><b>Nama Peserta</b></td><td>${p.nama}</td></tr>
+            <tr><td><b>Asal Sekolah</b></td><td>${p.sekolah}</td></tr>
+            <tr><td><b>Tingkatan Level</b></td><td>${p.level}</td></tr>
+            <tr><td><b>Mata Pelajaran</b></td><td>${p.mapel}</td></tr>
+            <tr><td><b>Nomor Peserta Ujian</b></td><td>${p.kodePeserta}</td></tr>
+            <tr><td><b>Tanggal Terdaftar</b></td><td>${p.tglDaftar}</td></tr>
+          </table>
+          <p style="margin-top: 20px; font-size: 10pt; color: #555;">Dokumen ini merupakan arsip resmi pendaftaran OMEGA PLUS 2026.</p>
+        </body>
+        </html>
+      `;
+      const blob = new Blob(['\ufeff', htmlContent], { type: 'application/msword' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Bukti_Pendaftaran_${p.noPendaftaran}.doc`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // Pencarian Status Peserta Mandiri
+    async function cariStatusPeserta() {
+      const keyword = document.getElementById('inputCariStatus').value.trim();
+      if (!keyword) {
+        Swal.fire({ icon: 'warning', title: 'Kata Kunci Kosong', text: 'Masukkan Nomor Pendaftaran, Nomor WhatsApp, atau Email Anda.' });
+        return;
+      }
+
+      const container = document.getElementById('statusSearchResultArea');
+      container.innerHTML = `<div style="text-align: center; padding: 2rem;"><span class="spinner" style="display:inline-block;width:24px;height:24px;border:3px solid #285891;border-top-color:transparent;border-radius:50%;animation:spin 0.6s linear infinite;"></span><p style="margin-top: 8px; color: #657c94;">Mencari data di database panitia...</p></div>`;
+
+      try {
+        const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '/api';
+        const response = await fetch(`${apiUrl}?action=cekStatus&q=${encodeURIComponent(keyword)}`);
+        const result = await response.json();
+
+        if (result.status === 'success' && result.data) {
+          const item = result.data;
+          const isVerified = (item.status === 'Terverifikasi');
+          const badgeClass = isVerified ? 'background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0;' : 'background: #fef3c7; color: #b45309; border: 1px solid #fde68a;';
+          
+          container.innerHTML = `
+            <div style="background: #ffffff; border: 1.5px solid var(--color-border-subtle); border-radius: 12px; padding: 1.75rem; box-shadow: var(--shadow-sm); margin-top: 1rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 14px;">
+                <div>
+                  <span style="font-size: 11px; font-weight: bold; color: #657c94; text-transform: uppercase;">Nomor Registrasi</span>
+                  <h3 style="font-size: 1.25rem; font-weight: 800; color: #19365f; margin: 0;">${item.noPendaftaran}</h3>
+                </div>
+                <div style="padding: 6px 14px; border-radius: 9999px; font-size: 12px; font-weight: bold; ${badgeClass}">
+                  ${item.status}
+                </div>
+              </div>
+
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; font-size: 14px;">
+                <div><span style="color: #64748b; display: block; font-size: 12px;">Nama Lengkap:</span><strong>${item.nama}</strong></div>
+                <div><span style="color: #64748b; display: block; font-size: 12px;">Asal Sekolah:</span><strong>${item.sekolah}</strong></div>
+                <div><span style="color: #64748b; display: block; font-size: 12px;">Tingkatan Level:</span><strong>${item.level}</strong></div>
+                <div><span style="color: #64748b; display: block; font-size: 12px;">Mata Pelajaran:</span><strong>${item.mataPelajaran}</strong></div>
+                <div style="grid-column: 1 / -1;"><span style="color: #64748b; display: block; font-size: 12px;">Nomor Peserta Ujian:</span><strong style="color: #047857; font-size: 15px;">${item.kodePeserta}</strong></div>
+              </div>
+
+              ${isVerified ? `
+                <div style="margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+                  <span style="font-size: 13px; color: #047857; font-weight: 600;">
+                    ✓ Selamat! Pendaftaran telah disetujui panitia.
+                  </span>
+                  <button type="button" class="btn btn-primary" onclick="cetakKartuDariStatus('${encodeURIComponent(JSON.stringify(item))}')">
+                    <i data-lucide="printer" style="width: 16px; height: 16px;"></i> Cetak Kartu Peserta Resmi PDF
+                  </button>
+                </div>
+              ` : `
+                <div style="margin-top: 1.25rem; padding: 12px; background: #fffbeb; border-radius: 8px; font-size: 13px; color: #92400e;">
+                  ⏳ <strong>Menunggu Konfirmasi:</strong> Pembayaran atau data formulir Anda sedang dalam tahap verifikasi panitia. Kartu Ujian Resmi akan aktif setelah diverifikasi.
+                </div>
+              `}
+            </div>
+          `;
+          lucide.createIcons();
+        } else {
+          container.innerHTML = `
+            <div style="text-align: center; padding: 2rem; color: #a33f39; background: #fff0ee; border-radius: 8px; border: 1px solid #fecaca; margin-top: 1rem;">
+              <strong>Data Tidak Ditemukan</strong>
+              <p style="font-size: 13px; margin-top: 4px; color: #657c94;">Silakan pastikan Nomor Pendaftaran, Nomor WhatsApp, atau Email Anda sudah tepat.</p>
+            </div>
+          `;
+        }
+      } catch (e) {
+        container.innerHTML = `<div style="text-align: center; padding: 1.5rem; color: #dc2626;">Gagal memuat status pendaftaran. Silakan coba kembali.</div>`;
+      }
+    }
+
+    // Cetak Kartu Ujian Resmi dari Status
+    function cetakKartuDariStatus(jsonStr) {
+      const item = JSON.parse(decodeURIComponent(jsonStr));
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=${encodeURIComponent(item.noPendaftaran + '|' + item.nama + '|' + item.kodePeserta)}`;
+      const w = window.open('', '_blank');
+      const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Kartu Peserta Resmi - ${item.nama}</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 30px; font-size: 11pt; color: #0f172a; }
+            .card { border: 3px solid #19365f; border-radius: 10px; padding: 20px; }
+            .header { text-align: center; border-bottom: 2px solid #285891; padding-bottom: 10px; margin-bottom: 15px; }
+            table { width: 100%; border-collapse: collapse; }
+            td { padding: 6px 10px; vertical-align: top; }
+            .field-name { width: 30%; font-weight: bold; color: #334155; }
+            .qr-box { border: 1px dashed #64748b; padding: 8px; text-align: center; border-radius: 8px; }
+            .rules { font-size: 9pt; color: #475569; margin-top: 15px; border-top: 1px dotted #cbd5e1; padding-top: 10px; }
+          </style>
+        </head>
+        <body onload="window.print();">
+          <div class="card">
+            <div class="header" style="display: flex; align-items: center; justify-content: center; gap: 12px;">
+              <img src="https://file.garden/aehADr1aKQol7cT9/Omega%20Plus%20Pamekasan%20Emblem.png" width="55" height="55" style="object-fit: contain;" />
+              <div>
+                <h2 style="margin: 0; color: #19365f; font-size: 15pt;">KARTU PESERTA RESMI OMEGA PLUS 2026</h2>
+                <div style="color: #285891; font-weight: bold; margin-top: 2px;">SMP NEGERI 1 PAMEKASAN</div>
+              </div>
+            </div>
+            <table>
+              <tr>
+                <td style="width: 70%;">
+                  <table>
+                    <tr><td class="field-name">No. Registrasi</td><td>: <strong>${item.noPendaftaran}</strong></td></tr>
+                    <tr><td class="field-name">Nama Lengkap</td><td>: <strong>${item.nama}</strong></td></tr>
+                    <tr><td class="field-name">Asal Sekolah</td><td>: ${item.sekolah}</td></tr>
+                    <tr><td class="field-name">Tingkatan</td><td>: ${item.level}</td></tr>
+                    <tr><td class="field-name">Mata Pelajaran</td><td>: ${item.mataPelajaran}</td></tr>
+                    <tr><td class="field-name">Nomor Peserta Ujian</td><td>: <span style="font-size: 13pt; font-weight: bold; color: #047857;">${item.kodePeserta}</span></td></tr>
+                  </table>
+                </td>
+                <td style="width: 30%; text-align: center;">
+                  <div class="qr-box">
+                    <img src="${qrUrl}" width="110" height="110" /><br>
+                    <span style="font-size: 8pt; font-weight: bold; color: #19365f;">SCAN PRESENSI</span>
+                  </div>
+                </td>
+              </tr>
+            </table>
+            <div class="rules">
+              <strong>Tata Tertib Peserta:</strong><br>
+              1. Wajib membawa kartu ujian ini dan mengenakan seragam sekolah asal.<br>
+              2. Hadir di lokasi SMP Negeri 1 Pamekasan 30 menit sebelum sesi ujian dimulai.<br>
+              3. Sesi 1: IPA & IPS (07.30 - 08.30 WIB) | Sesi 2: Matematika & B. Inggris (09.00 - 10.00 WIB).
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
+      w.document.write(html);
+      w.document.close();
+    }
+  </script>
+</body>
+</html>

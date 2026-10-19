@@ -783,7 +783,7 @@ function handleDeletePeserta(payload) {
 function sendEmailKonfirmasiTahap1(email, nama, noReg, sekolah, level, mapel, kodePeserta) {
   try {
     var subject = "[OMEGA PLUS 2026] Bukti Pendaftaran Diterima - " + nama + " (" + noReg + ")";
-    var logoUrl = "https://raw.githubusercontent.com/aidukasinet-svg/omegaplus/main/logo.png";
+    var logoUrl = "https://file.garden/aehADr1aKQol7cT9/Omega%20Plus%20Pamekasan%20Emblem.png";
     var htmlBody = "" +
       "<div style='font-family: Arial, sans-serif; max-width: 620px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05);'>" +
       "  <div style='background-color: #19365f; color: #ffffff; padding: 24px; text-align: center;'>" +
@@ -834,7 +834,7 @@ function sendEmailKonfirmasiTahap1(email, nama, noReg, sekolah, level, mapel, ko
 function sendEmailTahap2(email, nama, noReg, sekolah, level, mapel, kodePeserta) {
   try {
     var subject = "[RESMI] Kartu Peserta Ujian OMEGA PLUS 2026 - " + nama + " (" + noReg + ")";
-    var logoUrl = "https://raw.githubusercontent.com/aidukasinet-svg/omegaplus/main/logo.png";
+    var logoUrl = "https://file.garden/aehADr1aKQol7cT9/Omega%20Plus%20Pamekasan%20Emblem.png";
     var htmlBody = "" +
       "<div style='font-family: Arial, sans-serif; max-width: 620px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;'>" +
       "  <div style='background-color: #047857; color: #ffffff; padding: 22px; text-align: center;'>" +
@@ -872,7 +872,7 @@ function sendEmailTahap2(email, nama, noReg, sekolah, level, mapel, kodePeserta)
  */
 function generateKartuPesertaResmiPDF(noReg, nama, sekolah, level, mapel, kodePeserta) {
   var qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=" + encodeURIComponent(noReg + "|" + nama + "|" + kodePeserta);
-  var logoUrl = "https://raw.githubusercontent.com/aidukasinet-svg/omegaplus/main/logo.png";
+  var logoUrl = "https://file.garden/aehADr1aKQol7cT9/Omega%20Plus%20Pamekasan%20Emblem.png";
   var html = "" +
     "<html><head><style>" +
     "  body { font-family: Arial, sans-serif; margin: 25px; font-size: 10pt; color: #0f172a; }" +

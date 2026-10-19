@@ -108,6 +108,27 @@ export default {
       }
     }
 
+    // =========================================================================
+    // ROUTING BERSIH & RAMAH PENGGUNA (CUSTOM CLEAN ROUTING)
+    // =========================================================================
+    const cleanPath = url.pathname.toLowerCase().replace(/\/$/, ""); // hilangkan trailing slash
+
+    // Rute Pendaftaran: /pendaftaran, /daftar, /formpendaftaran -> pendaftaran.html
+    if (cleanPath === '/pendaftaran' || cleanPath === '/daftar' || cleanPath === '/formpendaftaran') {
+      const pendaftaranUrl = new URL('/pendaftaran.html', request.url);
+      if (env && env.ASSETS) {
+        return env.ASSETS.fetch(new Request(pendaftaranUrl, request));
+      }
+    }
+
+    // Rute Portal Admin: /login, /admin, /panitia -> admin.html
+    if (cleanPath === '/login' || cleanPath === '/admin' || cleanPath === '/panitia') {
+      const adminUrl = new URL('/admin.html', request.url);
+      if (env && env.ASSETS) {
+        return env.ASSETS.fetch(new Request(adminUrl, request));
+      }
+    }
+
     // Default: Sajikan aset statis Cloudflare Pages
     if (env && env.ASSETS) {
       return env.ASSETS.fetch(request);
@@ -116,3 +137,4 @@ export default {
     return fetch(request);
   },
 };
+
