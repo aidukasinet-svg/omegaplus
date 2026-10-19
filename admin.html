@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Panitia — OMEGA PLUS 2026</title>
+  <meta name="description" content="Dashboard Panitia OMEGA PLUS SMP Negeri 1 Pamekasan. Kelola data peserta, verifikasi pendaftaran, dan cetak laporan.">
+
+  <!-- Favicon -->
+  <link rel="icon" href="https://api.iconify.design/lucide:shield-check.svg?color=%2319365f" type="image/svg+xml">
+
+  <!-- Google Fonts: Work Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- SweetAlert2 (Anti-Alert Bawaan) -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Konfigurasi Global -->
+  <script src="config.js"></script>
+
+  <style>
+    /* ==========================================================================
+       DESIGN SYSTEM TOKENS (ADMIN PORTAL)
+       ========================================================================== */
+    :root {
+      --color-primary-navy:     #19365f;
+      --color-primary-royal:    #285891;
+      --color-accent-gold:      #e7b55e;
+      
+      --color-bg-page:          #f5f8fc;
+      --color-bg-surface:       #ffffff;
+      --color-bg-tint:          #e7f0fb;
+      --color-bg-tint-light:    #f8fafc;
+
+      --color-text-main:        #193047;
+      --color-text-muted:       #657c94;
+      --color-text-inverse:     #ffffff;
+
+      --color-border-subtle:    rgba(25, 54, 95, 0.12);
+      --color-border-input:     #cbd5e1;
+      --color-border-focus:     #285891;
+
+      --radius-sm:   6px;
+      --radius-md:   10px;
+      --radius-lg:   16px;
+      --radius-pill: 9999px;
+
+      --shadow-sm:   0 1px 3px rgba(25, 54, 95, 0.05);
+      --shadow-card: 0 4px 18px rgba(25, 54, 95, 0.06);
+      --shadow-modal:0 20px 45px rgba(25, 54, 95, 0.25);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Work Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--color-bg-page);
+      color: var(--color-text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.5;
+    }
+
+    /* ==========================================================================
+       HEADER & NAVIGATION
+       ========================================================================== */
+    .header-admin {
+      background: linear-gradient(135deg, var(--color-primary-navy) 0%, #1e4472 100%);
+      color: #ffffff;
+      padding: 1.5rem 1.5rem 1.25rem;
+      box-shadow: 0 4px 15px rgba(25, 54, 95, 0.15);
+    }
+
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .brand-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: 44px;
+      height: 44px;
+      background: #ffffff;
+      border: 2px solid var(--color-accent-gold);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary-navy);
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+
+    .brand-text h2 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .brand-text p {
+      font-size: 0.75rem;
+      color: var(--color-accent-gold);
+    }
+
+    .admin-nav {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .nav-btn {
+      padding: 8px 16px;
+      border-radius: var(--radius-pill);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: #ffffff;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .nav-btn.active {
+      background: #ffffff;
+      color: var(--color-primary-navy);
+      border-color: #ffffff;
+    }
+
+    /* ==========================================================================
+       MAIN CONTENT CONTAINER
+       ========================================================================== */
+    .main-container {
+      max-width: 1200px;
+      margin: 1.5rem auto 3rem;
+      padding: 0 1rem;
+      width: 100%;
+      flex: 1;
+    }
+
+    /* Sync Status Bar */
+    .sync-status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 1.5rem;
+    }
+
+    .sync-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #ffffff;
+      border: 1px solid var(--color-border-subtle);
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--color-text-main);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
+    }
+
+    /* Dashboard Title Header */
+    .dashboard-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .dashboard-header h1 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--color-primary-navy);
+    }
+
+    .dashboard-eyebrow {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--color-primary-royal);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* ==========================================================================
+       7 METRIC STAT CARDS
+       ========================================================================== */
+    .stats-grid-7 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .stat-card {
+      background: #ffffff;
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.25rem 1rem;
+      box-shadow: var(--shadow-card);
+      text-align: center;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(25, 54, 95, 0.1);
+    }
+
+    .stat-num {
+      font-size: 2.25rem;
+      font-weight: 800;
+      color: var(--color-primary-navy);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .stat-label {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--color-text-muted);
+    }
+
+    /* ==========================================================================
+       CHARTS / PROGRESS BARS
+       ========================================================================== */
+    .charts-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .chart-panel {
+      background: #ffffff;
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-card);
+    }
+
+    .chart-panel h3 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--color-primary-navy);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .progress-item {
+      margin-bottom: 1rem;
+    }
+
+    .progress-label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--color-text-main);
+    }
+
+    .progress-track {
+      background: #e2e8f0;
+      height: 12px;
+      border-radius: var(--radius-pill);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      background: linear-gradient(90deg, var(--color-primary-royal), var(--color-primary-navy));
+      height: 100%;
+      border-radius: var(--radius-pill);
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      width: 0%;
+    }
+
+    /* ==========================================================================
+       DATA PESERTA TABLE SECTION
+       ========================================================================== */
+    .table-panel {
+      background: #ffffff;
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      box-shadow: var(--shadow-card);
+      margin-bottom: 2rem;
+    }
+
+    .table-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+      flex: 1;
+    }
+
+    .search-input {
+      height: 42px;
+      border: 1px solid var(--color-border-input);
+      border-radius: var(--radius-sm);
+      padding: 0 12px;
+      font-size: 0.875rem;
+      min-width: 250px;
+    }
+
+    .filter-select {
+      height: 42px;
+      border: 1px solid var(--color-border-input);
+      border-radius: var(--radius-sm);
+      padding: 0 12px;
+      font-size: 0.875rem;
+      background: #ffffff;
+      color: var(--color-text-main);
+    }
+
+    .export-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-md);
+    }
+
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+      text-align: left;
+    }
+
+    table.data-table th {
+      background-color: var(--color-bg-tint);
+      color: var(--color-primary-navy);
+      font-weight: 700;
+      padding: 12px 14px;
+      border-bottom: 2px solid var(--color-border-subtle);
+      white-space: nowrap;
+    }
+
+    table.data-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--color-border-subtle);
+      vertical-align: middle;
+    }
+
+    table.data-table tr:hover {
+      background-color: #f8fafc;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      font-size: 0.75rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .badge-pending {
+      background-color: #fef3c7;
+      color: #b45309;
+    }
+
+    .badge-verified {
+      background-color: #ecfdf5;
+      color: #047857;
+    }
+
+    .badge-danger {
+      background-color: #fff0ee;
+      color: #a33f39;
+    }
+
+    .action-icons-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .icon-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--color-border-input);
+      background: #ffffff;
+      color: var(--color-primary-navy);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .icon-btn:hover {
+      background: var(--color-bg-tint);
+      border-color: var(--color-primary-royal);
+    }
+
+    .icon-btn-danger:hover {
+      background: #fee2e2;
+      border-color: #dc2626;
+      color: #dc2626;
+    }
+
+    /* Common Buttons */
+    .btn {
+      height: 42px;
+      padding: 0 16px;
+      border-radius: var(--radius-sm);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: none;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background-color: var(--color-primary-royal);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--color-primary-navy);
+    }
+
+    .btn-secondary {
+      background-color: var(--color-bg-tint);
+      color: var(--color-primary-navy);
+    }
+
+    .btn-secondary:hover {
+      background-color: #d2e4f7;
+    }
+
+    /* ==========================================================================
+       LOGIN PIN MODAL OVERLAY
+       ========================================================================== */
+    .pin-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .pin-modal-card {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 2.25rem 2rem;
+      max-width: 420px;
+      width: 90%;
+      text-align: center;
+      box-shadow: var(--shadow-modal);
+    }
+
+    .pin-input {
+      width: 100%;
+      height: 48px;
+      text-align: center;
+      letter-spacing: 6px;
+      font-size: 1.5rem;
+      font-weight: 700;
+      border: 2px solid var(--color-border-input);
+      border-radius: var(--radius-sm);
+      margin: 1.25rem 0;
+    }
+
+    .pin-input:focus {
+      outline: none;
+      border-color: var(--color-primary-royal);
+    }
+
+    @media (max-width: 768px) {
+      .charts-grid-2 {
+        grid-template-columns: 1fr;
+      }
+      .table-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .filter-group {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================================================
+       PIN LOGIN OVERLAY (PROTECTED ACCESS)
+       ========================================================================== -->
+  <div id="pinOverlay" class="pin-modal-overlay">
+    <div class="pin-modal-card">
+      <div style="width: 56px; height: 56px; background: #e7f0fb; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: #19365f;">
+        <i data-lucide="lock" style="width: 28px; height: 28px;"></i>
+      </div>
+      <h2 style="font-size: 1.25rem; font-weight: 700; color: #19365f; margin-bottom: 4px;">Autentikasi Panitia</h2>
+      <p style="font-size: 0.8125rem; color: #657c94;">Masukkan PIN Keamanan untuk membuka portal admin.</p>
+      
+      <input type="password" id="adminPinInput" class="pin-input" placeholder="••••••" maxlength="10" autofocus onkeypress="if(event.key==='Enter') submitPinLogin()">
+      
+      <button type="button" class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="submitPinLogin()">
+        <i data-lucide="unlock" style="width: 16px; height: 16px;"></i> Masuk Dashboard
+      </button>
+      <div style="margin-top: 1rem;">
+        <a href="index.html" style="font-size: 0.8125rem; color: #657c94; text-decoration: none;">&larr; Kembali ke Formulir Pendaftaran</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       HEADER ADMIN
+       ========================================================================== -->
+  <header class="header-admin">
+    <div class="header-container">
+      <div class="brand-box">
+        <div class="brand-logo">Ω+</div>
+        <div class="brand-text">
+          <h2>SMP NEGERI 1 PAMEKASAN</h2>
+          <p>Portal Dashboard Panitia OMEGA PLUS 2026</p>
+        </div>
+      </div>
+
+      <nav class="admin-nav">
+        <a href="index.html" class="nav-btn">
+          <i data-lucide="external-link" style="width: 14px; height: 14px;"></i> Lihat Web Pendaftaran
+        </a>
+        <button class="nav-btn" onclick="logoutAdmin()">
+          <i data-lucide="log-out" style="width: 14px; height: 14px;"></i> Keluar
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       MAIN DASHBOARD CONTENT
+       ========================================================================== -->
+  <main class="main-container">
+    
+    <!-- Sync & Title Bar -->
+    <div class="sync-status-bar">
+      <div class="sync-pill">
+        <span class="pulse-dot"></span>
+        <span id="syncStatusText">Tersinkron ke Google Sheets Realtime</span>
+      </div>
+      <div>
+        <button class="btn btn-secondary" onclick="loadAllDashboardData()">
+          <i data-lucide="refresh-cw" style="width: 14px; height: 14px;"></i> Perbarui Data
+        </button>
+      </div>
+    </div>
+
+    <div class="dashboard-header">
+      <div>
+        <div class="dashboard-eyebrow">RINGKASAN PENDAFTARAN</div>
+        <h1>Dashboard Panitia</h1>
+      </div>
+      <div>
+        <a href="index.html" class="btn btn-primary">
+          <i data-lucide="plus" style="width: 16px; height: 16px;"></i> + Daftarkan Peserta
+        </a>
+      </div>
+    </div>
+
+    <!-- 7 METRIC STAT CARDS -->
+    <div class="stats-grid-7">
+      <div class="stat-card">
+        <div class="stat-num" id="stat-total">0</div>
+        <div class="stat-label">Total peserta</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-level1">0</div>
+        <div class="stat-label">Level 1</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-level2">0</div>
+        <div class="stat-label">Level 2</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-matematika">0</div>
+        <div class="stat-label">Matematika</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-binggris">0</div>
+        <div class="stat-label">Bahasa Inggris</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-ipa">0</div>
+        <div class="stat-label">IPA</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-ips">0</div>
+        <div class="stat-label">IPS</div>
+      </div>
+    </div>
+
+    <!-- 2 DISTRIBUTION CHARTS -->
+    <div class="charts-grid-2">
+      <div class="chart-panel">
+        <h3><i data-lucide="bar-chart-2" style="width: 20px; height: 20px; color: var(--color-primary-royal);"></i> Peserta berdasarkan level</h3>
+        <div class="progress-item">
+          <div class="progress-label-row">
+            <span>Level 1 (Kelas 1 - 3)</span>
+            <span id="chart-l1-val">0</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" id="bar-level1"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-label-row">
+            <span>Level 2 (Kelas 4 - 6)</span>
+            <span id="chart-l2-val">0</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" id="bar-level2"></div></div>
+        </div>
+      </div>
+
+      <div class="chart-panel">
+        <h3><i data-lucide="pie-chart" style="width: 20px; height: 20px; color: var(--color-primary-royal);"></i> Pilihan mata pelajaran</h3>
+        <div class="progress-item">
+          <div class="progress-label-row"><span>Matematika</span><span id="chart-mat-val">0</span></div>
+          <div class="progress-track"><div class="progress-fill" id="bar-mat"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-label-row"><span>Bahasa Inggris</span><span id="chart-bing-val">0</span></div>
+          <div class="progress-track"><div class="progress-fill" id="bar-bing"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-label-row"><span>IPA</span><span id="chart-ipa-val">0</span></div>
+          <div class="progress-track"><div class="progress-fill" id="bar-ipa"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-label-row"><span>IPS</span><span id="chart-ips-val">0</span></div>
+          <div class="progress-track"><div class="progress-fill" id="bar-ips"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DATA PESERTA MANAGEMENT TABLE -->
+    <div class="table-panel">
+      <div class="table-toolbar">
+        <div class="filter-group">
+          <input type="text" id="filterSearch" class="search-input" placeholder="🔍 Cari nama, no. pendaftaran, sekolah..." oninput="filterLocalPeserta()">
+          
+          <select id="filterLevel" class="filter-select" onchange="filterLocalPeserta()">
+            <option value="Semua">Semua Level</option>
+            <option value="Level 1">Level 1</option>
+            <option value="Level 2">Level 2</option>
+          </select>
+
+          <select id="filterMapel" class="filter-select" onchange="filterLocalPeserta()">
+            <option value="Semua">Semua Mapel</option>
+            <option value="Matematika">Matematika</option>
+            <option value="Bahasa Inggris">Bahasa Inggris</option>
+            <option value="IPA">IPA</option>
+            <option value="IPS">IPS</option>
+          </select>
+        </div>
+
+        <div class="export-actions">
+          <button class="btn btn-secondary" onclick="cetakSeluruhPeserta()">
+            <i data-lucide="printer" style="width: 14px; height: 14px;"></i> CETAK REKAP A4
+          </button>
+          <button class="btn btn-secondary" onclick="eksporCSV()">
+            <i data-lucide="download" style="width: 14px; height: 14px;"></i> EKSPOR CSV
+          </button>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>No. Pendaftaran</th>
+              <th>Nama Peserta</th>
+              <th>Asal Sekolah</th>
+              <th>Level</th>
+              <th>Mata Pelajaran</th>
+              <th>Kode Mapel</th>
+              <th>Status</th>
+              <th style="text-align: center;">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="pesertaTableBody">
+            <tr>
+              <td colspan="8" style="text-align: center; padding: 30px; color: #657c94;">
+                Memuat data peserta dari Google Sheets...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ==========================================================================
+       JAVASCRIPT LOGIC (SWEETALERT2 & REAL-TIME GAS SYNC)
+       ========================================================================== -->
+  <script>
+    lucide.createIcons();
+
+    let allPesertaList = [];
+
+    // Periksa status login admin saat halaman dibuka
+    document.addEventListener('DOMContentLoaded', () => {
+      const isAuth = sessionStorage.getItem('omegaAdminAuth');
+      if (isAuth === 'true') {
+        document.getElementById('pinOverlay').style.display = 'none';
+        loadAllDashboardData();
+      }
+    });
+
+    // Login PIN Admin
+    async function submitPinLogin() {
+      const pin = document.getElementById('adminPinInput').value.trim();
+      if (!pin) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'PIN Belum Diisi',
+          text: 'Silakan ketik PIN keamanan panitia.',
+          confirmButtonColor: '#285891'
+        });
+        return;
+      }
+
+      Swal.fire({
+        title: 'Memverifikasi PIN...',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); }
+      });
+
+      try {
+        const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '/api';
+        const res = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'verifyAdminPin', pin: pin })
+        });
+        const result = await res.json();
+
+        if (result.status === 'success' && result.authorized) {
+          sessionStorage.setItem('omegaAdminAuth', 'true');
+          document.getElementById('pinOverlay').style.display = 'none';
+          Swal.close();
+          loadAllDashboardData();
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'PIN Salah!',
+            text: 'PIN keamanan yang Anda masukkan tidak cocok.',
+            confirmButtonColor: '#285891'
+          });
+        }
+      } catch (err) {
+        // Fallback untuk offline/lokal default PIN
+        if (pin === '123456') {
+          sessionStorage.setItem('omegaAdminAuth', 'true');
+          document.getElementById('pinOverlay').style.display = 'none';
+          Swal.close();
+          loadAllDashboardData();
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Gagal Terhubung',
+            text: 'Tidak dapat memverifikasi PIN ke server.',
+            confirmButtonColor: '#285891'
+          });
+        }
+      }
+    }
+
+    // Logout Admin
+    function logoutAdmin() {
+      sessionStorage.removeItem('omegaAdminAuth');
+      location.reload();
+    }
+
+    // Load Data Metrik & Peserta secara Real-Time
+    async function loadAllDashboardData() {
+      document.getElementById('syncStatusText').innerText = 'Memperbarui data dari Google Sheets...';
+      const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '/api';
+
+      try {
+        // 1. Fetch Stats
+        const resStats = await fetch(`${apiUrl}?action=getDashboardStats`);
+        const dataStats = await resStats.json();
+
+        if (dataStats.status === 'success') {
+          const s = dataStats.data;
+          document.getElementById('stat-total').innerText = s.total;
+          document.getElementById('stat-level1').innerText = s.level1;
+          document.getElementById('stat-level2').innerText = s.level2;
+          document.getElementById('stat-matematika').innerText = s.matematika;
+          document.getElementById('stat-binggris').innerText = s.bahasaInggris;
+          document.getElementById('stat-ipa').innerText = s.ipa;
+          document.getElementById('stat-ips').innerText = s.ips;
+
+          // Render Progress Bars
+          const maxLevel = Math.max(s.level1, s.level2, 1);
+          document.getElementById('chart-l1-val').innerText = s.level1;
+          document.getElementById('chart-l2-val').innerText = s.level2;
+          document.getElementById('bar-level1').style.width = (s.level1 / maxLevel * 100) + '%';
+          document.getElementById('bar-level2').style.width = (s.level2 / maxLevel * 100) + '%';
+
+          const maxMapel = Math.max(s.matematika, s.bahasaInggris, s.ipa, s.ips, 1);
+          document.getElementById('chart-mat-val').innerText = s.matematika;
+          document.getElementById('chart-bing-val').innerText = s.bahasaInggris;
+          document.getElementById('chart-ipa-val').innerText = s.ipa;
+          document.getElementById('chart-ips-val').innerText = s.ips;
+
+          document.getElementById('bar-mat').style.width = (s.matematika / maxMapel * 100) + '%';
+          document.getElementById('bar-bing').style.width = (s.bahasaInggris / maxMapel * 100) + '%';
+          document.getElementById('bar-ipa').style.width = (s.ipa / maxMapel * 100) + '%';
+          document.getElementById('bar-ips').style.width = (s.ips / maxMapel * 100) + '%';
+        }
+
+        // 2. Fetch Peserta List
+        const resPeserta = await fetch(`${apiUrl}?action=getPesertaList`);
+        const dataPeserta = await resPeserta.json();
+
+        if (dataPeserta.status === 'success') {
+          allPesertaList = dataPeserta.data || [];
+          renderPesertaTable(allPesertaList);
+        }
+
+        document.getElementById('syncStatusText').innerText = 'Tersinkron ke Google Sheets Realtime';
+      } catch (e) {
+        document.getElementById('syncStatusText').innerText = 'Gagal sinkron dengan spreadsheet';
+      }
+    }
+
+    // Render Tabel Peserta
+    function renderPesertaTable(list) {
+      const tbody = document.getElementById('pesertaTableBody');
+      if (list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 25px; color: #657c94;">Belum ada pendaftaran yang sesuai filter.</td></tr>';
+        return;
+      }
+
+      let html = '';
+      list.forEach(p => {
+        const isVerified = p.status === 'Terverifikasi';
+        const badgeClass = isVerified ? 'badge-verified' : 'badge-pending';
+
+        html += `
+          <tr>
+            <td><strong style="color: #285891;">${p.noPendaftaran}</strong></td>
+            <td><strong>${p.nama}</strong><br><span style="font-size: 11px; color: #657c94;">${p.email}</span></td>
+            <td>${p.sekolah}</td>
+            <td>${p.level}</td>
+            <td>${p.mataPelajaran}</td>
+            <td><span style="color: #047857; font-weight: bold;">${p.kodePeserta}</span></td>
+            <td><span class="status-badge ${badgeClass}">${p.status}</span></td>
+            <td style="text-align: center;">
+              <div class="action-icons-row" style="justify-content: center;">
+                ${!isVerified ? `
+                  <button class="icon-btn" title="Verifikasi Pendaftaran" style="color: #047857;" onclick="verifikasiStatusPeserta('${p.noPendaftaran}')">
+                    <i data-lucide="check-circle" style="width: 16px; height: 16px;"></i>
+                  </button>
+                ` : `
+                  <button class="icon-btn" title="Cetak Kartu Ujian" style="color: #285891;" onclick="cetakKartuDariAdmin('${encodeURIComponent(JSON.stringify(p))}')">
+                    <i data-lucide="award" style="width: 16px; height: 16px;"></i>
+                  </button>
+                `}
+                <button class="icon-btn" title="Edit Peserta" onclick="editDataPeserta('${encodeURIComponent(JSON.stringify(p))}')">
+                  <i data-lucide="edit-3" style="width: 16px; height: 16px;"></i>
+                </button>
+                <button class="icon-btn icon-btn-danger" title="Hapus Peserta" onclick="hapusPeserta('${p.noPendaftaran}', '${p.nama}')">
+                  <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+      tbody.innerHTML = html;
+      lucide.createIcons();
+    }
+
+    // Filter Lokal Tabel
+    function filterLocalPeserta() {
+      const q = document.getElementById('filterSearch').value.toLowerCase();
+      const lvl = document.getElementById('filterLevel').value;
+      const mpl = document.getElementById('filterMapel').value;
+
+      const filtered = allPesertaList.filter(p => {
+        const matchText = (p.noPendaftaran + ' ' + p.nama + ' ' + p.sekolah).toLowerCase().includes(q);
+        const matchLvl = (lvl === 'Semua') || p.level.includes(lvl);
+        const matchMpl = (mpl === 'Semua') || p.mataPelajaran.includes(mpl);
+        return matchText && matchLvl && matchMpl;
+      });
+
+      renderPesertaTable(filtered);
+    }
+
+    // Verifikasi Pendaftaran (Trigger Email Tahap 2 & Kartu Resmi)
+    function verifikasiStatusPeserta(noReg) {
+      Swal.fire({
+        title: 'Verifikasi Pendaftaran?',
+        html: `Apakah data dan bukti pembayaran untuk <strong>${noReg}</strong> sudah sah?<br><br><small style="color: #047857;">Sistem akan otomatis mengirimkan email konfirmasi resmi beserta Kartu Peserta Ujian PDF ber-QR Code.</small>`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Verifikasi Sah',
+        cancelButtonText: 'Batal',
+        confirmButtonColor: '#047857',
+        cancelButtonColor: '#657c94'
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: 'Memproses Verifikasi...',
+            didOpen: () => { Swal.showLoading(); }
+          });
+
+          const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '/api';
+          try {
+            const res = await fetch(apiUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                action: 'verifikasiPeserta',
+                noPendaftaran: noReg,
+                status: 'Terverifikasi'
+              })
+            });
+            const data = await res.json();
+
+            if (data.status === 'success') {
+              Swal.fire({
+                icon: 'success',
+                title: 'Berhasil Terverifikasi!',
+                text: 'Status diperbarui dan email kartu ujian resmi telah dikirim ke peserta.',
+                confirmButtonColor: '#285891'
+              });
+              loadAllDashboardData();
+            } else {
+              Swal.fire({ icon: 'error', title: 'Gagal', text: data.message });
+            }
+          } catch (e) {
+            Swal.fire({ icon: 'error', title: 'Error', text: 'Gagal memproses verifikasi.' });
+          }
+        }
+      });
+    }
+
+    // Edit Data Peserta
+    function editDataPeserta(jsonStr) {
+      const p = JSON.parse(decodeURIComponent(jsonStr));
+      Swal.fire({
+        title: 'Edit Data Peserta',
+        html: `
+          <div style="text-align: left; font-size: 13px;">
+            <label><b>Nama Lengkap:</b></label>
+            <input id="swal-nama" class="swal2-input" value="${p.nama}" style="margin: 4px 0 12px; font-size: 14px;">
+            <label><b>Asal Sekolah:</b></label>
+            <input id="swal-sekolah" class="swal2-input" value="${p.sekolah}" style="margin: 4px 0 12px; font-size: 14px;">
+            <label><b>Nomor WhatsApp:</b></label>
+            <input id="swal-hp" class="swal2-input" value="${p.nomorHp}" style="margin: 4px 0 12px; font-size: 14px;">
+            <label><b>Alamat Email:</b></label>
+            <input id="swal-email" class="swal2-input" value="${p.email}" style="margin: 4px 0 12px; font-size: 14px;">
+          </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Simpan Perubahan',
+        cancelButtonText: 'Batal',
+        confirmButtonColor: '#285891',
+        cancelButtonColor: '#657c94',
+        preConfirm: () => {
+          return {
+            nama: document.getElementById('swal-nama').value.trim(),
+            sekolah: document.getElementById('swal-sekolah').value.trim(),
+            noHp: document.getElementById('swal-hp').value.trim(),
+            email: document.getElementById('swal-email').value.trim()
+          };
+        }
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          const val = result.value;
+          const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '/api';
+          await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'updatePeserta',
+              noPendaftaran: p.noPendaftaran,
+              ...val
+            })
+          });
+          Swal.fire({ icon: 'success', title: 'Data Diperbarui!', timer: 1500, showConfirmButton: false });
+          loadAllDashboardData();
+        }
+      });
+    }
+
+    // Hapus Peserta (Anti-Confirm Bawaan)
+    function hapusPeserta(noReg, nama) {
+      Swal.fire({
+        title: 'Hapus Peserta?',
+        html: `Apakah Anda yakin ingin menghapus data peserta <strong>${nama}</strong> (${noReg})?<br><br><span style="color: #dc2626; font-size: 12px;">Data yang dihapus dari Google Sheets tidak dapat dikembalikan.</span>`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Hapus Data',
+        cancelButtonText: 'Batal',
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#657c94'
+      }).then(async (res) => {
+        if (res.isConfirmed) {
+          const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '/api';
+          try {
+            await fetch(apiUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action: 'deletePeserta', noPendaftaran: noReg })
+            });
+            Swal.fire({ icon: 'success', title: 'Terhapus', text: 'Data peserta berhasil dihapus.', timer: 1500, showConfirmButton: false });
+            loadAllDashboardData();
+          } catch (e) {
+            Swal.fire({ icon: 'error', title: 'Gagal', text: 'Gagal menghapus data.' });
+          }
+        }
+      });
+    }
+
+    // Cetak Seluruh Peserta (A4 Rekap)
+    function cetakSeluruhPeserta() {
+      if (allPesertaList.length === 0) {
+        Swal.fire({ icon: 'info', title: 'Data Masih Kosong' });
+        return;
+      }
+
+      const w = window.open('', '_blank');
+      let rowsHtml = '';
+      allPesertaList.forEach((p, idx) => {
+        rowsHtml += `
+          <tr>
+            <td style="text-align: center;">${idx + 1}</td>
+            <td><strong>${p.noPendaftaran}</strong></td>
+            <td>${p.nama}</td>
+            <td>${p.sekolah}</td>
+            <td>${p.level}</td>
+            <td>${p.mataPelajaran}</td>
+            <td>${p.kodePeserta}</td>
+            <td>${p.status}</td>
+          </tr>
+        `;
+      });
+
+      const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Rekapitulasi Peserta OMEGA PLUS 2026</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 30px; font-size: 9pt; }
+            .kop { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { border: 1px solid #333; padding: 6px 8px; }
+            th { background: #eee; font-weight: bold; }
+          </style>
+        </head>
+        <body onload="window.print();">
+          <div class="kop">
+            <h2 style="margin: 0;">DAFTAR REKAPITULASI PESERTA OMEGA PLUS 2026</h2>
+            <h3 style="margin: 4px 0;">SMP NEGERI 1 PAMEKASAN</h3>
+            <p style="margin: 0;">Total Peserta Terdaftar: ${allPesertaList.length} Orang | Dicetak pada: ${new Date().toLocaleString('id-ID')}</p>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>No. Pendaftaran</th>
+                <th>Nama Peserta</th>
+                <th>Asal Sekolah</th>
+                <th>Level</th>
+                <th>Mata Pelajaran</th>
+                <th>Kode Mapel</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>${rowsHtml}</tbody>
+          </table>
+        </body>
+        </html>
+      `;
+      w.document.write(html);
+      w.document.close();
+    }
+
+    // Ekspor Data ke CSV
+    function eksporCSV() {
+      if (allPesertaList.length === 0) {
+        Swal.fire({ icon: 'info', title: 'Data Masih Kosong' });
+        return;
+      }
+
+      let csv = "No. Pendaftaran,Nama Peserta,Asal Sekolah,Tanggal Daftar,Nomor HP,Email,Level,Mata Pelajaran,Kode Peserta,Status\n";
+      allPesertaList.forEach(p => {
+        csv += `"${p.noPendaftaran}","${p.nama}","${p.sekolah}","${p.tanggalDaftar}","${p.nomorHp}","${p.email}","${p.level}","${p.mataPelajaran}","${p.kodePeserta}","${p.status}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Rekap_Peserta_OMEGA_PLUS_${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // Cetak Kartu dari Admin
+    function cetakKartuDariAdmin(jsonStr) {
+      const item = JSON.parse(decodeURIComponent(jsonStr));
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=${encodeURIComponent(item.noPendaftaran + '|' + item.nama + '|' + item.kodePeserta)}`;
+      const w = window.open('', '_blank');
+      const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Kartu Peserta Resmi - ${item.nama}</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 30px; font-size: 11pt; color: #0f172a; }
+            .card { border: 3px solid #19365f; border-radius: 10px; padding: 20px; }
+            .header { text-align: center; border-bottom: 2px solid #285891; padding-bottom: 10px; margin-bottom: 15px; }
+            table { width: 100%; border-collapse: collapse; }
+            td { padding: 6px 10px; vertical-align: top; }
+            .field-name { width: 30%; font-weight: bold; color: #334155; }
+            .qr-box { border: 1px dashed #64748b; padding: 8px; text-align: center; border-radius: 8px; }
+            .rules { font-size: 9pt; color: #475569; margin-top: 15px; border-top: 1px dotted #cbd5e1; padding-top: 10px; }
+          </style>
+        </head>
+        <body onload="window.print();">
+          <div class="card">
+            <div class="header">
+              <h2 style="margin: 0; color: #19365f;">KARTU PESERTA RESMI OMEGA PLUS 2026</h2>
+              <div style="color: #285891; font-weight: bold; margin-top: 2px;">SMP NEGERI 1 PAMEKASAN</div>
+            </div>
+            <table>
+              <tr>
+                <td style="width: 70%;">
+                  <table>
+                    <tr><td class="field-name">No. Registrasi</td><td>: <strong>${item.noPendaftaran}</strong></td></tr>
+                    <tr><td class="field-name">Nama Lengkap</td><td>: <strong>${item.nama}</strong></td></tr>
+                    <tr><td class="field-name">Asal Sekolah</td><td>: ${item.sekolah}</td></tr>
+                    <tr><td class="field-name">Tingkatan</td><td>: ${item.level}</td></tr>
+                    <tr><td class="field-name">Mata Pelajaran</td><td>: ${item.mataPelajaran}</td></tr>
+                    <tr><td class="field-name">Nomor Peserta Ujian</td><td>: <span style="font-size: 13pt; font-weight: bold; color: #047857;">${item.kodePeserta}</span></td></tr>
+                  </table>
+                </td>
+                <td style="width: 30%; text-align: center;">
+                  <div class="qr-box">
+                    <img src="${qrUrl}" width="110" height="110" /><br>
+                    <span style="font-size: 8pt; font-weight: bold; color: #19365f;">SCAN PRESENSI</span>
+                  </div>
+                </td>
+              </tr>
+            </table>
+            <div class="rules">
+              <strong>Tata Tertib Peserta:</strong><br>
+              1. Wajib membawa kartu ujian ini dan mengenakan seragam sekolah asal.<br>
+              2. Hadir di lokasi SMP Negeri 1 Pamekasan 30 menit sebelum sesi ujian dimulai.<br>
+              3. Sesi 1: IPA & IPS (07.30 - 08.30 WIB) | Sesi 2: Matematika & B. Inggris (09.00 - 10.00 WIB).
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
+      w.document.write(html);
+      w.document.close();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+# Dependencies & OS files
+.DS_Store
+Thumbs.db
+*.zip
+*.log
+
+# Antigravity artifacts & cache
+.gemini/
