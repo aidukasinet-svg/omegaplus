@@ -1,0 +1,9 @@
+# =========================================================================
+# CLOUDFLARE PAGES CLEAN ROUTING & REWRITES (OMEGA PLUS 2026)
+# =========================================================================
+/pendaftaran       /pendaftaran.html    200
+/daftar            /pendaftaran.html    200
+/formpendaftaran   /pendaftaran.html    200
+/login             /admin.html          200
+/admin             /admin.html          200
+/panitia           /admin.html          200

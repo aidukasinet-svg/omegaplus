@@ -109,27 +109,21 @@ export default {
     }
 
     // =========================================================================
-    // ROUTING BERSIH & RAMAH PENGGUNA (CUSTOM CLEAN ROUTING)
+    // ROUTING RAMAH PENGGUNA (CLEAN REDIRECTS & CANONICAL PATHS)
     // =========================================================================
-    const cleanPath = url.pathname.toLowerCase().replace(/\/$/, ""); // hilangkan trailing slash
+    const cleanPath = url.pathname.toLowerCase().replace(/\/$/, "");
 
-    // Rute Pendaftaran: /pendaftaran, /daftar, /formpendaftaran -> pendaftaran.html
-    if (cleanPath === '/pendaftaran' || cleanPath === '/daftar' || cleanPath === '/formpendaftaran') {
-      const pendaftaranUrl = new URL('/pendaftaran.html', request.url);
-      if (env && env.ASSETS) {
-        return env.ASSETS.fetch(new Request(pendaftaranUrl, request));
-      }
+    // Alias Pendaftaran (/daftar, /formpendaftaran) -> /pendaftaran
+    if (cleanPath === '/daftar' || cleanPath === '/formpendaftaran') {
+      return Response.redirect(new URL('/pendaftaran', request.url), 302);
     }
 
-    // Rute Portal Admin: /login, /admin, /panitia -> admin.html
-    if (cleanPath === '/login' || cleanPath === '/admin' || cleanPath === '/panitia') {
-      const adminUrl = new URL('/admin.html', request.url);
-      if (env && env.ASSETS) {
-        return env.ASSETS.fetch(new Request(adminUrl, request));
-      }
+    // Alias Portal Panitia (/login, /panitia) -> /admin
+    if (cleanPath === '/login' || cleanPath === '/panitia') {
+      return Response.redirect(new URL('/admin', request.url), 302);
     }
 
-    // Default: Sajikan aset statis Cloudflare Pages
+    // Default: Sajikan aset statis Cloudflare Pages (otomatis melayani /pendaftaran -> pendaftaran.html, /admin -> admin.html)
     if (env && env.ASSETS) {
       return env.ASSETS.fetch(request);
     }
