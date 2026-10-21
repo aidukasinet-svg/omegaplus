@@ -33,7 +33,17 @@ const CONFIG = {
   SESI: [
     { sesi: "Sesi 1", mapel: "IPA & IPS", waktu: "07.30 - 08.30 WIB" },
     { sesi: "Sesi 2", mapel: "Matematika & Bahasa Inggris", waktu: "09.00 - 10.00 WIB" }
-  ]
+  ],
+
+  // Konfigurasi Status Demo & Proteksi Negosiasi Proyek
+  DEMO_MODE: {
+    LOCKED: true, // Ubah ke 'false' ketika proyek resmi deal untuk membuka seluruh sistem secara instan
+    DEVELOPER_WA: "088228511309",
+    DEVELOPER_WA_LINK: "https://wa.me/6288228511309?text=" + encodeURIComponent("Halo Developer OMEGA PLUS 2026, kami dari pihak panitia/sekolah ingin konfirmasi mengenai kelanjutan proyek dan aktivasi penuh sistem pendaftaran website."),
+    BADGE: "PREVIEW EKSKLUSIF SISTEM",
+    TITLE: "Sistem Pendaftaran Siap Diaktifkan",
+    DESCRIPTION: "Portal Pendaftaran Online, Cek Status Real-time, dan Dashboard Verifikasi Peserta OMEGA PLUS 2026 telah selesai dikembangkan dan saat ini dalam status <strong>Preview Terbatas</strong>.<br><br>Akses penuh ke formulir dan database akan langsung diaktifkan segera setelah konfirmasi kesepakatan kerjasama (deal) dengan pihak sekolah/panitia difinalisasi."
+  }
 };
 
 // Ekspor ke window agar dapat diakses oleh index.html dan admin.html
