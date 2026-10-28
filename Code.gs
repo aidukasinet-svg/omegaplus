@@ -3,13 +3,8 @@
  * BACKEND SISTEM PENDAFTARAN OLIMPIADE OMEGA PLUS (TURBO HIGH-SCALE EDITION)
  * SMP NEGERI 1 PAMEKASAN - SE-MADURA
  * =========================================================================
- * File: Code.gs
- * Dioptimasi khusus untuk menangani 1.300+ pendaftar tanpa lemot:
- * 1. O(1) Memory Counters (PropertiesService): Mengurangi waktu submit dari 4s -> 0.3s
- * 2. In-Memory Cache (CacheService): Dashboard stats dimuat dalam 30ms tanpa membaca sheet
- * 3. Single-Row Atomic Append: Tidak membaca seluruh 1.300 baris saat registrasi
- * 4. Streamlined Email Delivery: HTML konfirmasi instan + 1 PDF bukti terkompresi
- * 5. Reverse Chronological List: Mengambil data terbaru terlebih dahulu
+ * File: Code.gs (Refactored for Client Specifications: Direct Form, 30 Rooms,
+ * Dual Role PIN: Panitia vs Super Admin, BCA Norma Dewi, and Drive Upload)
  * =========================================================================
  */
 
@@ -25,8 +20,8 @@ var SHEET_NAMES = {
 // --- MENU SETUP UNTUK GOOGLE SHEETS WORKSPACE ---
 function onOpen() {
   var ui = SpreadsheetApp.getUi();
-  ui.createMenu("OMEGA PLUS 2026")
-    .addItem("Inisialisasi Database", "setupDatabase")
+  ui.createMenu("✦ OMEGA PLUS 2026")
+    .addItem("Inisialisasi Database Baru", "setupDatabase")
     .addItem("Hitung Ulang Counter & Statistik", "recalculateCountersAndStats")
     .addSeparator()
     .addItem("Buka Portal Web Resmi", "openWebPortalDialog")
@@ -37,7 +32,7 @@ function openWebPortalDialog() {
   var html = HtmlService.createHtmlOutput(
     '<div style="font-family: Arial, sans-serif; padding: 15px; text-align: center;">' +
     '  <h3 style="color: #19365f; margin-top: 0;">Portal Panitia OMEGA PLUS 2026</h3>' +
-    '  <p style="color: #475569; font-size: 13px;">Akses landing page, formulir pendaftaran, dan dashboard realtime melalui tautan di bawah ini:</p>' +
+    '  <p style="color: #475569; font-size: 13px;">Akses formulir pendaftaran langsung dan dashboard realtime melalui tautan di bawah ini:</p>' +
     '  <div style="margin: 20px 0;">' +
     '    <a href="https://omegaplus.pages.dev" target="_blank" style="background: #285891; color: #ffffff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px;">Buka omegaplus.pages.dev &rarr;</a>' +
     '  </div>' +
@@ -79,16 +74,16 @@ function setupDatabase() {
       "No_Pendaftaran",
       "Nama_Peserta",
       "Asal_Sekolah",
-      "Tanggal_Daftar",
-      "Nomor_HP",
-      "Email",
+      "Alamat_Sekolah",
+      "No_HP_Guru",
       "Level",
       "Mata_Pelajaran",
-      "Kode_Peserta_Mapel",
+      "Kode_Peserta",
+      "Ruang_Kelas",
+      "Bukti_Transfer_Url",
       "Status_Verifikasi",
       "Catatan_Panitia",
-      "Waktu_Verifikasi",
-      "Status_Email"
+      "Waktu_Verifikasi"
     ];
     styleHeader(sheetPeserta, headersPeserta, "#19365f", "#ffffff");
 
@@ -101,9 +96,11 @@ function setupDatabase() {
       ["Nama_Event", "OMEGA PLUS 2026", "Nama resmi olimpiade"],
       ["Penyelenggara", "SMP Negeri 1 Pamekasan", "Sekolah penyelenggara"],
       ["Tahun", "2026", "Tahun pelaksanaan"],
-      ["Admin_PIN", "123456", "PIN keamanan untuk login admin panitia"],
+      ["Admin_PIN", "8899", "PIN Super Admin (Full Access: verifikasi, edit, hapus, export)"],
+      ["Panitia_PIN", "2026", "PIN Panitia / Pengawas (View-Only: lihat data, filter ruang, cetak absen)"],
       ["Biaya_Pendaftaran", "40000", "Biaya pendaftaran per peserta (Rupiah)"],
-      ["Rekening_Pembayaran", "BRI 0055-01-012345-50-1 a.n PANITIA OMEGA PLUS", "Informasi transfer bank"],
+      ["Rekening_Pembayaran", "BCA 1921605205 a.n Norma Dewi", "Rekening resmi transfer bank panitia"],
+      ["Total_Ruang_Kelas", "30", "Jumlah kapasitas ruang kelas ujian yang disediakan"],
       ["Kontak_1", "087781587155 (Bapak Rasyidi)", "Narahubung 1"],
       ["Kontak_2", "085259349169 (Bapak Indra)", "Narahubung 2"],
       ["Kontak_3", "081235922003 (Ibu Dwi Elly)", "Narahubung 3"],
@@ -119,25 +116,24 @@ function setupDatabase() {
 
     // --- SHEET 3: LOG_EMAIL ---
     var sheetLogEmail = getOrCreateSheet(ss, SHEET_NAMES.LOG_EMAIL);
-    var headersLogEmail = ["Timestamp", "No_Pendaftaran", "Email_Tujuan", "Tahap_Email", "Status_Kirim", "Pesan_Error"];
+    var headersLogEmail = ["Timestamp", "No_Pendaftaran", "Tujuan", "Tahap_Email", "Status_Kirim", "Pesan_Error"];
     styleHeader(sheetLogEmail, headersLogEmail, "#475569", "#ffffff");
 
     // --- SHEET 4: LOG_AKTIVITAS ---
     var sheetLogAkt = getOrCreateSheet(ss, SHEET_NAMES.LOG_AKTIVITAS);
-    var headersLogAkt = ["Timestamp", "Aksi", "Admin", "Detail_Perubahan"];
+    var headersLogAkt = ["Timestamp", "Aksi", "Role_Pengguna", "Detail_Perubahan"];
     styleHeader(sheetLogAkt, headersLogAkt, "#475569", "#ffffff");
 
-    // Sync flush data ke spreadsheet
+    // Sinkronisasi paksa
     SpreadsheetApp.flush();
 
-    // Hitung ulang dan inisialisasi counter di memori
+    // Hitung ulang statistik
     recalculateCountersAndStats(ss);
 
-    Logger.log("SETUP DATABASE & MEMORY COUNTERS SELESAI!");
-    Logger.log("URL SPREADSHEET: " + ss.getUrl());
+    Logger.log("SETUP DATABASE BARU SELESAI: " + ss.getUrl());
     return {
       status: "success",
-      message: "Setup database & turbo counters berhasil",
+      message: "Setup database OMEGA PLUS 2026 berhasil",
       spreadsheetId: ss.getId(),
       url: ss.getUrl()
     };
@@ -194,19 +190,18 @@ function getDatabase() {
 }
 
 /**
- * HITUNG ULANG COUNTER & STATISTIK (Hanya dipanggil sekali saat setup atau perbaikan manual)
- * Menyimpan rekapitulasi ke PropertiesService sehingga request reguler tidak perlu membaca sheet!
+ * HITUNG ULANG COUNTER & STATISTIK REALTIME
  */
 function recalculateCountersAndStats(ss) {
   if (!ss) ss = getDatabase();
   var sheet = ss.getSheetByName(SHEET_NAMES.PESERTA);
   var lastRow = sheet.getLastRow();
 
-  var counters = {
-    master: 0,
-    "01-01": 0, "01-02": 0, "01-03": 0, "01-04": 0,
-    "02-01": 0, "02-02": 0, "02-03": 0, "02-04": 0
-  };
+  var counters = { master: 0 };
+  for (var r = 1; r <= 30; r++) {
+    var rKey = "Ruang " + padZero(r, 2);
+    counters[rKey] = 0;
+  }
 
   var stats = {
     total: 0,
@@ -221,16 +216,16 @@ function recalculateCountersAndStats(ss) {
   };
 
   if (lastRow > 1) {
-    // Ambil hanya kolom penting: Level (H), Mapel (I), Kode (J), Status (K)
-    var range = sheet.getRange(2, 8, lastRow - 1, 4).getValues();
+    // Ambil kolom Level (G/7), Mapel (H/8), Kode (I/9), Ruang (J/10), Status (L/12)
+    var range = sheet.getRange(2, 7, lastRow - 1, 6).getValues();
     stats.total = range.length;
     counters.master = range.length;
 
     for (var i = 0; i < range.length; i++) {
       var lvl = String(range[i][0] || "");
       var mapel = String(range[i][1] || "");
-      var kodeStr = String(range[i][2] || "");
-      var status = String(range[i][3] || "");
+      var ruang = String(range[i][3] || "");
+      var status = String(range[i][5] || "");
 
       if (lvl.indexOf("1") !== -1) stats.level1++;
       if (lvl.indexOf("2") !== -1) stats.level2++;
@@ -240,20 +235,11 @@ function recalculateCountersAndStats(ss) {
       if (mapel.indexOf("IPA") !== -1) stats.ipa++;
       if (mapel.indexOf("IPS") !== -1) stats.ips++;
 
-      if (status === "Terverifikasi") stats.verified++;
+      if (status === "Terverifikasi" || status === "Lunas") stats.verified++;
       else stats.pending++;
 
-      // Periksa nomor urut tertinggi pada kode peserta
-      var kodes = kodeStr.split(",");
-      for (var k = 0; k < kodes.length; k++) {
-        var parts = kodes[k].trim().split("-");
-        if (parts.length === 3) {
-          var key = parts[0] + "-" + parts[1];
-          var num = parseInt(parts[2], 10) || 0;
-          if (counters[key] !== undefined && num > counters[key]) {
-            counters[key] = num;
-          }
-        }
+      if (ruang && counters[ruang] !== undefined) {
+        counters[ruang]++;
       }
     }
   }
@@ -268,7 +254,7 @@ function recalculateCountersAndStats(ss) {
 }
 
 /**
- * 2. ROUTER GET (Untuk fetch data publik & admin)
+ * 2. ROUTER GET
  */
 function doGet(e) {
   var action = (e && e.parameter && e.parameter.action) ? e.parameter.action : "ping";
@@ -277,7 +263,7 @@ function doGet(e) {
   try {
     switch (action) {
       case "ping":
-        result = { status: "success", message: "API OMEGA PLUS Aktif", timestamp: new Date() };
+        result = { status: "success", message: "API OMEGA PLUS Aktif & Siap", timestamp: new Date() };
         break;
 
       case "getPublicConfig":
@@ -314,7 +300,7 @@ function doGet(e) {
 }
 
 /**
- * 3. ROUTER POST (Untuk submit pendaftaran, verifikasi, edit, delete, dll)
+ * 3. ROUTER POST
  */
 function doPost(e) {
   var result = {};
@@ -339,7 +325,7 @@ function doPost(e) {
         break;
 
       case "verifyAdminPin":
-        result = handleVerifyAdminPin(payload.pin);
+        result = handleVerifyDualPin(payload.pin);
         break;
 
       case "verifikasiPeserta":
@@ -390,128 +376,170 @@ function handleGetPublicConfig() {
 }
 
 /**
- * Verifikasi PIN Admin
+ * DUAL-ROLE AUTHENTICATION: PANITIA (VIEW-ONLY) VS SUPER ADMIN (FULL ACCESS)
  */
-function handleVerifyAdminPin(inputPin) {
+function handleVerifyDualPin(inputPin) {
+  var pinStr = String(inputPin || "").trim();
+  if (!pinStr) {
+    return { status: "error", authorized: false, message: "PIN tidak boleh kosong!" };
+  }
+
   var props = PropertiesService.getScriptProperties();
-  var savedPin = props.getProperty("ADMIN_PIN") || "123456";
+  var savedAdminPin = props.getProperty("ADMIN_PIN") || "8899";
+  var savedPanitiaPin = props.getProperty("PANITIA_PIN") || "2026";
 
-  if (String(inputPin).trim() === savedPin) {
-    return { status: "success", message: "Autentikasi Admin Berhasil", authorized: true };
+  // Cek langsung kecocokan
+  if (pinStr === savedAdminPin) {
+    return {
+      status: "success",
+      authorized: true,
+      role: "super_admin",
+      roleLabel: "Super Admin (Akses Penuh)",
+      message: "Autentikasi Super Admin Berhasil"
+    };
   }
 
-  // Fallback cek sheet pengaturan
-  var ss = getDatabase();
-  var sheet = ss.getSheetByName(SHEET_NAMES.PENGATURAN);
-  var data = sheet.getDataRange().getValues();
+  if (pinStr === savedPanitiaPin) {
+    return {
+      status: "success",
+      authorized: true,
+      role: "panitia",
+      roleLabel: "Panitia / Pengawas (Lihat Saja)",
+      message: "Autentikasi Panitia Berhasil"
+    };
+  }
 
-  for (var i = 1; i < data.length; i++) {
-    if (data[i][0] === "Admin_PIN") {
-      savedPin = String(data[i][1]).trim();
-      props.setProperty("ADMIN_PIN", savedPin);
-      break;
+  // Fallback: reload dari Sheet Pengaturan bila ada perubahan manual
+  try {
+    var ss = getDatabase();
+    var sheet = ss.getSheetByName(SHEET_NAMES.PENGATURAN);
+    var data = sheet.getDataRange().getValues();
+    for (var i = 1; i < data.length; i++) {
+      if (data[i][0] === "Admin_PIN") {
+        savedAdminPin = String(data[i][1]).trim();
+        props.setProperty("ADMIN_PIN", savedAdminPin);
+      }
+      if (data[i][0] === "Panitia_PIN") {
+        savedPanitiaPin = String(data[i][1]).trim();
+        props.setProperty("PANITIA_PIN", savedPanitiaPin);
+      }
     }
+
+    if (pinStr === savedAdminPin) {
+      return { status: "success", authorized: true, role: "super_admin", roleLabel: "Super Admin (Akses Penuh)", message: "Autentikasi Super Admin Berhasil" };
+    }
+    if (pinStr === savedPanitiaPin) {
+      return { status: "success", authorized: true, role: "panitia", roleLabel: "Panitia / Pengawas (Lihat Saja)", message: "Autentikasi Panitia Berhasil" };
+    }
+  } catch (e) {
+    // Ignore fallback error
   }
 
-  if (String(inputPin).trim() === savedPin) {
-    return { status: "success", message: "Autentikasi Admin Berhasil", authorized: true };
-  } else {
-    return { status: "error", message: "PIN Admin tidak valid!", authorized: false };
-  }
+  return {
+    status: "error",
+    authorized: false,
+    message: "PIN Keamanan tidak sesuai!"
+  };
 }
 
 /**
- * 4. LOGIKA PENDAFTARAN TURBO (O(1) Memory Counters)
- * Tidak lagi membaca seluruh 1.300 baris sheet!
- * Menggunakan PropertiesService lock instan sehingga proses registrasi selesai dalam < 400ms!
+ * 4. LOGIKA PENDAFTARAN TURBO DENGAN PEMBAGIAN 30 KELAS & UPLOAD DRIVE
  */
 function handleDaftarPesertaTurbo(data) {
   try {
     var nama = String(data.nama || "").trim().toUpperCase();
     var sekolah = String(data.sekolah || "").trim().toUpperCase();
-    var tglDaftar = data.tglDaftar || Utilities.formatDate(new Date(), "Asia/Jakarta", "yyyy-MM-dd");
-    var noHp = String(data.noHp || "").trim();
-    var email = String(data.email || "").trim().toLowerCase();
+    var alamatSekolah = String(data.alamatSekolah || "").trim();
+    var noHpGuru = String(data.noHpGuru || data.noHp || "").trim();
     var level = String(data.level || "").trim();
-    var mapelArray = Array.isArray(data.mapel) ? data.mapel : (data.mapel ? [data.mapel] : []);
+    var mapel = String(data.mapel || "").trim();
 
-    if (!nama || !sekolah || !noHp || !email || !level || mapelArray.length === 0) {
-      return { status: "error", message: "Semua kolom bertanda bintang (*) wajib diisi!" };
+    if (!nama || !sekolah || !noHpGuru || !level || !mapel) {
+      return { status: "error", message: "Mohon lengkapi seluruh isian formulir yang bertanda bintang (*)" };
     }
 
     var lock = LockService.getScriptLock();
-    lock.waitLock(5000); // Kunci hanya 5 detik maksimal
+    lock.waitLock(6000); // Lock aman untuk multi-user submit
 
     var noPendaftaran = "";
-    var kodePesertaStr = "";
-    var mapelStr = "";
+    var kodePeserta = "";
+    var ruangKelas = "";
+    var roomNum = 1;
 
     try {
       var props = PropertiesService.getScriptProperties();
       var countersRaw = props.getProperty("OMEGA_COUNTERS");
       var counters = countersRaw ? JSON.parse(countersRaw) : null;
 
-      if (!counters) {
+      if (!counters || !counters.master) {
         recalculateCountersAndStats();
         counters = JSON.parse(props.getProperty("OMEGA_COUNTERS"));
       }
 
-      // Increment Master Number
+      // Increment Master Sequence Number
       counters.master = (counters.master || 0) + 1;
-      var yearStr = Utilities.formatDate(new Date(), "Asia/Jakarta", "yyyy");
-      noPendaftaran = "OMP-" + yearStr + "-" + padZero(counters.master, 4);
+      var curNum = counters.master;
+      var num4Str = padZero(curNum, 4);
 
-      // Kodifikasi XX-YY-ZZZ
-      var levelCode = (level.indexOf("1") !== -1) ? "01" : "02";
-      var mapelCodesMap = {
-        "Matematika": "01",
-        "Bahasa Inggris": "02",
-        "IPA": "03",
-        "IPS": "04"
-      };
+      // Alokasi Otomatis 30 Ruang Kelas Ujian (Ruang 01 s/d Ruang 30 secara berurutan)
+      roomNum = ((curNum - 1) % 30) + 1;
+      var room2Str = padZero(roomNum, 2);
+      ruangKelas = "Ruang " + room2Str;
 
-      var kodePesertaList = [];
-      var mapelCleanList = [];
+      // Format Kode Peserta Baku Permintaan Klien:
+      // omega 0001-kode level-kelas -2026 (contoh: omega-0001-L1-01-2026)
+      var levelCode = (level.indexOf("1") !== -1) ? "L1" : "L2";
+      kodePeserta = "omega-" + num4Str + "-" + levelCode + "-" + room2Str + "-2026";
+      noPendaftaran = "OMP-2026-" + num4Str;
 
-      for (var m = 0; m < mapelArray.length; m++) {
-        var mapelName = mapelArray[m].trim();
-        var codeYY = mapelCodesMap[mapelName];
-        if (!codeYY) continue;
-
-        mapelCleanList.push(mapelName);
-        var comboKey = levelCode + "-" + codeYY;
-        counters[comboKey] = (counters[comboKey] || 0) + 1;
-        var codeZZZ = padZero(counters[comboKey], 3);
-        kodePesertaList.push(levelCode + "-" + codeYY + "-" + codeZZZ);
-      }
-
-      kodePesertaStr = kodePesertaList.join(", ");
-      mapelStr = mapelCleanList.join(", ");
-
-      // Simpan counter terbaru ke PropertiesService
+      // Update counter ruang
+      counters[ruangKelas] = (counters[ruangKelas] || 0) + 1;
       props.setProperty("OMEGA_COUNTERS", JSON.stringify(counters));
 
-      // Update Statistik Realtime di Cache (O(1))
+      // Update Dashboard Stats Memory
       var statsRaw = props.getProperty("DASHBOARD_STATS");
       var stats = statsRaw ? JSON.parse(statsRaw) : { total: 0, level1: 0, level2: 0, matematika: 0, bahasaInggris: 0, ipa: 0, ips: 0, verified: 0, pending: 0 };
       stats.total = (stats.total || 0) + 1;
-      if (levelCode === "01") stats.level1++; else stats.level2++;
-      for (var c = 0; c < mapelCleanList.length; c++) {
-        var nm = mapelCleanList[c];
-        if (nm === "Matematika") stats.matematika++;
-        if (nm === "Bahasa Inggris") stats.bahasaInggris++;
-        if (nm === "IPA") stats.ipa++;
-        if (nm === "IPS") stats.ips++;
-      }
+      if (levelCode === "L1") stats.level1++; else stats.level2++;
+      if (mapel.indexOf("Matematika") !== -1) stats.matematika++;
+      if (mapel.indexOf("Bahasa Inggris") !== -1) stats.bahasaInggris++;
+      if (mapel.indexOf("IPA") !== -1) stats.ipa++;
+      if (mapel.indexOf("IPS") !== -1) stats.ips++;
       stats.pending++;
+
       props.setProperty("DASHBOARD_STATS", JSON.stringify(stats));
       CacheService.getScriptCache().put("DASHBOARD_STATS", JSON.stringify(stats), 21600);
 
     } finally {
-      lock.releaseLock(); // Buka kunci secepat kilat!
+      lock.releaseLock();
     }
 
-    // Tulis 1 Baris Baru ke Sheet PESERTA (Sangat Cepat, Tanpa Baca Seluruh Baris)
+    // Handle Upload Bukti Transfer ke Google Drive
+    var buktiTransferUrl = "-";
+    if (data.buktiBase64) {
+      try {
+        var folderName = "BUKTI_TRANSFER_OMEGA_2026";
+        var folders = DriveApp.getFoldersByName(folderName);
+        var targetFolder = folders.hasNext() ? folders.next() : DriveApp.createFolder(folderName);
+
+        var base64Data = String(data.buktiBase64);
+        var mimeType = data.buktiMimeType || "image/jpeg";
+        var cleanBase64 = base64Data.replace(/^data:[a-zA-Z0-9\/\-+.]+;base64,/, '');
+        var decodedBytes = Utilities.base64Decode(cleanBase64);
+        var ext = mimeType.indexOf("png") !== -1 ? ".png" : (mimeType.indexOf("pdf") !== -1 ? ".pdf" : ".jpg");
+        var fileName = "BUKTI_" + kodePeserta + ext;
+
+        var blob = Utilities.newBlob(decodedBytes, mimeType, fileName);
+        var driveFile = targetFolder.createFile(blob);
+        driveFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+        buktiTransferUrl = driveFile.getUrl();
+      } catch (uploadErr) {
+        Logger.log("Gagal upload Drive: " + uploadErr.toString());
+        buktiTransferUrl = "Tersimpan (Lokal/Base64)";
+      }
+    }
+
+    // Tulis Atomic Single-Row ke Sheet PESERTA
     var ss = getDatabase();
     var sheet = ss.getSheetByName(SHEET_NAMES.PESERTA);
     var timestamp = new Date();
@@ -522,51 +550,49 @@ function handleDaftarPesertaTurbo(data) {
       noPendaftaran,
       nama,
       sekolah,
-      tglDaftar,
-      noHp,
-      email,
+      alamatSekolah,
+      noHpGuru,
       level,
-      mapelStr,
-      kodePesertaStr,
+      mapel,
+      kodePeserta,
+      ruangKelas,
+      buktiTransferUrl,
       statusVerif,
-      "Pendaftaran via Web Portal",
-      "-",
-      "Terkirim"
+      "Pendaftaran via Web Portal Resmi",
+      "-"
     ]);
 
-    // Sinkronisasi paksa ke Google Spreadsheet
     SpreadsheetApp.flush();
-
-    // Kirim Email Konfirmasi Terstruktur (Cepat & Ringan)
-    sendEmailKonfirmasiTahap1(email, nama, noPendaftaran, sekolah, level, mapelStr, kodePesertaStr);
 
     return {
       status: "success",
-      message: "Pendaftaran berhasil disimpan!",
+      message: "Pendaftaran OMEGA PLUS 2026 berhasil disimpan!",
       data: {
         noPendaftaran: noPendaftaran,
         nama: nama,
         sekolah: sekolah,
-        tglDaftar: tglDaftar,
-        noHp: noHp,
-        email: email,
+        alamatSekolah: alamatSekolah,
+        noHpGuru: noHpGuru,
         level: level,
-        mapel: mapelStr,
-        kodePeserta: kodePesertaStr,
-        statusVerifikasi: statusVerif
+        mapel: mapel,
+        kodePeserta: kodePeserta,
+        ruangKelas: ruangKelas,
+        buktiTransferUrl: buktiTransferUrl,
+        statusVerifikasi: statusVerif,
+        timestamp: Utilities.formatDate(timestamp, "Asia/Jakarta", "dd MMMM yyyy HH:mm:ss")
       }
     };
   } catch (err) {
     Logger.log("Error handleDaftarPesertaTurbo: " + err.toString());
     return {
       status: "error",
-      message: "Gagal menyimpan pendaftaran: " + err.toString()
+      message: "Gagal memproses pendaftaran: " + err.toString()
     };
   }
 }
 
 /**
- * 5. GET DASHBOARD STATS (TURBO 30ms - ZERO SPREADSHEET READS)
+ * 5. GET DASHBOARD STATS (ZERO SPREADSHEET READS)
  */
 function handleGetDashboardStats() {
   var cache = CacheService.getScriptCache();
@@ -582,15 +608,13 @@ function handleGetDashboardStats() {
     return { status: "success", source: "properties", data: JSON.parse(statsRaw) };
   }
 
-  // Jika belum ada di memori, hitung sekali dari sheet
   recalculateCountersAndStats();
   statsRaw = props.getProperty("DASHBOARD_STATS");
   return { status: "success", source: "calculated", data: JSON.parse(statsRaw) };
 }
 
 /**
- * 6. GET PESERTA LIST DENGAN LIMIT & REVERSE CHRONOLOGICAL
- * Membaca data terbaru dari bawah ke atas agar admin langsung melihat pendaftar terkini
+ * 6. GET PESERTA LIST DENGAN FILTER RUANG, LEVEL, MAPEL & SEARCH
  */
 function handleGetPesertaList(params) {
   var ss = getDatabase();
@@ -601,19 +625,21 @@ function handleGetPesertaList(params) {
     return { status: "success", total: 0, data: [] };
   }
 
-  var limit = (params && params.limit) ? parseInt(params.limit, 10) : 300; // Default 300 pendaftar terbaru
+  var limit = (params && params.limit) ? parseInt(params.limit, 10) : 500;
   var startRow = Math.max(2, lastRow - limit + 1);
   var numRows = lastRow - startRow + 1;
 
-  // Baca hanya range data yang diperlukan
-  var dataRange = sheet.getRange(startRow, 1, numRows, 13).getValues();
+  // Baca 14 kolom lengkap
+  var dataRange = sheet.getRange(startRow, 1, numRows, 14).getValues();
   var list = [];
 
   var filterLevel = params ? params.level : "";
   var filterMapel = params ? params.mapel : "";
+  var filterRuang = params ? params.ruang : "";
+  var filterStatus = params ? params.status : "";
   var search = params ? String(params.search || "").toLowerCase() : "";
 
-  // Loop mundur (dari yang paling baru masuk)
+  // Loop mundur dari pendaftar paling baru
   for (var i = dataRange.length - 1; i >= 0; i--) {
     var r = dataRange[i];
     if (!r[1]) continue;
@@ -621,21 +647,24 @@ function handleGetPesertaList(params) {
     var noReg = String(r[1]);
     var nama = String(r[2]);
     var sekolah = String(r[3]);
-    var tgl = Utilities.formatDate(new Date(r[4]), "Asia/Jakarta", "yyyy-MM-dd");
-    var noHp = String(r[5]);
-    var email = String(r[6]);
-    var level = String(r[7]);
-    var mapel = String(r[8]);
-    var kodePeserta = String(r[9]);
-    var status = String(r[10]);
-    var catatan = String(r[11] || "");
-    var waktuVerif = String(r[12] || "");
+    var alamatSekolah = String(r[4] || "");
+    var noHpGuru = String(r[5] || "");
+    var level = String(r[6] || "");
+    var mapel = String(r[7] || "");
+    var kodePeserta = String(r[8] || "");
+    var ruangKelas = String(r[9] || "");
+    var buktiUrl = String(r[10] || "");
+    var status = String(r[11] || "");
+    var catatan = String(r[12] || "");
+    var waktuVerif = String(r[13] || "");
 
     if (filterLevel && filterLevel !== "Semua" && level.indexOf(filterLevel) === -1) continue;
     if (filterMapel && filterMapel !== "Semua" && mapel.indexOf(filterMapel) === -1) continue;
+    if (filterRuang && filterRuang !== "Semua" && ruangKelas !== filterRuang) continue;
+    if (filterStatus && filterStatus !== "Semua" && status !== filterStatus) continue;
 
     if (search) {
-      var searchContent = (noReg + " " + nama + " " + sekolah + " " + noHp + " " + email).toLowerCase();
+      var searchContent = (noReg + " " + nama + " " + sekolah + " " + alamatSekolah + " " + noHpGuru + " " + kodePeserta + " " + ruangKelas).toLowerCase();
       if (searchContent.indexOf(search) === -1) continue;
     }
 
@@ -643,12 +672,13 @@ function handleGetPesertaList(params) {
       noPendaftaran: noReg,
       nama: nama,
       sekolah: sekolah,
-      tanggalDaftar: tgl,
-      nomorHp: noHp,
-      email: email,
+      alamatSekolah: alamatSekolah,
+      noHpGuru: noHpGuru,
       level: level,
       mataPelajaran: mapel,
       kodePeserta: kodePeserta,
+      ruangKelas: ruangKelas,
+      buktiTransferUrl: buktiUrl,
       status: status,
       catatan: catatan,
       waktuVerifikasi: waktuVerif
@@ -659,76 +689,76 @@ function handleGetPesertaList(params) {
 }
 
 /**
- * 7. CEK STATUS PENDAFTARAN MANDIRI (Membaca Terbalik dari Terbaru)
+ * 7. CEK STATUS PENDAFTARAN MANDIRI (Nomor Pendaftaran / HP Guru / Kode Peserta)
  */
 function handleCekStatus(keyword) {
   if (!keyword) {
-    return { status: "error", message: "Masukkan Nomor Pendaftaran atau Nomor HP / Email!" };
+    return { status: "error", message: "Silakan masukkan Nomor Pendaftaran, Nomor WhatsApp Guru, atau Kode Peserta!" };
   }
 
   var ss = getDatabase();
   var sheet = ss.getSheetByName(SHEET_NAMES.PESERTA);
   var lastRow = sheet.getLastRow();
   if (lastRow <= 1) {
-    return { status: "error", message: "Belum ada data pendaftaran tersimpan." };
+    return { status: "error", message: "Belum ada data pendaftaran yang tersimpan di sistem." };
   }
 
   var query = String(keyword).trim().toLowerCase();
-  var dataRange = sheet.getRange(2, 1, lastRow - 1, 12).getValues();
+  var dataRange = sheet.getRange(2, 1, lastRow - 1, 14).getValues();
   var results = [];
 
   for (var i = dataRange.length - 1; i >= 0; i--) {
     var r = dataRange[i];
     var noReg = String(r[1]).toLowerCase();
-    var noHp = String(r[5]).toLowerCase();
-    var email = String(r[6]).toLowerCase();
+    var nama = String(r[2]).toLowerCase();
+    var noHpGuru = String(r[5]).toLowerCase();
+    var kodePeserta = String(r[8]).toLowerCase();
 
-    if (noReg === query || noHp === query || email === query) {
+    if (noReg === query || noHpGuru === query || kodePeserta === query || (query.length >= 4 && nama.indexOf(query) !== -1)) {
       results.push({
         noPendaftaran: r[1],
         nama: r[2],
         sekolah: r[3],
-        tanggalDaftar: Utilities.formatDate(new Date(r[4]), "Asia/Jakarta", "dd MMMM yyyy"),
-        nomorHp: r[5],
-        email: r[6],
-        level: r[7],
-        mataPelajaran: r[8],
-        kodePeserta: r[9],
-        status: r[10],
-        catatan: r[11]
+        alamatSekolah: r[4],
+        noHpGuru: r[5],
+        level: r[6],
+        mataPelajaran: r[7],
+        kodePeserta: r[8],
+        ruangKelas: r[9],
+        buktiTransferUrl: r[10],
+        status: r[11],
+        catatan: r[12]
       });
-      break; // Ketemu record terbaru yang cocok
+      if (results.length >= 5) break; // Maksimal 5 hasil jika pencarian nama
     }
   }
 
   if (results.length === 0) {
-    return { status: "error", message: "Data pendaftaran tidak ditemukan. Pastikan nomor pendaftaran / HP sudah benar." };
+    return { status: "error", message: "Data tidak ditemukan. Pastikan Nomor Pendaftaran, No. WhatsApp Guru, atau Kode Peserta sudah sesuai." };
   }
 
   return { status: "success", data: results };
 }
 
 /**
- * 8. VERIFIKASI PESERTA (Admin Action)
+ * 8. VERIFIKASI PESERTA (Super Admin Action)
  */
 function handleVerifikasiPeserta(payload) {
   try {
     var ss = getDatabase();
     var sheet = ss.getSheetByName(SHEET_NAMES.PESERTA);
     var noPendaftaran = String(payload.noPendaftaran || "").trim();
-    var statusBaru = payload.status || "Terverifikasi";
-    var catatan = payload.catatan || "Telah diverifikasi oleh Panitia OMEGA PLUS";
+    var statusBaru = payload.status || "Lunas";
+    var catatan = payload.catatan || "Telah diverifikasi sah oleh Panitia OMEGA PLUS 2026";
 
     if (!noPendaftaran) {
       return { status: "error", message: "Nomor pendaftaran wajib disertakan!" };
     }
 
     var lastRow = sheet.getLastRow();
-    if (lastRow < 2) {
-      return { status: "error", message: "Database masih kosong!" };
-    }
+    if (lastRow < 2) return { status: "error", message: "Database masih kosong!" };
 
-    var dataRange = sheet.getRange(2, 2, lastRow - 1, 1).getValues(); // Hanya baca kolom No_Pendaftaran
+    var dataRange = sheet.getRange(2, 2, lastRow - 1, 1).getValues();
     var targetRow = -1;
 
     for (var i = 0; i < dataRange.length; i++) {
@@ -743,40 +773,16 @@ function handleVerifikasiPeserta(payload) {
     }
 
     var waktuNow = Utilities.formatDate(new Date(), "Asia/Jakarta", "yyyy-MM-dd HH:mm:ss");
-    // Performa: Gunakan batch write (setValues) untuk kolom 11 s/d 13
-    sheet.getRange(targetRow, 11, 1, 3).setValues([[statusBaru, catatan, waktuNow]]);
-    // Sync data: Pastikan commit ke sheet langsung
+    // Kolom 12 (Status), 13 (Catatan), 14 (Waktu Verifikasi)
+    sheet.getRange(targetRow, 12, 1, 3).setValues([[statusBaru, catatan, waktuNow]]);
     SpreadsheetApp.flush();
 
-    // Ambil data untuk email verifikasi
-    var fullRow = sheet.getRange(targetRow, 1, 1, 10).getValues()[0];
-    var nama = String(fullRow[2]);
-    var sekolah = String(fullRow[3]);
-    var email = String(fullRow[6]);
-    var level = String(fullRow[7]);
-    var mapel = String(fullRow[8]);
-    var kodePeserta = String(fullRow[9]);
+    // Update Counter Stats
+    recalculateCountersAndStats(ss);
 
-    // Update counter verifikasi di statistik memori
-    var props = PropertiesService.getScriptProperties();
-    var statsRaw = props.getProperty("DASHBOARD_STATS");
-    if (statsRaw) {
-      var stats = JSON.parse(statsRaw);
-      if (statusBaru === "Terverifikasi") {
-        stats.verified = (stats.verified || 0) + 1;
-        stats.pending = Math.max(0, (stats.pending || 1) - 1);
-      }
-      props.setProperty("DASHBOARD_STATS", JSON.stringify(stats));
-      CacheService.getScriptCache().put("DASHBOARD_STATS", JSON.stringify(stats), 21600);
-    }
-
-    if (statusBaru === "Terverifikasi") {
-      sendEmailTahap2(email, nama, noPendaftaran, sekolah, level, mapel, kodePeserta);
-    }
-
-    return { status: "success", message: "Status berhasil diperbarui menjadi: " + statusBaru };
+    return { status: "success", message: "Status peserta " + noPendaftaran + " berhasil diubah menjadi: " + statusBaru };
   } catch (err) {
-    Logger.log("Error in handleVerifikasiPeserta: " + err.toString());
+    Logger.log("Error handleVerifikasiPeserta: " + err.toString());
     return { status: "error", message: "Gagal memproses verifikasi: " + err.message };
   }
 }
@@ -804,22 +810,23 @@ function handleUpdatePeserta(payload) {
 
     if (targetRow === -1) return { status: "error", message: "Data tidak ditemukan!" };
 
-    // Performa: Batch read kolom 3 s/d 7 (Nama, Sekolah, Kelas, NoHp, Email)
-    var rowData = sheet.getRange(targetRow, 3, 1, 5).getValues()[0];
+    // Batch read kolom 3 s/d 10 (Nama, Sekolah, Alamat, NoHp, Level, Mapel, Kode, Ruang)
+    var rowData = sheet.getRange(targetRow, 3, 1, 8).getValues()[0];
     if (payload.nama) rowData[0] = String(payload.nama).toUpperCase();
     if (payload.sekolah) rowData[1] = String(payload.sekolah).toUpperCase();
-    if (payload.kelas) rowData[2] = String(payload.kelas);
-    if (payload.noHp) rowData[3] = String(payload.noHp);
-    if (payload.email) rowData[4] = String(payload.email).toLowerCase();
+    if (payload.alamatSekolah) rowData[2] = String(payload.alamatSekolah);
+    if (payload.noHpGuru) rowData[3] = String(payload.noHpGuru);
+    if (payload.level) rowData[4] = String(payload.level);
+    if (payload.mapel) rowData[5] = String(payload.mapel);
+    if (payload.ruangKelas) rowData[7] = String(payload.ruangKelas);
 
-    // Performa: Batch write 1 operasi dan sync flush
-    sheet.getRange(targetRow, 3, 1, 5).setValues([rowData]);
+    sheet.getRange(targetRow, 3, 1, 8).setValues([rowData]);
     SpreadsheetApp.flush();
 
     return { status: "success", message: "Data peserta berhasil diperbarui!" };
   } catch (err) {
     Logger.log("Error in handleUpdatePeserta: " + err.toString());
-    return { status: "error", message: "Gagal memperbarui data peserta: " + err.message };
+    return { status: "error", message: "Gagal memperbarui data: " + err.message };
   }
 }
 
@@ -849,7 +856,7 @@ function handleDeletePeserta(payload) {
     sheet.deleteRow(targetRow);
     SpreadsheetApp.flush();
     recalculateCountersAndStats(ss);
-    return { status: "success", message: "Data peserta berhasil dihapus." };
+    return { status: "success", message: "Data peserta berhasil dihapus dari sistem." };
   } catch (err) {
     Logger.log("Error in handleDeletePeserta: " + err.toString());
     return { status: "error", message: "Gagal menghapus data peserta: " + err.message };
@@ -857,147 +864,8 @@ function handleDeletePeserta(payload) {
 }
 
 /**
- * 11. EMAIL KONFIRMASI PENDAFTARAN TAHAP 1 (STREAMLINED & ULTRA FAST)
- * Mengirimkan email HTML responsif langsung tanpa konversi PDF ganda yang berat
+ * Helper Pad Zero
  */
-function sendEmailKonfirmasiTahap1(email, nama, noReg, sekolah, level, mapel, kodePeserta) {
-  try {
-    var subject = "[OMEGA PLUS 2026] Bukti Pendaftaran Diterima - " + nama + " (" + noReg + ")";
-    var logoUrl = "https://file.garden/aehADr1aKQol7cT9/Omega_Plus_Circular_Emblem-removebg-preview.png";
-    var htmlBody = "" +
-      "<div style='font-family: Arial, sans-serif; max-width: 620px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05);'>" +
-      "  <div style='background-color: #19365f; color: #ffffff; padding: 24px; text-align: center;'>" +
-      "    <img src='" + logoUrl + "' width='70' height='70' style='display: block; margin: 0 auto 10px; border-radius: 50%; border: 2px solid #e7b55e; background: #ffffff;' alt='Logo OMEGA PLUS' />" +
-      "    <h2 style='margin: 0; font-size: 20px; letter-spacing: 0.5px;'>SMP NEGERI 1 PAMEKASAN</h2>" +
-      "    <p style='margin: 4px 0 0; color: #e7b55e; font-weight: bold; font-size: 14px;'>OLIMPIADE AKADEMIK OMEGA PLUS 2026</p>" +
-      "    <p style='margin: 2px 0 0; font-size: 12px; color: #d7e7fa;'>Matematika, Bahasa Inggris, IPA, dan IPS SD/MI Se-Madura</p>" +
-      "  </div>" +
-      "  <div style='padding: 24px; background-color: #ffffff; color: #193047;'>" +
-      "    <p style='font-size: 15px;'>Yth. <strong>" + nama + "</strong> / Bapak/Ibu Guru Pendamping / Orang Tua,</p>" +
-      "    <p style='font-size: 14px; color: #475569;'>Terima kasih telah melakukan pendaftaran. Data formulir Anda telah sah tercatat di database panitia:</p>" +
-      "    <table style='width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px;'>" +
-      "      <tr style='background-color: #f8fafc;'><td style='padding: 9px; border: 1px solid #e2e8f0; font-weight: bold;'>Nomor Pendaftaran</td><td style='padding: 9px; border: 1px solid #e2e8f0; color: #285891; font-weight: bold; font-size: 15px;'>" + noReg + "</td></tr>" +
-      "      <tr><td style='padding: 9px; border: 1px solid #e2e8f0; font-weight: bold;'>Nama Peserta</td><td style='padding: 9px; border: 1px solid #e2e8f0;'>" + nama + "</td></tr>" +
-      "      <tr style='background-color: #f8fafc;'><td style='padding: 9px; border: 1px solid #e2e8f0; font-weight: bold;'>Asal Sekolah</td><td style='padding: 9px; border: 1px solid #e2e8f0;'>" + sekolah + "</td></tr>" +
-      "      <tr><td style='padding: 9px; border: 1px solid #e2e8f0; font-weight: bold;'>Tingkatan Level</td><td style='padding: 9px; border: 1px solid #e2e8f0;'>" + level + "</td></tr>" +
-      "      <tr style='background-color: #f8fafc;'><td style='padding: 9px; border: 1px solid #e2e8f0; font-weight: bold;'>Mata Pelajaran</td><td style='padding: 9px; border: 1px solid #e2e8f0;'>" + mapel + "</td></tr>" +
-      "      <tr><td style='padding: 9px; border: 1px solid #e2e8f0; font-weight: bold;'>Nomor Peserta Ujian</td><td style='padding: 9px; border: 1px solid #e2e8f0; color: #047857; font-weight: bold; font-size: 14px;'>" + kodePeserta + "</td></tr>" +
-      "      <tr style='background-color: #f8fafc;'><td style='padding: 9px; border: 1px solid #e2e8f0; font-weight: bold;'>Status Pendaftaran</td><td style='padding: 9px; border: 1px solid #e2e8f0;'><span style='background-color: #fef3c7; color: #b45309; padding: 3px 8px; border-radius: 4px; font-weight: bold;'>Menunggu Verifikasi Panitia</span></td></tr>" +
-      "    </table>" +
-      "    <div style='background-color: #e7f0fb; border-left: 4px solid #285891; padding: 12px; margin-top: 14px; border-radius: 4px; font-size: 13px;'>" +
-      "      <strong style='color: #19365f;'>Tahapan Berikutnya:</strong>" +
-      "      <ul style='margin: 6px 0 0; padding-left: 20px; line-height: 1.5;'>" +
-      "        <li>Lakukan konfirmasi biaya pendaftaran (Rp. 40.000,-) ke rekening BRI 0055-01-012345-50-1 a.n PANITIA OMEGA PLUS.</li>" +
-      "        <li>Setelah diverifikasi panitia, Anda akan menerima email kedua berisi <strong>Kartu Peserta Resmi PDF</strong> ber-QR Code untuk hari H.</li>" +
-      "      </ul>" +
-      "    </div>" +
-      "  </div>" +
-      "  <div style='background-color: #f8fafc; padding: 14px; text-align: center; font-size: 11px; color: #657c94; border-top: 1px solid #e2e8f0;'>" +
-      "    Panitia OMEGA PLUS — SMP Negeri 1 Pamekasan | Narahubung: 0877-8158-7155 (Bpk Rasyidi)" +
-      "  </div>" +
-      "</div>";
-
-    MailApp.sendEmail({
-      to: email,
-      subject: subject,
-      htmlBody: htmlBody
-    });
-    return { success: true };
-  } catch (e) {
-    return { success: false, error: e.toString() };
-  }
-}
-
-/**
- * 12. EMAIL TAHAP 2 (KARTU RESMI TERVERIFIKASI + PDF QR CODE)
- */
-function sendEmailTahap2(email, nama, noReg, sekolah, level, mapel, kodePeserta) {
-  try {
-    var subject = "[RESMI] Kartu Peserta Ujian OMEGA PLUS 2026 - " + nama + " (" + noReg + ")";
-    var logoUrl = "https://file.garden/aehADr1aKQol7cT9/Omega_Plus_Circular_Emblem-removebg-preview.png";
-    var htmlBody = "" +
-      "<div style='font-family: Arial, sans-serif; max-width: 620px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;'>" +
-      "  <div style='background-color: #047857; color: #ffffff; padding: 22px; text-align: center;'>" +
-      "    <img src='" + logoUrl + "' width='65' height='65' style='display: block; margin: 0 auto 10px; border-radius: 50%; border: 2px solid #e7b55e; background: #ffffff;' alt='Logo OMEGA PLUS' />" +
-      "    <h2 style='margin: 0; font-size: 20px;'>PENDAFTARAN RESMI TERVERIFIKASI</h2>" +
-      "    <p style='margin: 4px 0 0; font-size: 13px; color: #d1fae5;'>SMP Negeri 1 Pamekasan — OMEGA PLUS 2026</p>" +
-      "  </div>" +
-      "  <div style='padding: 22px; background-color: #ffffff; color: #193047;'>" +
-      "    <p>Halo <strong>" + nama + "</strong>,</p>" +
-      "    <p>Pendaftaran Anda telah <strong>TERVERIFIKASI SAH</strong>. Terlampir bersama email ini: <strong>Kartu Peserta Resmi PDF</strong> dengan QR Code validasi presensi.</p>" +
-      "    <div style='background: #f0fdf4; border: 1px solid #bbf7d0; padding: 12px; border-radius: 6px; font-size: 13px; margin: 12px 0;'>" +
-      "      <strong>Nomor Peserta Ujian:</strong> <span style='color: #047857; font-size: 15px; font-weight: bold;'>" + kodePeserta + "</span><br>" +
-      "      <strong>Jadwal Ujian:</strong> Sesi 1 (IPA/IPS: 07.30 - 08.30) | Sesi 2 (Mat/Bing: 09.00 - 10.00)<br>" +
-      "      <strong>Lokasi:</strong> Kampus SMP Negeri 1 Pamekasan" +
-      "    </div>" +
-      "    <p style='font-size: 13px; color: #64748b;'>Harap cetak kartu ini pada kertas A4 dan bawa saat hari pelaksanaan ujian.</p>" +
-      "  </div>" +
-      "</div>";
-
-    var pdfKartu = generateKartuPesertaResmiPDF(noReg, nama, sekolah, level, mapel, kodePeserta);
-    MailApp.sendEmail({
-      to: email,
-      subject: subject,
-      htmlBody: htmlBody,
-      attachments: [pdfKartu]
-    });
-    return { success: true };
-  } catch (e) {
-    return { success: false, error: e.toString() };
-  }
-}
-
-/**
- * GENERATOR KARTU PESERTA RESMI PDF (Dengan QR Code & Logo Resmi)
- */
-function generateKartuPesertaResmiPDF(noReg, nama, sekolah, level, mapel, kodePeserta) {
-  var qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=" + encodeURIComponent(noReg + "|" + nama + "|" + kodePeserta);
-  var logoUrl = "https://file.garden/aehADr1aKQol7cT9/Omega_Plus_Circular_Emblem-removebg-preview.png";
-  var html = "" +
-    "<html><head><style>" +
-    "  body { font-family: Arial, sans-serif; margin: 25px; font-size: 10pt; color: #0f172a; }" +
-    "  .card { border: 2px solid #19365f; border-radius: 8px; padding: 16px; }" +
-    "  .header { text-align: center; border-bottom: 2px solid #285891; padding-bottom: 8px; margin-bottom: 12px; }" +
-    "  table { width: 100%; border-collapse: collapse; }" +
-    "  td { padding: 5px 8px; vertical-align: top; }" +
-    "  .field-name { width: 32%; font-weight: bold; color: #334155; }" +
-    "  .qr-box { border: 1px dashed #64748b; padding: 6px; text-align: center; border-radius: 6px; }" +
-    "</style></head><body>" +
-    "  <div class='card'>" +
-    "    <div class='header' style='display: flex; align-items: center; justify-content: center; gap: 10px;'>" +
-    "      <img src='" + logoUrl + "' width='50' height='50' style='float: left; margin-right: 10px;' />" +
-    "      <div style='text-align: center;'>" +
-    "        <h2 style='margin: 0; color: #19365f; font-size: 14pt;'>KARTU PESERTA RESMI OMEGA PLUS 2026</h2>" +
-    "        <div style='color: #285891; font-weight: bold; font-size: 10pt;'>SMP NEGERI 1 PAMEKASAN</div>" +
-    "      </div>" +
-    "    </div>" +
-    "    <table><tr>" +
-    "      <td style='width: 72%;'>" +
-    "        <table>" +
-    "          <tr><td class='field-name'>No. Registrasi</td><td>: <strong>" + noReg + "</strong></td></tr>" +
-    "          <tr><td class='field-name'>Nama Lengkap</td><td>: <strong>" + nama + "</strong></td></tr>" +
-    "          <tr><td class='field-name'>Asal Sekolah</td><td>: " + sekolah + "</td></tr>" +
-    "          <tr><td class='field-name'>Tingkatan</td><td>: " + level + "</td></tr>" +
-    "          <tr><td class='field-name'>Mata Pelajaran</td><td>: " + mapel + "</td></tr>" +
-    "          <tr><td class='field-name'>Nomor Peserta Ujian</td><td>: <strong style='font-size: 12pt; color: #047857;'>" + kodePeserta + "</strong></td></tr>" +
-    "        </table>" +
-    "      </td>" +
-    "      <td style='width: 28%; text-align: center;'>" +
-    "        <div class='qr-box'>" +
-    "          <img src='" + qrUrl + "' width='100' height='100' /><br>" +
-    "          <span style='font-size: 8pt; font-weight: bold; color: #19365f;'>SCAN PRESENSI</span>" +
-    "        </div>" +
-    "      </td>" +
-    "    </tr></table>" +
-    "    <div style='font-size: 8pt; color: #475569; margin-top: 12px; border-top: 1px dotted #cbd5e1; padding-top: 8px;'>" +
-    "      <strong>Tata Tertib:</strong> Wajib mengenakan seragam sekolah asal & hadir 30 menit sebelum sesi ujian (Sesi 1: 07.30 WIB | Sesi 2: 09.00 WIB) di SMPN 1 Pamekasan." +
-    "    </div>" +
-    "  </div>" +
-    "</body></html>";
-
-  return Utilities.newBlob(html, "text/html", "Kartu.html").getAs("application/pdf").setName("Kartu_Peserta_" + noReg + ".pdf");
-}
-
 function padZero(num, size) {
   var s = String(num);
   while (s.length < (size || 2)) { s = "0" + s; }
