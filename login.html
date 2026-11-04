@@ -3,42 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Panitia — OMEGA PLUS 2026</title>
-  <meta name="description" content="Dashboard Panitia OMEGA PLUS SMP Negeri 1 Pamekasan. Kelola data peserta, verifikasi pendaftaran, dan cetak laporan.">
+  <title>Dashboard Panitia & Admin — OMEGA PLUS 2026</title>
+  <meta name="description" content="Dashboard Panitia & Admin OMEGA PLUS 2026 SMP Negeri 1 Pamekasan. Dual-role monitoring, verifikasi BCA, pembagian 30 ruang, dan cetak presensi.">
 
   <!-- OpenGraph Metadata -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="Dashboard Panitia OMEGA PLUS 2026 — SMP Negeri 1 Pamekasan">
-  <meta property="og:description" content="Portal Administrasi Panitia Olimpiade OMEGA PLUS 2026 SMP Negeri 1 Pamekasan.">
+  <meta property="og:description" content="Portal Administrasi Panitia & Super Admin OMEGA PLUS 2026.">
   <meta property="og:image" content="https://file.garden/aehADr1aKQol7cT9/Omega_Plus_Circular_Emblem-removebg-preview.png">
 
   <!-- Favicon Official Emblem -->
   <link rel="icon" href="https://file.garden/aehADr1aKQol7cT9/Omega_Plus_Circular_Emblem-removebg-preview.png" type="image/png">
   <link rel="shortcut icon" href="logo.png" type="image/png">
 
-  <!-- Google Fonts: Work Sans -->
+  <!-- Google Fonts: Plus Jakarta Sans & Work Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Work+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <!-- SweetAlert2 (Anti-Alert Bawaan) -->
+  <!-- SweetAlert2 & Lucide Icons -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
-  <!-- Konfigurasi Global & Demo Activation Guard -->
+  <!-- Konfigurasi Global & Demo Guard -->
   <script src="config.js"></script>
   <script src="demo-guard.js"></script>
 
   <style>
-    /* ==========================================================================
-       DESIGN SYSTEM TOKENS (ADMIN PORTAL)
-       ========================================================================== */
     :root {
       --color-primary-navy:     #19365f;
       --color-primary-royal:    #285891;
       --color-accent-gold:      #e7b55e;
+      --color-accent-gold-dark: #b88628;
       
       --color-bg-page:          #f5f8fc;
       --color-bg-surface:       #ffffff;
@@ -54,8 +50,8 @@
       --color-border-focus:     #285891;
 
       --radius-sm:   6px;
-      --radius-md:   10px;
-      --radius-lg:   16px;
+      --radius-md:   12px;
+      --radius-lg:   18px;
       --radius-pill: 9999px;
 
       --shadow-sm:   0 1px 3px rgba(25, 54, 95, 0.05);
@@ -80,17 +76,88 @@
     }
 
     /* ==========================================================================
+       PIN LOGIN OVERLAY & CARD
+       ========================================================================== */
+    .pin-modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(14, 34, 61, 0.94);
+      backdrop-filter: blur(8px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .pin-modal-card {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 2.25rem 2rem;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: var(--shadow-modal);
+      border: 1px solid rgba(25, 54, 95, 0.15);
+      text-align: center;
+    }
+
+    .pin-input {
+      font-family: 'Plus Jakarta Sans', monospace;
+      font-size: 1.6rem;
+      letter-spacing: 6px;
+      text-align: center;
+      height: 52px;
+      width: 100%;
+      border: 2px solid var(--color-border-input);
+      border-radius: var(--radius-sm);
+      margin: 1.25rem 0 0.75rem;
+      color: var(--color-primary-navy);
+      transition: all 0.2s ease;
+    }
+
+    .pin-input:focus {
+      outline: none;
+      border-color: var(--color-primary-royal);
+      box-shadow: 0 0 0 4px rgba(40, 88, 145, 0.15);
+    }
+
+    .pin-error-alert {
+      background: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      font-size: 0.8125rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .pin-hint-box {
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: var(--radius-sm);
+      padding: 10px;
+      font-size: 0.775rem;
+      color: #64748b;
+      margin-top: 1rem;
+      text-align: left;
+    }
+
+    .pin-hint-box strong {
+      color: var(--color-primary-navy);
+    }
+
+    /* ==========================================================================
        HEADER & NAVIGATION
        ========================================================================== */
     .header-admin {
       background: linear-gradient(135deg, var(--color-primary-navy) 0%, #1e4472 100%);
       color: #ffffff;
-      padding: 1.5rem 1.5rem 1.25rem;
+      padding: 1.25rem 1.5rem;
       box-shadow: 0 4px 15px rgba(25, 54, 95, 0.15);
     }
 
     .header-container {
-      max-width: 1200px;
+      max-width: 1280px;
       margin: 0 auto;
       display: flex;
       align-items: center;
@@ -105,180 +172,159 @@
       gap: 12px;
     }
 
-    .brand-logo {
-      width: 44px;
-      height: 44px;
-      background: #ffffff;
+    .brand-box img {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+      border-radius: 50%;
       border: 2px solid var(--color-accent-gold);
-      border-radius: var(--radius-sm);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--color-primary-navy);
-      font-weight: 800;
-      font-size: 1.25rem;
+      background: #ffffff;
     }
 
     .brand-text h2 {
-      font-size: 1.125rem;
-      font-weight: 700;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin: 0;
       letter-spacing: 0.5px;
     }
 
     .brand-text p {
-      font-size: 0.75rem;
+      font-size: 0.775rem;
       color: var(--color-accent-gold);
+      margin: 2px 0 0;
+      font-weight: 600;
     }
 
     .admin-nav {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
     .nav-btn {
-      padding: 8px 16px;
-      border-radius: var(--radius-pill);
-      font-size: 0.8125rem;
-      font-weight: 600;
-      color: #ffffff;
-      text-decoration: none;
-      transition: all 0.2s ease;
-      cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      background: rgba(255, 255, 255, 0.12);
       border: 1px solid rgba(255, 255, 255, 0.2);
-      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      padding: 7px 16px;
+      border-radius: var(--radius-pill);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
     }
 
     .nav-btn:hover {
-      background: rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.22);
     }
 
-    .nav-btn.active {
-      background: #ffffff;
-      color: var(--color-primary-navy);
-      border-color: #ffffff;
+    .role-badge-header {
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 0.775rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .role-badge-super {
+      background: #ecfdf5;
+      color: #047857;
+      border: 1.5px solid #a7f3d0;
+    }
+
+    .role-badge-panitia {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1.5px solid #bfdbfe;
     }
 
     /* ==========================================================================
-       MAIN CONTENT CONTAINER
+       MAIN CONTENT LAYOUT
        ========================================================================== */
     .main-container {
-      max-width: 1200px;
+      max-width: 1280px;
       margin: 1.5rem auto 3rem;
-      padding: 0 1rem;
+      padding: 0 1.25rem;
       width: 100%;
       flex: 1;
     }
 
-    /* Sync Status Bar */
     .sync-status-bar {
       display: flex;
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 1.5rem;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+      background: #ffffff;
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-md);
+      padding: 0.75rem 1.25rem;
     }
 
     .sync-pill {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: #ffffff;
-      border: 1px solid var(--color-border-subtle);
-      padding: 6px 14px;
-      border-radius: var(--radius-pill);
       font-size: 0.8125rem;
       font-weight: 600;
-      color: var(--color-text-main);
-      box-shadow: var(--shadow-sm);
+      color: #047857;
     }
 
     .pulse-dot {
       width: 8px;
       height: 8px;
+      background-color: #10b981;
       border-radius: 50%;
-      background: #10b981;
       box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
     }
 
-    /* Dashboard Title Header */
-    .dashboard-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .dashboard-header h1 {
-      font-size: 1.75rem;
-      font-weight: 800;
-      color: var(--color-primary-navy);
-    }
-
-    .dashboard-eyebrow {
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: var(--color-primary-royal);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    /* ==========================================================================
-       7 METRIC STAT CARDS
-       ========================================================================== */
-    .stats-grid-7 {
+    /* STATS CARDS */
+    .stats-grid-8 {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 1rem;
-      margin-bottom: 1.75rem;
+      grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
     }
 
     .stat-card {
       background: #ffffff;
       border: 1px solid var(--color-border-subtle);
       border-radius: var(--radius-md);
-      padding: 1.25rem 1rem;
-      box-shadow: var(--shadow-card);
+      padding: 1rem;
       text-align: center;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: var(--shadow-sm);
     }
 
-    .stat-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(25, 54, 95, 0.1);
-    }
-
-    .stat-num {
-      font-size: 2.25rem;
+    .stat-card .stat-num {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.6rem;
       font-weight: 800;
       color: var(--color-primary-navy);
-      line-height: 1;
-      margin-bottom: 6px;
+      line-height: 1.2;
     }
 
-    .stat-label {
-      font-size: 0.8125rem;
-      font-weight: 600;
+    .stat-card .stat-label {
+      font-size: 0.725rem;
+      font-weight: 700;
       color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 4px;
     }
 
-    /* ==========================================================================
-       CHARTS / PROGRESS BARS
-       ========================================================================== */
-    .charts-grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.25rem;
-      margin-bottom: 2rem;
-    }
-
-    .chart-panel {
+    /* TOOLBAR & FILTERS */
+    .table-panel {
       background: #ffffff;
       border: 1px solid var(--color-border-subtle);
       border-radius: var(--radius-lg);
@@ -286,352 +332,195 @@
       box-shadow: var(--shadow-card);
     }
 
-    .chart-panel h3 {
-      font-size: 1.125rem;
-      font-weight: 700;
-      color: var(--color-primary-navy);
-      margin-bottom: 1.25rem;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .progress-item {
-      margin-bottom: 1rem;
-    }
-
-    .progress-label-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.875rem;
-      font-weight: 600;
-      margin-bottom: 6px;
-      color: var(--color-text-main);
-    }
-
-    .progress-track {
-      background: #e2e8f0;
-      height: 12px;
-      border-radius: var(--radius-pill);
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      background: linear-gradient(90deg, var(--color-primary-royal), var(--color-primary-navy));
-      height: 100%;
-      border-radius: var(--radius-pill);
-      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-      width: 0%;
-    }
-
-    /* ==========================================================================
-       DATA PESERTA TABLE SECTION
-       ========================================================================== */
-    .table-panel {
-      background: #ffffff;
-      border: 1px solid var(--color-border-subtle);
-      border-radius: var(--radius-lg);
-      padding: 1.75rem;
-      box-shadow: var(--shadow-card);
-      margin-bottom: 2rem;
-    }
-
     .table-toolbar {
       display: flex;
-      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
+      flex-wrap: wrap;
       gap: 1rem;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.25rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid #f1f5f9;
     }
 
     .filter-group {
       display: flex;
-      flex-wrap: wrap;
       align-items: center;
-      gap: 0.75rem;
+      gap: 8px;
+      flex-wrap: wrap;
       flex: 1;
     }
 
     .search-input {
       height: 42px;
-      border: 1px solid var(--color-border-input);
+      border: 1.5px solid var(--color-border-input);
       border-radius: var(--radius-sm);
       padding: 0 12px;
       font-size: 0.875rem;
-      min-width: 250px;
+      color: var(--color-text-main);
+      min-width: 240px;
+      flex: 1;
     }
 
     .filter-select {
       height: 42px;
-      border: 1px solid var(--color-border-input);
+      border: 1.5px solid var(--color-border-input);
       border-radius: var(--radius-sm);
-      padding: 0 12px;
-      font-size: 0.875rem;
+      padding: 0 10px;
+      font-size: 0.8125rem;
       background: #ffffff;
       color: var(--color-text-main);
+      cursor: pointer;
     }
 
     .export-actions {
       display: flex;
+      align-items: center;
+      gap: 8px;
       flex-wrap: wrap;
-      gap: 0.5rem;
     }
 
+    /* BUTTONS */
+    .btn {
+      height: 42px;
+      padding: 0 16px;
+      border-radius: var(--radius-sm);
+      font-size: 0.8125rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--color-primary-royal);
+      color: #ffffff;
+    }
+    .btn-primary:hover {
+      background: var(--color-primary-navy);
+    }
+
+    .btn-secondary {
+      background: var(--color-bg-tint);
+      color: var(--color-primary-navy);
+      border: 1px solid #bfdbfe;
+    }
+    .btn-secondary:hover {
+      background: #d3e5f8;
+    }
+
+    /* DATA TABLE */
     .table-wrapper {
       overflow-x: auto;
-      border: 1px solid var(--color-border-subtle);
+      border: 1px solid #e2e8f0;
       border-radius: var(--radius-md);
     }
 
-    table.data-table {
+    .data-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.875rem;
+      font-size: 0.84rem;
       text-align: left;
     }
 
-    table.data-table th {
-      background-color: var(--color-bg-tint);
-      color: var(--color-primary-navy);
+    .data-table th {
+      background: #f8fafc;
+      padding: 11px 12px;
       font-weight: 700;
-      padding: 12px 14px;
-      border-bottom: 2px solid var(--color-border-subtle);
+      color: #334155;
+      border-bottom: 2px solid #e2e8f0;
       white-space: nowrap;
     }
 
-    table.data-table td {
-      padding: 12px 14px;
-      border-bottom: 1px solid var(--color-border-subtle);
+    .data-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #f1f5f9;
       vertical-align: middle;
     }
 
-    table.data-table tr:hover {
-      background-color: #f8fafc;
+    .data-table tr:hover {
+      background: #f8fbff;
     }
 
-    .status-badge {
-      display: inline-block;
-      padding: 4px 10px;
+    .badge-ruang {
+      background: #19365f;
+      color: #ffffff;
+      padding: 3px 8px;
+      border-radius: var(--radius-pill);
+      font-weight: 700;
+      font-size: 0.75rem;
+      white-space: nowrap;
+    }
+
+    .badge-status {
+      padding: 3px 10px;
       border-radius: var(--radius-pill);
       font-size: 0.75rem;
       font-weight: 700;
       white-space: nowrap;
     }
 
-    .badge-pending {
-      background-color: #fef3c7;
-      color: #b45309;
-    }
-
-    .badge-verified {
-      background-color: #ecfdf5;
+    .badge-lunas {
+      background: #ecfdf5;
       color: #047857;
+      border: 1px solid #a7f3d0;
     }
 
-    .badge-danger {
-      background-color: #fff0ee;
-      color: #a33f39;
+    .badge-pending {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fde68a;
     }
 
-    .action-icons-row {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .icon-btn {
+    .btn-icon-action {
       width: 32px;
       height: 32px;
       border-radius: var(--radius-sm);
-      border: 1px solid var(--color-border-input);
-      background: #ffffff;
-      color: var(--color-primary-navy);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .icon-btn:hover {
-      background: var(--color-bg-tint);
-      border-color: var(--color-primary-royal);
-    }
-
-    .icon-btn-danger:hover {
-      background: #fee2e2;
-      border-color: #dc2626;
-      color: #dc2626;
-    }
-
-    /* Common Buttons */
-    .btn {
-      height: 42px;
-      padding: 0 16px;
-      border-radius: var(--radius-sm);
-      font-size: 0.8125rem;
-      font-weight: 600;
-      cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      border: none;
-      text-decoration: none;
+      justify-content: center;
+      cursor: pointer;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
       transition: all 0.2s ease;
     }
 
-    .btn-primary {
-      background-color: var(--color-primary-royal);
-      color: #ffffff;
+    .btn-icon-action:hover {
+      background: #f1f5f9;
     }
 
-    .btn-primary:hover {
-      background-color: var(--color-primary-navy);
-    }
-
-    .btn-secondary {
-      background-color: var(--color-bg-tint);
-      color: var(--color-primary-navy);
-    }
-
-    .btn-secondary:hover {
-      background-color: #d2e4f7;
-    }
-
-    /* ==========================================================================
-       LOGIN PIN MODAL OVERLAY
-       ========================================================================== */
-    /* ==========================================================================
-       LOGIN PIN MODAL OVERLAY & CARD
-       ========================================================================== */
-    .pin-modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(15, 23, 42, 0.75);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      transition: opacity 0.35s ease, visibility 0.35s ease;
-    }
-
-    .pin-modal-card {
-      background: #ffffff;
-      border-radius: var(--radius-lg);
-      padding: 2.25rem 2rem;
-      max-width: 420px;
-      width: 90%;
+    /* FOOTER */
+    .site-footer {
+      background: #0e223d;
+      color: #94a3b8;
+      padding: 1.5rem;
       text-align: center;
-      box-shadow: 0 20px 50px rgba(15, 23, 42, 0.3);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .pin-input {
-      width: 100%;
-      height: 48px;
-      text-align: center;
-      letter-spacing: 6px;
-      font-size: 1.5rem;
-      font-weight: 700;
-      border: 2px solid var(--color-border-input);
-      border-radius: var(--radius-sm);
-      margin: 1rem 0;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .pin-input:focus {
-      outline: none;
-      border-color: var(--color-primary-royal);
-      box-shadow: 0 0 0 3px rgba(40, 88, 145, 0.15);
-    }
-
-    /* In-Card Loading Spinner & Success Badge */
-    .pin-auth-spinner {
-      width: 44px;
-      height: 44px;
-      margin: 0 auto;
-      border: 3.5px solid rgba(40, 88, 145, 0.15);
-      border-top-color: var(--color-primary-royal);
-      border-right-color: var(--color-accent-gold);
-      border-radius: 50%;
-      animation: pinSpin 0.75s linear infinite;
-    }
-
-    @keyframes pinSpin {
-      to { transform: rotate(360deg); }
-    }
-
-    .pin-auth-success-icon {
-      width: 48px;
-      height: 48px;
-      margin: 0 auto;
-      border-radius: 50%;
-      background: #ecfdf5;
-      border: 2px solid #a7f3d0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #047857;
-      animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    @keyframes popIn {
-      0% { transform: scale(0.6); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-
-    .pin-error-alert {
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-      color: #991b1b;
       font-size: 0.8125rem;
-      padding: 8px 12px;
-      border-radius: var(--radius-sm);
-      margin: -4px 0 14px;
-      text-align: center;
-      font-weight: 600;
-      animation: fadeIn 0.2s ease;
+      margin-top: auto;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-4px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes pinShake {
-      0%, 100% { transform: translateX(0); }
-      20%, 60% { transform: translateX(-8px); }
-      40%, 80% { transform: translateX(8px); }
-    }
-
-    .pin-shake {
-      animation: pinShake 0.4s ease-in-out;
-      border-color: #ef4444 !important;
-    }
-
-    /* SweetAlert Highest Priority Layer */
-    .swal2-container {
-      z-index: 100000 !important;
-    }
-
-    @media (max-width: 768px) {
-      .charts-grid-2 {
-        grid-template-columns: 1fr;
+    /* PRINT ATTENDANCE STYLES (PRESENSI RUANG FORMAT A4) */
+    @media print {
+      body * {
+        visibility: hidden;
       }
-      .table-toolbar {
-        flex-direction: column;
-        align-items: stretch;
+      #printAttendanceArea, #printAttendanceArea * {
+        visibility: visible;
       }
-      .filter-group {
-        flex-direction: column;
-        align-items: stretch;
+      #printAttendanceArea {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 20px;
+      }
+      .no-print {
+        display: none !important;
       }
     }
   </style>
@@ -639,31 +528,29 @@
 <body>
 
   <!-- ==========================================================================
-       PIN LOGIN OVERLAY (PROTECTED ACCESS)
+       PIN LOGIN OVERLAY (DUAL ROLE AUTH: PANITIA VS SUPER ADMIN)
        ========================================================================== -->
   <div id="pinOverlay" class="pin-modal-overlay">
     <div class="pin-modal-card">
-      <img src="https://file.garden/aehADr1aKQol7cT9/Omega_Plus_Circular_Emblem-removebg-preview.png" onerror="this.src='logo.png'" alt="Logo OMEGA PLUS" style="width: 72px; height: 72px; object-fit: contain; border-radius: 50%; margin: 0 auto 1rem; display: block; border: 2px solid var(--color-accent-gold); background: #ffffff; box-shadow: 0 4px 12px rgba(25, 54, 95, 0.15);">
-      <h2 style="font-size: 1.25rem; font-weight: 700; color: #19365f; margin-bottom: 4px;">Autentikasi Panitia</h2>
-      <p style="font-size: 0.8125rem; color: #657c94;">Masukkan PIN Keamanan untuk membuka portal admin.</p>
-      
-      <!-- PIN FORM FIELDS -->
-      <div id="pinFormFields">
-        <input type="password" id="adminPinInput" class="pin-input" placeholder="••••••" maxlength="10" autofocus onkeypress="if(event.key==='Enter') submitPinLogin()">
-        <div id="pinErrorAlert" class="pin-error-alert" style="display: none;"></div>
-        <button type="button" id="btnSubmitPin" class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="submitPinLogin()">
-          <i data-lucide="unlock" style="width: 16px; height: 16px;"></i> Masuk Dashboard
-        </button>
-        <div style="margin-top: 1rem;">
-          <a href="/" style="font-size: 0.8125rem; color: #657c94; text-decoration: none;">&larr; Kembali ke Beranda Utama</a>
-        </div>
-      </div>
+      <img src="https://file.garden/aehADr1aKQol7cT9/Omega_Plus_Circular_Emblem-removebg-preview.png" onerror="this.src='logo.png'" alt="Logo OMEGA PLUS" style="width: 68px; height: 68px; object-fit: contain; border-radius: 50%; margin: 0 auto 0.75rem; display: block; border: 2px solid var(--color-accent-gold); background: #ffffff;">
+      <h2 style="font-size: 1.25rem; font-weight: 800; color: #19365f; margin-bottom: 2px;">Autentikasi Panitia & Admin</h2>
+      <p style="font-size: 0.8125rem; color: #657c94;">Masukkan PIN Keamanan untuk membuka dashboard data pendaftaran.</p>
 
-      <!-- IN-CARD SLEEK LOADING STATE (No confusing background modal) -->
-      <div id="pinLoadingState" style="display: none; padding: 1.5rem 0 0.5rem; text-align: center;">
-        <div class="pin-auth-spinner"></div>
-        <h3 id="pinLoadingTitle" style="font-size: 1.05rem; font-weight: 700; color: #19365f; margin: 1rem 0 4px;">Memverifikasi PIN...</h3>
-        <p id="pinLoadingDesc" style="font-size: 0.8125rem; color: #657c94; margin: 0;">Menghubungkan ke server Google Apps Script</p>
+      <div id="pinFormFields">
+        <input type="password" id="adminPinInput" class="pin-input" placeholder="••••" maxlength="10" autofocus onkeypress="if(event.key==='Enter') submitDualPinLogin()">
+        <div id="pinErrorAlert" class="pin-error-alert" style="display: none;"></div>
+        <button type="button" class="btn btn-primary" style="width: 100%; justify-content: center; height: 46px;" onclick="submitDualPinLogin()">
+          <i data-lucide="unlock" style="width: 16px; height: 16px;"></i> Masuk ke Dashboard
+        </button>
+
+        <div class="pin-hint-box">
+          <div>&bull; <strong>PIN Panitia (2026):</strong> Mode Lihat Saja, filter 30 ruang & cetak absensi.</div>
+          <div style="margin-top: 4px;">&bull; <strong>PIN Super Admin (8899):</strong> Akses penuh verifikasi lunas, edit data, dan export Excel.</div>
+        </div>
+
+        <div style="margin-top: 1rem;">
+          <a href="index.html" style="font-size: 0.8125rem; color: #657c94; text-decoration: none;">&larr; Buka Formulir Pendaftaran Publik</a>
+        </div>
       </div>
     </div>
   </div>
@@ -674,33 +561,31 @@
   <header class="header-admin">
     <div class="header-container">
       <div class="brand-box">
-        <img src="https://file.garden/aehADr1aKQol7cT9/Omega_Plus_Circular_Emblem-removebg-preview.png" onerror="this.src='logo.png'" alt="Logo OMEGA PLUS" style="width: 46px; height: 46px; object-fit: contain; border-radius: 50%; border: 2px solid var(--color-accent-gold); background: #ffffff;">
+        <img src="https://file.garden/aehADr1aKQol7cT9/Omega_Plus_Circular_Emblem-removebg-preview.png" onerror="this.src='logo.png'" alt="Logo">
         <div class="brand-text">
           <h2>SMP NEGERI 1 PAMEKASAN</h2>
           <p>Portal Dashboard Panitia OMEGA PLUS 2026</p>
         </div>
       </div>
 
-      <nav class="admin-nav">
-        <a href="/" class="nav-btn">
-          <i data-lucide="home" style="width: 14px; height: 14px;"></i> Beranda
-        </a>
-        <a href="pendaftaran.html" class="nav-btn">
+      <div class="admin-nav">
+        <div id="roleBadgeContainer"></div>
+        <a href="index.html" class="nav-btn" target="_blank">
           <i data-lucide="external-link" style="width: 14px; height: 14px;"></i> Form Pendaftaran
         </a>
         <button class="nav-btn" onclick="logoutAdmin()">
           <i data-lucide="log-out" style="width: 14px; height: 14px;"></i> Keluar
         </button>
-      </nav>
+      </div>
     </div>
   </header>
 
   <!-- ==========================================================================
-       MAIN DASHBOARD CONTENT
+       MAIN DASHBOARD
        ========================================================================== -->
   <main class="main-container">
     
-    <!-- Sync & Title Bar -->
+    <!-- SYNC BAR -->
     <div class="sync-status-bar">
       <div class="sync-pill">
         <span class="pulse-dot"></span>
@@ -713,194 +598,188 @@
       </div>
     </div>
 
-    <div class="dashboard-header">
-      <div>
-        <div class="dashboard-eyebrow">RINGKASAN PENDAFTARAN</div>
-        <h1>Dashboard Panitia</h1>
-      </div>
-      <div>
-        <a href="index.html" class="btn btn-primary">
-          <i data-lucide="plus" style="width: 16px; height: 16px;"></i> + Daftarkan Peserta
-        </a>
-      </div>
-    </div>
-
-    <!-- 7 METRIC STAT CARDS -->
-    <div class="stats-grid-7">
+    <!-- METRIC STATS GRID -->
+    <div class="stats-grid-8">
       <div class="stat-card">
         <div class="stat-num" id="stat-total">0</div>
-        <div class="stat-label">Total peserta</div>
+        <div class="stat-label">Total Peserta</div>
       </div>
       <div class="stat-card">
         <div class="stat-num" id="stat-level1">0</div>
-        <div class="stat-label">Level 1</div>
+        <div class="stat-label">Level 1 (Kls 3-4)</div>
       </div>
       <div class="stat-card">
         <div class="stat-num" id="stat-level2">0</div>
-        <div class="stat-label">Level 2</div>
+        <div class="stat-label">Level 2 (Kls 5-6)</div>
       </div>
       <div class="stat-card">
         <div class="stat-num" id="stat-matematika">0</div>
         <div class="stat-label">Matematika</div>
       </div>
       <div class="stat-card">
-        <div class="stat-num" id="stat-binggris">0</div>
-        <div class="stat-label">Bahasa Inggris</div>
-      </div>
-      <div class="stat-card">
         <div class="stat-num" id="stat-ipa">0</div>
         <div class="stat-label">IPA</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-binggris">0</div>
+        <div class="stat-label">B. Inggris</div>
       </div>
       <div class="stat-card">
         <div class="stat-num" id="stat-ips">0</div>
         <div class="stat-label">IPS</div>
       </div>
-    </div>
-
-    <!-- 2 DISTRIBUTION CHARTS -->
-    <div class="charts-grid-2">
-      <div class="chart-panel">
-        <h3><i data-lucide="bar-chart-2" style="width: 20px; height: 20px; color: var(--color-primary-royal);"></i> Peserta berdasarkan level</h3>
-        <div class="progress-item">
-          <div class="progress-label-row">
-            <span>Level 1 (Kelas 1 - 3)</span>
-            <span id="chart-l1-val">0</span>
-          </div>
-          <div class="progress-track"><div class="progress-fill" id="bar-level1"></div></div>
-        </div>
-        <div class="progress-item">
-          <div class="progress-label-row">
-            <span>Level 2 (Kelas 4 - 6)</span>
-            <span id="chart-l2-val">0</span>
-          </div>
-          <div class="progress-track"><div class="progress-fill" id="bar-level2"></div></div>
-        </div>
-      </div>
-
-      <div class="chart-panel">
-        <h3><i data-lucide="pie-chart" style="width: 20px; height: 20px; color: var(--color-primary-royal);"></i> Pilihan mata pelajaran</h3>
-        <div class="progress-item">
-          <div class="progress-label-row"><span>Matematika</span><span id="chart-mat-val">0</span></div>
-          <div class="progress-track"><div class="progress-fill" id="bar-mat"></div></div>
-        </div>
-        <div class="progress-item">
-          <div class="progress-label-row"><span>Bahasa Inggris</span><span id="chart-bing-val">0</span></div>
-          <div class="progress-track"><div class="progress-fill" id="bar-bing"></div></div>
-        </div>
-        <div class="progress-item">
-          <div class="progress-label-row"><span>IPA</span><span id="chart-ipa-val">0</span></div>
-          <div class="progress-track"><div class="progress-fill" id="bar-ipa"></div></div>
-        </div>
-        <div class="progress-item">
-          <div class="progress-label-row"><span>IPS</span><span id="chart-ips-val">0</span></div>
-          <div class="progress-track"><div class="progress-fill" id="bar-ips"></div></div>
-        </div>
+      <div class="stat-card" style="border-color: #a7f3d0; background: #f0fdf4;">
+        <div class="stat-num" id="stat-verified" style="color: #047857;">0</div>
+        <div class="stat-label" style="color: #047857;">Lunas / Sah</div>
       </div>
     </div>
 
-    <!-- DATA PESERTA MANAGEMENT TABLE -->
+    <!-- TABLE MANAGEMENT PANEL -->
     <div class="table-panel">
+      
+      <!-- TOOLBAR & FILTERS -->
       <div class="table-toolbar">
         <div class="filter-group">
-          <input type="text" id="filterSearch" class="search-input" placeholder="🔍 Cari nama, no. pendaftaran, sekolah..." oninput="filterLocalPeserta()">
+          <!-- SEARCH -->
+          <input type="text" id="filterSearch" class="search-input" placeholder="🔍 Cari nama, sekolah, no. registrasi, WA guru..." oninput="filterLocalPeserta()">
           
+          <!-- FILTER LEVEL -->
           <select id="filterLevel" class="filter-select" onchange="filterLocalPeserta()">
             <option value="Semua">Semua Level</option>
-            <option value="Level 1">Level 1</option>
-            <option value="Level 2">Level 2</option>
+            <option value="Level 1">Level 1 (Kls 3-4)</option>
+            <option value="Level 2">Level 2 (Kls 5-6)</option>
           </select>
 
+          <!-- FILTER MAPEL -->
           <select id="filterMapel" class="filter-select" onchange="filterLocalPeserta()">
             <option value="Semua">Semua Mapel</option>
             <option value="Matematika">Matematika</option>
-            <option value="Bahasa Inggris">Bahasa Inggris</option>
             <option value="IPA">IPA</option>
+            <option value="Bahasa Inggris">Bahasa Inggris</option>
             <option value="IPS">IPS</option>
+          </select>
+
+          <!-- FILTER RUANG KELAS (RUANG 01 - 30) -->
+          <select id="filterRuang" class="filter-select" onchange="filterLocalPeserta()">
+            <option value="Semua">Semua Ruang (01–30)</option>
+            <!-- Generated via JS for Ruang 01 to Ruang 30 -->
+          </select>
+
+          <!-- FILTER STATUS -->
+          <select id="filterStatus" class="filter-select" onchange="filterLocalPeserta()">
+            <option value="Semua">Semua Status</option>
+            <option value="Menunggu Verifikasi">Menunggu Verifikasi</option>
+            <option value="Lunas">Lunas / Terverifikasi</option>
           </select>
         </div>
 
         <div class="export-actions">
-          <button class="btn btn-secondary" onclick="cetakSeluruhPeserta()">
+          <button class="btn btn-secondary" onclick="cetakRekapA4()">
             <i data-lucide="printer" style="width: 14px; height: 14px;"></i> CETAK REKAP A4
           </button>
-          <button class="btn btn-secondary" onclick="eksporCSV()">
-            <i data-lucide="download" style="width: 14px; height: 14px;"></i> EKSPOR CSV
+          <button class="btn btn-primary" onclick="cetakPresensiRuang()">
+            <i data-lucide="clipboard-list" style="width: 14px; height: 14px;"></i> CETAK PRESENSI RUANG
+          </button>
+          <button class="btn btn-secondary" onclick="eksporExcelCSV()">
+            <i data-lucide="download" style="width: 14px; height: 14px;"></i> EKSPOR EXCEL
           </button>
         </div>
       </div>
 
+      <!-- TABLE -->
       <div class="table-wrapper">
         <table class="data-table">
           <thead>
             <tr>
-              <th>No. Pendaftaran</th>
-              <th>Nama Peserta</th>
-              <th>Asal Sekolah</th>
-              <th>Level</th>
-              <th>Mata Pelajaran</th>
-              <th>Kode Mapel</th>
+              <th>No. Registrasi</th>
+              <th>Nama Peserta & Asal Sekolah</th>
+              <th>Alamat Sekolah</th>
+              <th>No. WA Guru</th>
+              <th>Level & Mapel</th>
+              <th>Kode Peserta</th>
+              <th>Ruang Kelas</th>
+              <th>Bukti TF</th>
               <th>Status</th>
               <th style="text-align: center;">Aksi</th>
             </tr>
           </thead>
           <tbody id="pesertaTableBody">
             <tr>
-              <td colspan="8" style="text-align: center; padding: 30px; color: #657c94;">
+              <td colspan="10" style="text-align: center; padding: 30px; color: #657c94;">
                 Memuat data peserta dari Google Sheets...
               </td>
             </tr>
           </tbody>
         </table>
       </div>
+
     </div>
 
   </main>
 
-  <!-- ==========================================================================
-       JAVASCRIPT LOGIC (SWEETALERT2 & REAL-TIME GAS SYNC)
-       ========================================================================== -->
+  <!-- PRINT ATTENDANCE CONTAINER (HIDDEN UNTIL PRINT ACTION) -->
+  <div id="printAttendanceArea" style="display: none;"></div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    Panitia OMEGA PLUS 2026 — SMP Negeri 1 Pamekasan | Dukungan Teknis: 0882-2851-1309
+  </footer>
+
+  <!-- SCRIPT LOGIC -->
   <script>
     lucide.createIcons();
 
     let allPesertaList = [];
+    let currentRole = null; // 'super_admin' or 'panitia'
 
-    // Periksa status login admin saat halaman dibuka
+    // Populate Dropdown Ruang 01 - 30
+    const selectRuang = document.getElementById('filterRuang');
+    for (let i = 1; i <= 30; i++) {
+      const pad = i < 10 ? '0' + i : i;
+      const opt = document.createElement('option');
+      opt.value = 'Ruang ' + pad;
+      opt.innerText = 'Ruang ' + pad;
+      selectRuang.appendChild(opt);
+    }
+
+    // Cek Status Login Saat Load
     document.addEventListener('DOMContentLoaded', () => {
-      const isAuth = sessionStorage.getItem('omegaAdminAuth');
-      if (isAuth === 'true') {
+      const savedAuth = sessionStorage.getItem('omegaAdminAuth');
+      const savedRole = sessionStorage.getItem('omegaAdminRole');
+
+      if (savedAuth === 'true' && savedRole) {
+        currentRole = savedRole;
         document.getElementById('pinOverlay').style.display = 'none';
+        updateRoleBadgeHeader();
         loadAllDashboardData();
       }
     });
 
-    // Login PIN Admin (In-Card Smooth Transition & Feedback)
-    async function submitPinLogin() {
+    // Login Dual-PIN
+    async function submitDualPinLogin() {
       const pinInput = document.getElementById('adminPinInput');
       const errorAlert = document.getElementById('pinErrorAlert');
-      const formFields = document.getElementById('pinFormFields');
-      const loadingState = document.getElementById('pinLoadingState');
-      const loadingTitle = document.getElementById('pinLoadingTitle');
-      const loadingDesc = document.getElementById('pinLoadingDesc');
-
       const pin = pinInput.value.trim();
+
       if (!pin) {
-        errorAlert.innerText = 'Silakan ketik PIN keamanan panitia.';
+        errorAlert.innerText = 'Silakan ketik PIN keamanan.';
         errorAlert.style.display = 'block';
-        pinInput.classList.add('pin-shake');
-        setTimeout(() => pinInput.classList.remove('pin-shake'), 400);
         pinInput.focus();
         return;
       }
 
-      // Sembunyikan pesan error sebelumnya
       errorAlert.style.display = 'none';
 
-      // Transisi ke tampilan loading di dalam kartu (Bersih & Elegan, tidak ada modal bertumpuk)
-      formFields.style.display = 'none';
-      loadingState.style.display = 'block';
-      loadingTitle.innerText = 'Memverifikasi PIN...';
-      loadingDesc.innerText = 'Menghubungkan ke server Google Apps Script';
+      // Cek PIN lokal cepat
+      if (pin === (window.APP_CONFIG.PIN_ADMIN || '8899')) {
+        handleAuthSuccess('super_admin');
+        return;
+      } else if (pin === (window.APP_CONFIG.PIN_PANITIA || '2026')) {
+        handleAuthSuccess('panitia');
+        return;
+      }
 
+      // Verifikasi via server Google Apps Script
       try {
         const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '/api';
         const res = await fetch(apiUrl, {
@@ -911,104 +790,76 @@
         const result = await res.json();
 
         if (result.status === 'success' && result.authorized) {
-          handlePinSuccess();
+          handleAuthSuccess(result.role || 'panitia');
         } else {
-          handlePinError('PIN keamanan yang Anda masukkan tidak cocok.');
+          errorAlert.innerText = result.message || 'PIN Keamanan tidak sesuai.';
+          errorAlert.style.display = 'block';
+          pinInput.value = '';
+          pinInput.focus();
         }
-      } catch (err) {
-        // Fallback untuk offline/lokal default PIN
-        if (pin === '123456') {
-          handlePinSuccess();
-        } else {
-          handlePinError('Tidak dapat terhubung ke server atau PIN salah.');
-        }
-      }
-
-      function handlePinSuccess() {
-        sessionStorage.setItem('omegaAdminAuth', 'true');
-        loadingState.innerHTML = `
-          <div class="pin-auth-success-icon">
-            <i data-lucide="check" style="width: 26px; height: 26px;"></i>
-          </div>
-          <h3 style="font-size: 1.05rem; font-weight: 700; color: #047857; margin: 0.75rem 0 4px;">Akses Diterima!</h3>
-          <p style="font-size: 0.8125rem; color: #657c94; margin: 0;">Membuka Dashboard Panitia...</p>
-        `;
-        lucide.createIcons();
-
-        // Fade out overlay dengan transisi halus
-        const overlay = document.getElementById('pinOverlay');
-        setTimeout(() => {
-          overlay.style.transition = 'opacity 0.35s ease';
-          overlay.style.opacity = '0';
-          setTimeout(() => {
-            overlay.style.display = 'none';
-            loadAllDashboardData();
-          }, 350);
-        }, 600);
-      }
-
-      function handlePinError(message) {
-        // Kembalikan form secara instan
-        loadingState.style.display = 'none';
-        formFields.style.display = 'block';
-        errorAlert.innerText = message;
+      } catch (e) {
+        errorAlert.innerText = 'Gagal memverifikasi ke server. Coba PIN 8899 (Admin) atau 2026 (Panitia).';
         errorAlert.style.display = 'block';
-        pinInput.classList.add('pin-shake');
-        setTimeout(() => pinInput.classList.remove('pin-shake'), 400);
-        pinInput.value = '';
-        pinInput.focus();
+      }
+
+      function handleAuthSuccess(role) {
+        currentRole = role;
+        sessionStorage.setItem('omegaAdminAuth', 'true');
+        sessionStorage.setItem('omegaAdminRole', role);
+        document.getElementById('pinOverlay').style.display = 'none';
+        updateRoleBadgeHeader();
+        loadAllDashboardData();
       }
     }
 
-    // Logout Admin
+    function updateRoleBadgeHeader() {
+      const badgeContainer = document.getElementById('roleBadgeContainer');
+      if (currentRole === 'super_admin') {
+        badgeContainer.innerHTML = `
+          <span class="role-badge-header role-badge-super">
+            <i data-lucide="shield-check" style="width: 14px; height: 14px;"></i> Super Admin (Akses Penuh)
+          </span>
+        `;
+      } else {
+        badgeContainer.innerHTML = `
+          <span class="role-badge-header role-badge-panitia">
+            <i data-lucide="eye" style="width: 14px; height: 14px;"></i> Panitia (Mode Lihat Saja)
+          </span>
+        `;
+      }
+      lucide.createIcons();
+    }
+
     function logoutAdmin() {
       sessionStorage.removeItem('omegaAdminAuth');
+      sessionStorage.removeItem('omegaAdminRole');
       location.reload();
     }
 
-    // Load Data Metrik & Peserta secara Real-Time
+    // Load Data Metrik & List
     async function loadAllDashboardData() {
-      document.getElementById('syncStatusText').innerText = 'Memperbarui data dari Google Sheets...';
+      document.getElementById('syncStatusText').innerText = 'Menghubungkan ke Google Sheets...';
       const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '/api';
 
       try {
-        // 1. Fetch Stats
+        // Stats
         const resStats = await fetch(`${apiUrl}?action=getDashboardStats`);
         const dataStats = await resStats.json();
-
         if (dataStats.status === 'success') {
           const s = dataStats.data;
-          document.getElementById('stat-total').innerText = s.total;
-          document.getElementById('stat-level1').innerText = s.level1;
-          document.getElementById('stat-level2').innerText = s.level2;
-          document.getElementById('stat-matematika').innerText = s.matematika;
-          document.getElementById('stat-binggris').innerText = s.bahasaInggris;
-          document.getElementById('stat-ipa').innerText = s.ipa;
-          document.getElementById('stat-ips').innerText = s.ips;
-
-          // Render Progress Bars
-          const maxLevel = Math.max(s.level1, s.level2, 1);
-          document.getElementById('chart-l1-val').innerText = s.level1;
-          document.getElementById('chart-l2-val').innerText = s.level2;
-          document.getElementById('bar-level1').style.width = (s.level1 / maxLevel * 100) + '%';
-          document.getElementById('bar-level2').style.width = (s.level2 / maxLevel * 100) + '%';
-
-          const maxMapel = Math.max(s.matematika, s.bahasaInggris, s.ipa, s.ips, 1);
-          document.getElementById('chart-mat-val').innerText = s.matematika;
-          document.getElementById('chart-bing-val').innerText = s.bahasaInggris;
-          document.getElementById('chart-ipa-val').innerText = s.ipa;
-          document.getElementById('chart-ips-val').innerText = s.ips;
-
-          document.getElementById('bar-mat').style.width = (s.matematika / maxMapel * 100) + '%';
-          document.getElementById('bar-bing').style.width = (s.bahasaInggris / maxMapel * 100) + '%';
-          document.getElementById('bar-ipa').style.width = (s.ipa / maxMapel * 100) + '%';
-          document.getElementById('bar-ips').style.width = (s.ips / maxMapel * 100) + '%';
+          document.getElementById('stat-total').innerText = s.total || 0;
+          document.getElementById('stat-level1').innerText = s.level1 || 0;
+          document.getElementById('stat-level2').innerText = s.level2 || 0;
+          document.getElementById('stat-matematika').innerText = s.matematika || 0;
+          document.getElementById('stat-ipa').innerText = s.ipa || 0;
+          document.getElementById('stat-binggris').innerText = s.bahasaInggris || 0;
+          document.getElementById('stat-ips').innerText = s.ips || 0;
+          document.getElementById('stat-verified').innerText = s.verified || 0;
         }
 
-        // 2. Fetch Peserta List
+        // Peserta List
         const resPeserta = await fetch(`${apiUrl}?action=getPesertaList`);
         const dataPeserta = await resPeserta.json();
-
         if (dataPeserta.status === 'success') {
           allPesertaList = dataPeserta.data || [];
           renderPesertaTable(allPesertaList);
@@ -1016,7 +867,7 @@
 
         document.getElementById('syncStatusText').innerText = 'Tersinkron ke Google Sheets Realtime';
       } catch (e) {
-        document.getElementById('syncStatusText').innerText = 'Gagal sinkron dengan spreadsheet';
+        document.getElementById('syncStatusText').innerText = 'Gagal sinkron data.';
       }
     }
 
@@ -1024,46 +875,62 @@
     function renderPesertaTable(list) {
       const tbody = document.getElementById('pesertaTableBody');
       if (list.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 25px; color: #657c94;">Belum ada pendaftaran yang sesuai filter.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 25px; color: #657c94;">Belum ada pendaftaran yang sesuai filter.</td></tr>';
         return;
       }
 
+      const isSuper = (currentRole === 'super_admin');
       let html = '';
+
       list.forEach(p => {
-        const isVerified = p.status === 'Terverifikasi';
-        const badgeClass = isVerified ? 'badge-verified' : 'badge-pending';
+        const isLunas = (p.status === 'Lunas' || p.status === 'Terverifikasi');
+        const badgeClass = isLunas ? 'badge-lunas' : 'badge-pending';
+        
+        let buktiLink = '-';
+        if (p.buktiTransferUrl && p.buktiTransferUrl !== '-') {
+          buktiLink = `<a href="${p.buktiTransferUrl}" target="_blank" style="color: #285891; font-weight: 700; text-decoration: underline; font-size: 11px;">Lihat Bukti</a>`;
+        }
 
         html += `
           <tr>
             <td><strong style="color: #285891;">${p.noPendaftaran}</strong></td>
-            <td><strong>${p.nama}</strong><br><span style="font-size: 11px; color: #657c94;">${p.email}</span></td>
-            <td>${p.sekolah}</td>
-            <td>${p.level}</td>
-            <td>${p.mataPelajaran}</td>
-            <td><span style="color: #047857; font-weight: bold;">${p.kodePeserta}</span></td>
-            <td><span class="status-badge ${badgeClass}">${p.status}</span></td>
+            <td>
+              <strong>${p.nama}</strong><br>
+              <span style="font-size: 11px; color: #657c94;">${p.sekolah}</span>
+            </td>
+            <td style="font-size: 11px; max-width: 140px;">${p.alamatSekolah || '-'}</td>
+            <td><a href="https://wa.me/${(p.noHpGuru||'').replace(/[^0-9]/g,'')}" target="_blank" style="color: #047857; text-decoration: none; font-weight: 600;">${p.noHpGuru || '-'}</a></td>
+            <td>
+              <span style="font-size: 11px; font-weight: 700; color: #1e293b;">${p.level}</span><br>
+              <span style="font-size: 11px; color: #285891;">${p.mataPelajaran}</span>
+            </td>
+            <td><span style="color: #047857; font-weight: 700; font-family: monospace;">${p.kodePeserta}</span></td>
+            <td><span class="badge-ruang">${p.ruangKelas || 'Ruang 01'}</span></td>
+            <td>${buktiLink}</td>
+            <td><span class="badge-status ${badgeClass}">${p.status}</span></td>
             <td style="text-align: center;">
-              <div class="action-icons-row" style="justify-content: center;">
-                ${!isVerified ? `
-                  <button class="icon-btn" title="Verifikasi Pendaftaran" style="color: #047857;" onclick="verifikasiStatusPeserta('${p.noPendaftaran}')">
-                    <i data-lucide="check-circle" style="width: 16px; height: 16px;"></i>
+              ${isSuper ? `
+                <div style="display: flex; gap: 4px; justify-content: center;">
+                  ${!isLunas ? `
+                    <button class="btn-icon-action" title="Verifikasi Lunas" style="color: #047857;" onclick="verifikasiStatusPeserta('${p.noPendaftaran}')">
+                      <i data-lucide="check-circle" style="width: 15px; height: 15px;"></i>
+                    </button>
+                  ` : ''}
+                  <button class="btn-icon-action" title="Edit Data" style="color: #285891;" onclick="editDataPeserta('${encodeURIComponent(JSON.stringify(p))}')">
+                    <i data-lucide="edit-3" style="width: 15px; height: 15px;"></i>
                   </button>
-                ` : `
-                  <button class="icon-btn" title="Cetak Kartu Ujian" style="color: #285891;" onclick="cetakKartuDariAdmin('${encodeURIComponent(JSON.stringify(p))}')">
-                    <i data-lucide="award" style="width: 16px; height: 16px;"></i>
+                  <button class="btn-icon-action" title="Hapus" style="color: #dc2626;" onclick="hapusDataPeserta('${p.noPendaftaran}', '${p.nama}')">
+                    <i data-lucide="trash-2" style="width: 15px; height: 15px;"></i>
                   </button>
-                `}
-                <button class="icon-btn" title="Edit Peserta" onclick="editDataPeserta('${encodeURIComponent(JSON.stringify(p))}')">
-                  <i data-lucide="edit-3" style="width: 16px; height: 16px;"></i>
-                </button>
-                <button class="icon-btn icon-btn-danger" title="Hapus Peserta" onclick="hapusPeserta('${p.noPendaftaran}', '${p.nama}')">
-                  <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
-                </button>
-              </div>
+                </div>
+              ` : `
+                <span style="font-size: 11px; color: #94a3b8; font-style: italic;">Lihat Saja</span>
+              `}
             </td>
           </tr>
         `;
       });
+
       tbody.innerHTML = html;
       lucide.createIcons();
     }
@@ -1073,230 +940,259 @@
       const q = document.getElementById('filterSearch').value.toLowerCase();
       const lvl = document.getElementById('filterLevel').value;
       const mpl = document.getElementById('filterMapel').value;
+      const rng = document.getElementById('filterRuang').value;
+      const st = document.getElementById('filterStatus').value;
 
       const filtered = allPesertaList.filter(p => {
-        const matchText = (p.noPendaftaran + ' ' + p.nama + ' ' + p.sekolah).toLowerCase().includes(q);
+        const matchText = (p.noPendaftaran + ' ' + p.nama + ' ' + p.sekolah + ' ' + (p.alamatSekolah||'') + ' ' + (p.noHpGuru||'') + ' ' + p.kodePeserta).toLowerCase().includes(q);
         const matchLvl = (lvl === 'Semua') || p.level.includes(lvl);
         const matchMpl = (mpl === 'Semua') || p.mataPelajaran.includes(mpl);
-        return matchText && matchLvl && matchMpl;
+        const matchRng = (rng === 'Semua') || (p.ruangKelas === rng);
+        const matchSt = (st === 'Semua') || (p.status.includes(st));
+        return matchText && matchLvl && matchMpl && matchRng && matchSt;
       });
 
       renderPesertaTable(filtered);
     }
 
-    // Verifikasi Pendaftaran (Trigger Email Tahap 2 & Kartu Resmi)
+    // Verifikasi Lunas (Super Admin Only)
     function verifikasiStatusPeserta(noReg) {
+      if (currentRole !== 'super_admin') {
+        Swal.fire({ icon: 'warning', title: 'Akses Terbatas', text: 'Hanya Super Admin yang berhak memverifikasi pendaftaran.' });
+        return;
+      }
+
       Swal.fire({
-        title: 'Verifikasi Pendaftaran?',
-        html: `Apakah data dan bukti pembayaran untuk <strong>${noReg}</strong> sudah sah?<br><br><small style="color: #047857;">Sistem akan otomatis mengirimkan email konfirmasi resmi beserta Kartu Peserta Ujian PDF ber-QR Code.</small>`,
+        title: 'Verifikasi Pembayaran Sah?',
+        text: `Konfirmasi status LUNAS untuk pendaftaran ${noReg}?`,
         icon: 'question',
         showCancelButton: true,
-        confirmButtonText: 'Ya, Verifikasi Sah',
-        cancelButtonText: 'Batal',
         confirmButtonColor: '#047857',
-        cancelButtonColor: '#657c94'
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          Swal.fire({
-            title: 'Memproses Verifikasi...',
-            didOpen: () => { Swal.showLoading(); }
-          });
-
-          const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '/api';
+        confirmButtonText: 'Ya, Sah & Lunas'
+      }).then(async (res) => {
+        if (res.isConfirmed) {
+          Swal.fire({ title: 'Menyimpan...', didOpen: () => Swal.showLoading() });
           try {
-            const res = await fetch(apiUrl, {
+            const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '/api';
+            const apiRes = await fetch(apiUrl, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 action: 'verifikasiPeserta',
                 noPendaftaran: noReg,
-                status: 'Terverifikasi'
+                status: 'Lunas'
               })
             });
-            const data = await res.json();
-
+            const data = await apiRes.json();
             if (data.status === 'success') {
-              Swal.fire({
-                icon: 'success',
-                title: 'Berhasil Terverifikasi!',
-                text: 'Status diperbarui dan email kartu ujian resmi telah dikirim ke peserta.',
-                confirmButtonColor: '#285891'
-              });
+              Swal.fire({ icon: 'success', title: 'Berhasil Diverifikasi', text: data.message });
               loadAllDashboardData();
             } else {
               Swal.fire({ icon: 'error', title: 'Gagal', text: data.message });
             }
           } catch (e) {
-            Swal.fire({ icon: 'error', title: 'Error', text: 'Gagal memproses verifikasi.' });
+            Swal.fire({ icon: 'error', title: 'Error', text: 'Gagal menghubungi server.' });
           }
         }
       });
     }
 
-    // Edit Data Peserta
+    // Edit Data Peserta (Super Admin Only)
     function editDataPeserta(jsonStr) {
+      if (currentRole !== 'super_admin') {
+        Swal.fire({ icon: 'warning', title: 'Akses Terbatas', text: 'Hanya Super Admin yang berhak mengubah data peserta.' });
+        return;
+      }
+
       const p = JSON.parse(decodeURIComponent(jsonStr));
+
       Swal.fire({
         title: 'Edit Data Peserta',
         html: `
           <div style="text-align: left; font-size: 13px;">
             <label><b>Nama Lengkap:</b></label>
-            <input id="swal-nama" class="swal2-input" value="${p.nama}" style="margin: 4px 0 12px; font-size: 14px;">
+            <input id="swal-nama" class="swal2-input" value="${p.nama}" style="margin: 4px 0 10px; font-size: 13px;">
             <label><b>Asal Sekolah:</b></label>
-            <input id="swal-sekolah" class="swal2-input" value="${p.sekolah}" style="margin: 4px 0 12px; font-size: 14px;">
-            <label><b>Nomor WhatsApp:</b></label>
-            <input id="swal-hp" class="swal2-input" value="${p.nomorHp}" style="margin: 4px 0 12px; font-size: 14px;">
-            <label><b>Alamat Email:</b></label>
-            <input id="swal-email" class="swal2-input" value="${p.email}" style="margin: 4px 0 12px; font-size: 14px;">
+            <input id="swal-sekolah" class="swal2-input" value="${p.sekolah}" style="margin: 4px 0 10px; font-size: 13px;">
+            <label><b>Alamat Sekolah:</b></label>
+            <input id="swal-alamat" class="swal2-input" value="${p.alamatSekolah||''}" style="margin: 4px 0 10px; font-size: 13px;">
+            <label><b>No. WhatsApp Guru:</b></label>
+            <input id="swal-hp" class="swal2-input" value="${p.noHpGuru||''}" style="margin: 4px 0 10px; font-size: 13px;">
+            <label><b>Ruang Kelas Ujian:</b></label>
+            <input id="swal-ruang" class="swal2-input" value="${p.ruangKelas||'Ruang 01'}" style="margin: 4px 0 10px; font-size: 13px;">
           </div>
         `,
         showCancelButton: true,
         confirmButtonText: 'Simpan Perubahan',
-        cancelButtonText: 'Batal',
         confirmButtonColor: '#285891',
-        cancelButtonColor: '#657c94',
         preConfirm: () => {
           return {
+            noPendaftaran: p.noPendaftaran,
             nama: document.getElementById('swal-nama').value.trim(),
             sekolah: document.getElementById('swal-sekolah').value.trim(),
-            noHp: document.getElementById('swal-hp').value.trim(),
-            email: document.getElementById('swal-email').value.trim()
+            alamatSekolah: document.getElementById('swal-alamat').value.trim(),
+            noHpGuru: document.getElementById('swal-hp').value.trim(),
+            ruangKelas: document.getElementById('swal-ruang').value.trim()
           };
         }
       }).then(async (result) => {
         if (result.isConfirmed) {
-          const val = result.value;
-          const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '/api';
-          Swal.fire({
-            title: 'Menyimpan Perubahan...',
-            allowOutsideClick: false,
-            didOpen: () => { Swal.showLoading(); }
-          });
+          Swal.fire({ title: 'Menyimpan perubahan...', didOpen: () => Swal.showLoading() });
           try {
+            const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '/api';
             const res = await fetch(apiUrl, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                action: 'updatePeserta',
-                noPendaftaran: p.noPendaftaran,
-                ...val
-              })
+              body: JSON.stringify({ action: 'updatePeserta', ...result.value })
             });
-            if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
-            const data = await res.json();
-            if (data.status === 'success') {
-              Swal.fire({ icon: 'success', title: 'Data Diperbarui!', text: data.message || 'Perubahan berhasil disimpan.', timer: 1500, showConfirmButton: false });
+            const d = await res.json();
+            if (d.status === 'success') {
+              Swal.fire({ icon: 'success', title: 'Tersimpan', text: d.message });
               loadAllDashboardData();
             } else {
-              Swal.fire({ icon: 'error', title: 'Gagal', text: data.message || 'Gagal memperbarui data peserta.' });
+              Swal.fire({ icon: 'error', title: 'Gagal', text: d.message });
             }
           } catch (e) {
-            Swal.fire({ icon: 'error', title: 'Error', text: e.message || 'Gagal menyimpan perubahan ke server.' });
+            Swal.fire({ icon: 'error', title: 'Error', text: 'Gagal update data.' });
           }
         }
       });
     }
 
-    // Hapus Peserta (Anti-Confirm Bawaan)
-    function hapusPeserta(noReg, nama) {
+    // Hapus Data Peserta (Super Admin Only)
+    function hapusDataPeserta(noReg, nama) {
+      if (currentRole !== 'super_admin') {
+        Swal.fire({ icon: 'warning', title: 'Akses Terbatas', text: 'Hanya Super Admin yang berhak menghapus data.' });
+        return;
+      }
+
       Swal.fire({
         title: 'Hapus Peserta?',
-        html: `Apakah Anda yakin ingin menghapus data peserta <strong>${nama}</strong> (${noReg})?<br><br><span style="color: #dc2626; font-size: 12px;">Data yang dihapus dari Google Sheets tidak dapat dikembalikan.</span>`,
+        text: `Data peserta ${nama} (${noReg}) akan dihapus permanen!`,
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Ya, Hapus Data',
-        cancelButtonText: 'Batal',
         confirmButtonColor: '#dc2626',
-        cancelButtonColor: '#657c94'
+        confirmButtonText: 'Ya, Hapus Data'
       }).then(async (res) => {
         if (res.isConfirmed) {
-          const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '/api';
-          Swal.fire({
-            title: 'Menghapus Peserta...',
-            allowOutsideClick: false,
-            didOpen: () => { Swal.showLoading(); }
-          });
+          Swal.fire({ title: 'Menghapus...', didOpen: () => Swal.showLoading() });
           try {
-            const response = await fetch(apiUrl, {
+            const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '/api';
+            const apiRes = await fetch(apiUrl, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ action: 'deletePeserta', noPendaftaran: noReg })
             });
-            if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
-            const data = await response.json();
+            const data = await apiRes.json();
             if (data.status === 'success') {
-              Swal.fire({ icon: 'success', title: 'Terhapus', text: data.message || 'Data peserta berhasil dihapus.', timer: 1500, showConfirmButton: false });
+              Swal.fire({ icon: 'success', title: 'Terhapus', text: data.message });
               loadAllDashboardData();
             } else {
-              Swal.fire({ icon: 'error', title: 'Gagal', text: data.message || 'Gagal menghapus data dari spreadsheet.' });
+              Swal.fire({ icon: 'error', title: 'Gagal', text: data.message });
             }
           } catch (e) {
-            Swal.fire({ icon: 'error', title: 'Gagal', text: e.message || 'Gagal menghapus data dari server.' });
+            Swal.fire({ icon: 'error', title: 'Error', text: 'Gagal menghapus data.' });
           }
         }
       });
     }
 
-    // Cetak Seluruh Peserta (A4 Rekap)
-    function cetakSeluruhPeserta() {
-      if (allPesertaList.length === 0) {
-        Swal.fire({ icon: 'info', title: 'Data Masih Kosong' });
+    // CETAK PRESENSI RUANG UJIAN (FORMAT RESMI PENGAWAS RUANG)
+    function cetakPresensiRuang() {
+      const selectedRuang = document.getElementById('filterRuang').value;
+      const targetRuang = (selectedRuang !== 'Semua') ? selectedRuang : 'Semua Ruang';
+
+      let listToPrint = allPesertaList;
+      if (selectedRuang !== 'Semua') {
+        listToPrint = allPesertaList.filter(p => p.ruangKelas === selectedRuang);
+      }
+
+      if (listToPrint.length === 0) {
+        Swal.fire({ icon: 'info', title: 'Tidak Ada Data', text: `Belum ada peserta yang dialokasikan di ${targetRuang}.` });
         return;
       }
 
-      const w = window.open('', '_blank');
       let rowsHtml = '';
-      allPesertaList.forEach((p, idx) => {
+      listToPrint.forEach((p, idx) => {
         rowsHtml += `
           <tr>
-            <td style="text-align: center;">${idx + 1}</td>
-            <td><strong>${p.noPendaftaran}</strong></td>
-            <td>${p.nama}</td>
-            <td>${p.sekolah}</td>
-            <td>${p.level}</td>
-            <td>${p.mataPelajaran}</td>
-            <td>${p.kodePeserta}</td>
-            <td>${p.status}</td>
+            <td style="text-align: center; padding: 6px;">${idx + 1}</td>
+            <td style="padding: 6px; font-weight: bold;">${p.kodePeserta}</td>
+            <td style="padding: 6px; font-weight: bold;">${p.nama}</td>
+            <td style="padding: 6px;">${p.sekolah}</td>
+            <td style="padding: 6px; text-align: center;">${p.level}</td>
+            <td style="padding: 6px;">${p.mataPelajaran}</td>
+            <td style="padding: 6px; text-align: center; font-weight: bold;">${p.ruangKelas || '-'}</td>
+            <td style="padding: 6px; width: 80px; text-align: center; border-bottom: 1px dotted #999;">${idx % 2 === 0 ? (idx + 1) + '. ......' : ''}</td>
+            <td style="padding: 6px; width: 80px; text-align: center; border-bottom: 1px dotted #999;">${idx % 2 !== 0 ? (idx + 1) + '. ......' : ''}</td>
           </tr>
         `;
       });
 
+      const w = window.open('', '_blank');
       const html = `
         <!DOCTYPE html>
         <html>
         <head>
-          <title>Rekapitulasi Peserta OMEGA PLUS 2026</title>
+          <title>Daftar Hadir Peserta - ${targetRuang}</title>
           <style>
-            body { font-family: Arial, sans-serif; margin: 30px; font-size: 9pt; }
-            .kop { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
-            table { width: 100%; border-collapse: collapse; }
-            th, td { border: 1px solid #333; padding: 6px 8px; }
-            th { background: #eee; font-weight: bold; }
+            body { font-family: Arial, sans-serif; margin: 25px; font-size: 10pt; color: #000; }
+            .header-table { width: 100%; border-bottom: 3px double #000; padding-bottom: 10px; margin-bottom: 15px; }
+            table.data { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 9.5pt; }
+            table.data th, table.data td { border: 1px solid #333; }
+            table.data th { background: #f0f0f0; padding: 8px 4px; text-align: center; }
+            .sig-table { width: 100%; margin-top: 30px; border: none; font-size: 10pt; }
+            .sig-table td { border: none; text-align: center; width: 50%; }
           </style>
         </head>
         <body onload="window.print();">
-          <div class="kop" style="display: flex; align-items: center; justify-content: center; gap: 15px;">
-            <img src="https://file.garden/aehADr1aKQol7cT9/Omega_Plus_Circular_Emblem-removebg-preview.png" onerror="this.src='logo.png'" width="60" height="60" style="object-fit: contain;" />
-            <div>
-              <h2 style="margin: 0;">DAFTAR REKAPITULASI PESERTA OMEGA PLUS 2026</h2>
-              <h3 style="margin: 3px 0;">SMP NEGERI 1 PAMEKASAN</h3>
-              <p style="margin: 0;">Total Peserta Terdaftar: ${allPesertaList.length} Orang | Dicetak pada: ${new Date().toLocaleString('id-ID')}</p>
-            </div>
+          <table class="header-table">
+            <tr>
+              <td style="width: 70px; text-align: center;">
+                <img src="https://file.garden/aehADr1aKQol7cT9/Omega_Plus_Circular_Emblem-removebg-preview.png" width="65" height="65" />
+              </td>
+              <td style="text-align: center;">
+                <h3 style="margin: 0; font-size: 13pt;">PANITIA OLIMPIADE AKADEMIK OMEGA PLUS 2026</h3>
+                <h2 style="margin: 3px 0; font-size: 15pt;">SMP NEGERI 1 PAMEKASAN</h2>
+                <p style="margin: 0; font-size: 9pt;">Jl. Raden Abdul Kadir No. 18 Pamekasan &bull; Telp. (0324) 322471</p>
+              </td>
+            </tr>
+          </table>
+
+          <div style="text-align: center; margin-bottom: 15px;">
+            <h3 style="margin: 0; text-transform: uppercase;">DAFTAR HADIR & PRESENSI PESERTA UJIAN</h3>
+            <div style="font-weight: bold; margin-top: 4px; font-size: 11pt;">ALOKASI: ${targetRuang.toUpperCase()} (TOTAL: ${listToPrint.length} PESERTA)</div>
           </div>
-          <table>
+
+          <table class="data">
             <thead>
               <tr>
-                <th>No</th>
-                <th>No. Pendaftaran</th>
-                <th>Nama Peserta</th>
-                <th>Asal Sekolah</th>
-                <th>Level</th>
-                <th>Mata Pelajaran</th>
-                <th>Kode Mapel</th>
-                <th>Status</th>
+                <th style="width: 30px;">NO</th>
+                <th>KODE PESERTA</th>
+                <th>NAMA LENGKAP SISWA</th>
+                <th>ASAL SEKOLAH</th>
+                <th>TINGKAT</th>
+                <th>MAPEL</th>
+                <th>RUANG</th>
+                <th colspan="2">TANDA TANGAN</th>
               </tr>
             </thead>
-            <tbody>${rowsHtml}</tbody>
+            <tbody>
+              ${rowsHtml}
+            </tbody>
+          </table>
+
+          <table class="sig-table">
+            <tr>
+              <td>
+                Mengetahui,<br>Pengawas Ruang 1<br><br><br><br>
+                ( ___________________________ )
+              </td>
+              <td>
+                Pamekasan, ......................... 2026<br>Pengawas Ruang 2<br><br><br><br>
+                ( ___________________________ )
+              </td>
+            </tr>
           </table>
         </body>
         </html>
@@ -1305,89 +1201,121 @@
       w.document.close();
     }
 
-    // Ekspor Data ke CSV
-    function eksporCSV() {
+    // CETAK REKAPITULASI A4
+    function cetakRekapA4() {
+      const q = document.getElementById('filterSearch').value.toLowerCase();
+      const lvl = document.getElementById('filterLevel').value;
+      const mpl = document.getElementById('filterMapel').value;
+      const rng = document.getElementById('filterRuang').value;
+
+      const filtered = allPesertaList.filter(p => {
+        const matchText = (p.noPendaftaran + ' ' + p.nama + ' ' + p.sekolah).toLowerCase().includes(q);
+        const matchLvl = (lvl === 'Semua') || p.level.includes(lvl);
+        const matchMpl = (mpl === 'Semua') || p.mataPelajaran.includes(mpl);
+        const matchRng = (rng === 'Semua') || (p.ruangKelas === rng);
+        return matchText && matchLvl && matchMpl && matchRng;
+      });
+
+      let rowsHtml = '';
+      filtered.forEach((p, idx) => {
+        rowsHtml += `
+          <tr>
+            <td style="text-align: center; padding: 5px;">${idx + 1}</td>
+            <td style="padding: 5px;">${p.noPendaftaran}</td>
+            <td style="padding: 5px; font-weight: bold;">${p.nama}</td>
+            <td style="padding: 5px;">${p.sekolah}</td>
+            <td style="padding: 5px; font-size: 8pt;">${p.alamatSekolah||'-'}</td>
+            <td style="padding: 5px;">${p.noHpGuru||'-'}</td>
+            <td style="padding: 5px;">${p.mataPelajaran}</td>
+            <td style="padding: 5px; font-family: monospace;">${p.kodePeserta}</td>
+            <td style="padding: 5px; text-align: center; font-weight: bold;">${p.ruangKelas||'-'}</td>
+            <td style="padding: 5px; text-align: center;">${p.status}</td>
+          </tr>
+        `;
+      });
+
+      const w = window.open('', '_blank');
+      const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Rekapitulasi Peserta OMEGA PLUS 2026</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 25px; font-size: 9.5pt; color: #000; }
+            table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+            th, td { border: 1px solid #333; padding: 6px 4px; }
+            th { background: #f0f0f0; }
+          </style>
+        </head>
+        <body onload="window.print();">
+          <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px;">
+            <h2 style="margin: 0;">REKAPITULASI PENDAFTARAN OMEGA PLUS 2026</h2>
+            <h3 style="margin: 3px 0;">SMP NEGERI 1 PAMEKASAN</h3>
+            <p style="margin: 0; font-size: 9pt;">Total Data Tercetak: ${filtered.length} Peserta</p>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 25px;">No</th>
+                <th>No. Reg</th>
+                <th>Nama Siswa</th>
+                <th>Asal Sekolah</th>
+                <th>Alamat Sekolah</th>
+                <th>No. WA Guru</th>
+                <th>Mapel</th>
+                <th>Kode Peserta</th>
+                <th>Ruang</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHtml}
+            </tbody>
+          </table>
+        </body>
+        </html>
+      `;
+      w.document.write(html);
+      w.document.close();
+    }
+
+    // EKSPOR KE EXCEL / CSV
+    function eksporExcelCSV() {
       if (allPesertaList.length === 0) {
-        Swal.fire({ icon: 'info', title: 'Data Masih Kosong' });
+        Swal.fire({ icon: 'info', title: 'Belum Ada Data Untuk Diekspor' });
         return;
       }
 
-      let csv = "No. Pendaftaran,Nama Peserta,Asal Sekolah,Tanggal Daftar,Nomor HP,Email,Level,Mata Pelajaran,Kode Peserta,Status\n";
-      allPesertaList.forEach(p => {
-        csv += `"${p.noPendaftaran}","${p.nama}","${p.sekolah}","${p.tanggalDaftar}","${p.nomorHp}","${p.email}","${p.level}","${p.mataPelajaran}","${p.kodePeserta}","${p.status}"\n`;
+      let csv = '\uFEFFNo,No_Pendaftaran,Nama_Peserta,Asal_Sekolah,Alamat_Sekolah,No_WhatsApp_Guru,Level,Mata_Pelajaran,Kode_Peserta,Ruang_Kelas,Bukti_Transfer_Url,Status_Verifikasi,Catatan\n';
+
+      allPesertaList.forEach((p, idx) => {
+        const row = [
+          idx + 1,
+          `"${p.noPendaftaran}"`,
+          `"${(p.nama || '').replace(/"/g, '""')}"`,
+          `"${(p.sekolah || '').replace(/"/g, '""')}"`,
+          `"${(p.alamatSekolah || '').replace(/"/g, '""')}"`,
+          `"${p.noHpGuru || ''}"`,
+          `"${p.level || ''}"`,
+          `"${p.mataPelajaran || ''}"`,
+          `"${p.kodePeserta || ''}"`,
+          `"${p.ruangKelas || ''}"`,
+          `"${p.buktiTransferUrl || ''}"`,
+          `"${p.status || ''}"`,
+          `"${(p.catatan || '').replace(/"/g, '""')}"`
+        ];
+        csv += row.join(',') + '\n';
       });
 
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `Rekap_Peserta_OMEGA_PLUS_${new Date().toISOString().split('T')[0]}.csv`;
+      a.download = `REKAP_PESERTA_OMEGA_PLUS_2026_${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(a);
       a.click();
+      document.body.removeChild(a);
       URL.revokeObjectURL(url);
-    }
-
-    // Cetak Kartu dari Admin
-    function cetakKartuDariAdmin(jsonStr) {
-      const item = JSON.parse(decodeURIComponent(jsonStr));
-      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=${encodeURIComponent(item.noPendaftaran + '|' + item.nama + '|' + item.kodePeserta)}`;
-      const w = window.open('', '_blank');
-      const html = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>Kartu Peserta Resmi - ${item.nama}</title>
-          <style>
-            body { font-family: Arial, sans-serif; margin: 30px; font-size: 11pt; color: #0f172a; }
-            .card { border: 3px solid #19365f; border-radius: 10px; padding: 20px; }
-            .header { text-align: center; border-bottom: 2px solid #285891; padding-bottom: 10px; margin-bottom: 15px; }
-            table { width: 100%; border-collapse: collapse; }
-            td { padding: 6px 10px; vertical-align: top; }
-            .field-name { width: 30%; font-weight: bold; color: #334155; }
-            .qr-box { border: 1px dashed #64748b; padding: 8px; text-align: center; border-radius: 8px; }
-            .rules { font-size: 9pt; color: #475569; margin-top: 15px; border-top: 1px dotted #cbd5e1; padding-top: 10px; }
-          </style>
-        </head>
-        <body onload="window.print();">
-          <div class="card">
-            <div class="header" style="display: flex; align-items: center; justify-content: center; gap: 12px;">
-              <img src="logo.png" width="55" height="55" style="object-fit: contain;" />
-              <div>
-                <h2 style="margin: 0; color: #19365f; font-size: 15pt;">KARTU PESERTA RESMI OMEGA PLUS 2026</h2>
-                <div style="color: #285891; font-weight: bold; margin-top: 2px;">SMP NEGERI 1 PAMEKASAN</div>
-              </div>
-            </div>
-            <table>
-              <tr>
-                <td style="width: 70%;">
-                  <table>
-                    <tr><td class="field-name">No. Registrasi</td><td>: <strong>${item.noPendaftaran}</strong></td></tr>
-                    <tr><td class="field-name">Nama Lengkap</td><td>: <strong>${item.nama}</strong></td></tr>
-                    <tr><td class="field-name">Asal Sekolah</td><td>: ${item.sekolah}</td></tr>
-                    <tr><td class="field-name">Tingkatan</td><td>: ${item.level}</td></tr>
-                    <tr><td class="field-name">Mata Pelajaran</td><td>: ${item.mataPelajaran}</td></tr>
-                    <tr><td class="field-name">Nomor Peserta Ujian</td><td>: <span style="font-size: 13pt; font-weight: bold; color: #047857;">${item.kodePeserta}</span></td></tr>
-                  </table>
-                </td>
-                <td style="width: 30%; text-align: center;">
-                  <div class="qr-box">
-                    <img src="${qrUrl}" width="110" height="110" /><br>
-                    <span style="font-size: 8pt; font-weight: bold; color: #19365f;">SCAN PRESENSI</span>
-                  </div>
-                </td>
-              </tr>
-            </table>
-            <div class="rules">
-              <strong>Tata Tertib Peserta:</strong><br>
-              1. Wajib membawa kartu ujian ini dan mengenakan seragam sekolah asal.<br>
-              2. Hadir di lokasi SMP Negeri 1 Pamekasan 30 menit sebelum sesi ujian dimulai.<br>
-              3. Sesi 1: IPA & IPS (07.30 - 08.30 WIB) | Sesi 2: Matematika & B. Inggris (09.00 - 10.00 WIB).
-            </div>
-          </div>
-        </body>
-        </html>
-      `;
-      w.document.write(html);
-      w.document.close();
     }
   </script>
 </body>

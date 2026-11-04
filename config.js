@@ -8,19 +8,31 @@
 
 const CONFIG = {
   // Bila di-deploy di Cloudflare Pages, gunakan '/api' (diteruskan via _worker.js)
-  // Bila dibuka secara lokal (file://), Anda dapat memasukkan URL langsung Google Apps Script Web App
+  // Bila dibuka secara lokal (file://), gunakan URL langsung Google Apps Script Web App
   API_URL: window.location.protocol === 'file:' 
     ? 'https://script.google.com/macros/s/AKfycbwsvjH5vK-g5UJF0sI4knpOal8jdGzYC6Z82lP0ecXW2yWGA4wIKmtoa4YRNXgz-g13vg/exec' 
     : '/api',
 
-  // Informasi Event dari Brosur Resmi
+  // Informasi Event dari Brosur & Keputusan Resmi
   EVENT_NAME: "OMEGA PLUS 2026",
   SUBTITLE: "Olimpiade Matematika, Bahasa Inggris, IPA, dan IPS",
   ORGANIZER: "SMP Negeri 1 Pamekasan",
-  TAGLINE: "Semangat berprestasi, tumbuh bersama. ✦",
+  TAGLINE: "Semangat berprestasi, raih tiket emas kelas unggulan! ✦",
   TARGET: "Tingkat SD/MI Sederajat Se-Madura",
   BIAYA_DAFTAR: 40000,
-  REKENING_PEMBAYARAN: "BRI 0055-01-012345-50-1 a.n PANITIA OMEGA PLUS",
+
+  // Rekening Pembayaran Resmi Klien (BCA Norma Dewi)
+  BANK_NAME: "Bank BCA",
+  NO_REKENING: "1921605205",
+  ATAS_NAMA: "Norma Dewi",
+  REKENING_PEMBAYARAN: "BCA 1921605205 a.n Norma Dewi",
+
+  // Konfigurasi 30 Ruang Kelas Ujian
+  TOTAL_RUANG_KELAS: 30,
+
+  // Autentikasi Dual-Role PIN Keamanan
+  PIN_PANITIA: "2026",     // Role 1: Panitia / Pengawas (View-Only / Cetak Absensi)
+  PIN_ADMIN: "8899",       // Role 2: Super Admin / Penanggung Jawab (Full Access)
 
   // Narahubung Resmi (Sesuai Brosur)
   CONTACTS: [

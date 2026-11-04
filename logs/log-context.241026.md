@@ -1,17 +1,16 @@
 # LOG AKTIVITAS, KONTEKS & RENCANA PENGEMBANGAN (CHANGELOG & CONTEXT)
 **Proyek:** Sistem Informasi & Portal Pendaftaran OMEGA PLUS 2026 (SMP Negeri 1 Pamekasan)  
 **Tanggal Log:** 24 Oktober 2026 (`241026`)  
-**Status Sesi:** Transisi & Kloning Proyek ke `13. omega-client` (Versi Ramping Khusus Klien)  
+**Status Sesi:** Sinkronisasi Kebutuhan Klien & Eksekusi Lapangan
 
 ---
 
-## 1. Ringkasan Eksekutif & Permintaan Klien (WhatsApp Request)
+## 1. Rangkuman Pembaharuan & Permintaan Klien (Hasil WhatsApp Chat)
 
-Klien meminta sistem pendaftaran yang **langsung tepat sasaran tanpa landing page**, difokuskan hanya pada formulir pendaftaran, verifikasi pembayaran BCA, pembagian 30 ruang kelas, kwitansi pendaftaran langsung, serta laporan rekapitulasi terlindung password dengan hak akses bertingkat.
+Klien meminta sistem pendaftaran yang *langsung to-the-point* (tanpa landing page panjang yang berputar-putar), formulir pendaftaran disederhanakan persis seperti formulir kertas fisik lomba, dengan alur sebagai berikut:
 
-### Catatan Kebutuhan Klien Berdasarkan 3 Tangkapan Layar WhatsApp:
-1. **Tanpa Landing Page:** Pengguna langsung diarahkan ke formulir pendaftaran publik saat membuka web.
-2. **Data / Field yang Diperlukan:**
+1. **Jalur Utama:** Pengunjung langsung disajikan **Formulir Pendaftaran Online**.
+2. **Field Formulir (Sesuai Brosur / Formulir Fisik):**
    - **Nama Peserta** (Wajib, teks)
    - **Asal Sekolah** (SD/MI)
    - **Alamat Sekolah** *(Field baru sesuai form fisik)*
@@ -23,8 +22,10 @@ Klien meminta sistem pendaftaran yang **langsung tepat sasaran tanpa landing pag
 3. **Pembayaran & Bukti Transfer:**
    - Rekening Pembayaran Resmi: **Bank BCA 1921605205 a.n Norma Dewi**
    - Upload screenshot bukti transfer pembayaran pendaftaran.
-4. **Kwitansi Pendaftaran Digital:**
-   - Sesaat setelah submit sukses, formulir menampilkan **Kwitansi Resmi Pendaftaran** (Nomor Registrasi, Kode Peserta misal `01-02-001`, Ruang Kelas, Nama, Sekolah, Mapel, Status Lunas).
+4. **Kwitansi Pendaftaran Digital & Format Nomor:**
+   - Sesaat setelah submit sukses, formulir menampilkan **Kwitansi Resmi Pendaftaran**.
+   - Format nomor/kode peserta sesuai permintaan baku klien: `omega 0001-kode level-kelas -2026` (contoh: `omega-0001-L1-01-2026`).
+   - Memuat Alokasi Ruang Kelas (Ruang 01–30), Nama, Sekolah, Mapel, Status Lunas, dan QR Code.
    - Tombol cetak langsung (*Print / Simpan PDF*).
 5. **Pembagian 30 Ruang Kelas:**
    - Penyelenggara menyediakan **30 Kelas Ujian**.
@@ -58,21 +59,21 @@ d:\1. MIZTERGOOD\04 - Keuangan dan Bisnis\JASA\13. omega-client
 
 Ketika sesi baru dibuka pada folder `13. omega-client`, berikut langkah eksekusi yang langsung dikerjakan:
 
-- [ ] **1. `config.js`:**
+- [x] **1. `config.js`:**
   - Update nomor rekening: **BCA 1921605205 a.n Norma Dewi**.
   - Atur konfigurasi dual PIN (PIN Panitia untuk View-Only, PIN Admin untuk Full Access).
   - Atur konstanta total kelas = 30.
-- [ ] **2. `index.html` (Formulir Pendaftaran Utama):**
+- [x] **2. `index.html` (Formulir Pendaftaran Utama):**
   - Menggantikan landing page lama menjadi form pendaftaran langsung.
   - Implementasi field baru: Nama, Asal Sekolah, Alamat Sekolah, No HP Guru, Level (3-4 & 5-6), Radio Button 1 Mapel.
   - Kotak informasi transfer BCA Norma Dewi + Form upload screenshot bukti TF.
   - Komponen **Kwitansi Resmi Pendaftaran** interaktif (siap cetak / save PDF).
-- [ ] **3. `admin.html` (Dashboard Laporan & Keamanan):**
+- [x] **3. `admin.html` (Dashboard Laporan & Keamanan):**
   - Modifikasi modal autentikasi: Mendeteksi apakah PIN yang dimasukkan adalah PIN Panitia (*Read-Only*) atau PIN Admin (*Full Access*).
   - Terapkan proteksi tombol aksi (Edit, Hapus, Status Verifikasi hanya aktif untuk Super Admin).
   - Tambahkan tombol **Export to Excel (.xlsx / .csv)** dan **Print Rekapitulasi**.
   - Tampilkan kolom **Ruang / Kelas Ujian** (Ruang 01–30) dan ringkasan distribusi kelas.
-- [ ] **4. `Code.gs` (Google Apps Script Backend):**
+- [x] **4. `Code.gs` (Google Apps Script Backend):**
   - Sesuaikan struktur kolom sheet `PESERTA`:
     `Timestamp`, `No_Pendaftaran`, `Nama_Peserta`, `Asal_Sekolah`, `Alamat_Sekolah`, `No_HP_Guru`, `Level`, `Mata_Pelajaran`, `Kode_Peserta`, `Ruang_Kelas`, `Bukti_Transfer_Url`, `Status_Verifikasi`, `Catatan_Panitia`.
   - Tambahkan handler upload bukti transfer ke folder Google Drive panitia.
