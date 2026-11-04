@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Scoreboard & Golden Ticket Arena — OMEGA PLUS 2026</title>
+  <meta name="description" content="Papan Skor Langsung (Live Score) & Panggung Kehormatan Golden Ticket Olimpiade OMEGA PLUS 2026 SMP Negeri 1 Pamekasan. Tampilan Layar Lebar Aula & Real-time Broadcast.">
+
+  <!-- OpenGraph Metadata -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Live Scoreboard OMEGA PLUS 2026 — SMP Negeri 1 Pamekasan">
+  <meta property="og:description" content="Pantau skor dan peringkat olimpiade SD/MI se-Madura secara langsung dan transparan.">
+  <meta property="og:image" content="https://file.garden/aehADr1aKQol7cT9/Omega_Plus_Circular_Emblem-removebg-preview.png">
+
+  <!-- Favicon Official Emblem -->
+  <link rel="icon" href="https://file.garden/aehADr1aKQol7cT9/Omega_Plus_Circular_Emblem-removebg-preview.png" type="image/png">
+  <link rel="shortcut icon" href="logo.png" type="image/png">
+
+  <!-- Google Fonts: Plus Jakarta Sans & Work Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Work+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- SweetAlert2 (Anti-Alert Bawaan) -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <!-- Konfigurasi Global & Demo Guard -->
+  <script src="config.js"></script>
+  <script src="demo-guard.js"></script>
+
+  <style>
+    /* ==========================================================================
+       DESIGN SYSTEM TOKENS - BIG SCREEN BROADCAST STAGE
+       ========================================================================== */
+    :root {
+      --color-primary-navy:     #19365f;
+      --color-dark-navy:        #091524;
+      --color-stage-bg:         #07111e;
+      --color-royal-blue:       #285891;
+      --color-accent-gold:      #e7b55e;
+      --color-gold-bright:      #fbbf24;
+      --color-gold-glow:        rgba(231, 181, 94, 0.4);
+      --color-silver:           #94a3b8;
+      --color-bronze:           #b45309;
+
+      --color-text-main:        #f8fafc;
+      --color-text-muted:       #94a3b8;
+      --color-text-dim:         #64748b;
+
+      --card-bg:                rgba(15, 30, 52, 0.75);
+      --card-border:            rgba(255, 255, 255, 0.1);
+      --card-border-gold:       rgba(231, 181, 94, 0.45);
+
+      --radius-sm:   8px;
+      --radius-md:   14px;
+      --radius-lg:   20px;
+      --radius-pill: 9999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', 'Work Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--color-stage-bg);
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(40, 88, 145, 0.3) 0%, transparent 60%),
+        radial-gradient(circle at 15% 100%, rgba(231, 181, 94, 0.12) 0%, transparent 45%),
+        radial-gradient(circle at 85% 100%, rgba(30, 68, 114, 0.2) 0%, transparent 45%);
+      color: var(--color-text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    }
+
+    /* Subtle Animated Stage Lights Overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% -20%, rgba(231, 181, 94, 0.18), transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ==========================================================================
+       HEADER BROADCAST BAR (TOP)
+       ========================================================================== */
+    .broadcast-header {
+      position: relative;
+      z-index: 20;
+      background: rgba(9, 21, 36, 0.85);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--card-border);
+      padding: 0.85rem 1.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .brand-logo {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 8px rgba(231, 181, 94, 0.35));
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: #ffffff;
+      line-height: 1.2;
+    }
+
+    .brand-sub {
+      font-size: 0.725rem;
+      color: var(--color-accent-gold);
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    /* Center Status Badge */
+    .header-center-info {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 6px 16px;
+      border-radius: var(--radius-pill);
+    }
+
+    .live-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.775rem;
+      font-weight: 800;
+      color: #ef4444;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .pulse-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ef4444;
+      box-shadow: 0 0 10px #ef4444;
+      animation: livePulse 1.5s infinite;
+    }
+
+    @keyframes livePulse {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.3); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+
+    .clock-display {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: 0.8px;
+      font-family: monospace;
+      border-left: 1px solid rgba(255, 255, 255, 0.2);
+      padding-left: 12px;
+    }
+
+    /* Header Controls */
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ctrl-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+      padding: 7px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .ctrl-btn:hover {
+      background: rgba(255, 255, 255, 0.18);
+      border-color: rgba(255, 255, 255, 0.35);
+      transform: translateY(-1px);
+    }
+
+    .ctrl-btn.active {
+      background: var(--color-accent-gold);
+      color: var(--color-dark-navy);
+      border-color: var(--color-accent-gold);
+      box-shadow: 0 0 15px rgba(231, 181, 94, 0.4);
+    }
+
+    /* ==========================================================================
+       SUB-BAR: SUBJECT TABS & CYCLE PROGRESS
+       ========================================================================== */
+    .stage-subbar {
+      position: relative;
+      z-index: 10;
+      background: rgba(14, 34, 61, 0.7);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--card-border);
+      padding: 0.75rem 1.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .mapel-tabs {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .mapel-tab-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--color-text-muted);
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 0.825rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .mapel-tab-btn:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .mapel-tab-btn.active {
+      background: linear-gradient(135deg, #1e4573 0%, var(--color-royal-blue) 100%);
+      color: #ffffff;
+      border-color: rgba(231, 181, 94, 0.5);
+      box-shadow: 0 4px 15px rgba(40, 88, 145, 0.4);
+    }
+
+    .level-tabs {
+      display: flex;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.35);
+      padding: 3px;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .level-btn {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      padding: 5px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 0.775rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .level-btn.active {
+      background: var(--color-accent-gold);
+      color: var(--color-dark-navy);
+      font-weight: 800;
+      box-shadow: 0 2px 10px rgba(231, 181, 94, 0.35);
+    }
+
+    /* Auto Cycle Timer Bar */
+    .cycle-timer-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.75rem;
+      color: var(--color-accent-gold);
+      font-weight: 700;
+    }
+
+    .cycle-progress-bar {
+      width: 100px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .cycle-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #e7b55e, #fbbf24);
+      width: 100%;
+      transition: width 1s linear;
+    }
+
+    /* ==========================================================================
+       MAIN STAGE ARENA
+       ========================================================================== */
+    .stage-arena {
+      position: relative;
+      z-index: 10;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1.5rem 1.5rem 6.5rem;
+      width: 100%;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* Subject Headline Banner */
+    .subject-headline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding: 0.5rem 0.5rem 0;
+    }
+
+    .headline-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .headline-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(231, 181, 94, 0.2), rgba(40, 88, 145, 0.3));
+      border: 1.5px solid var(--color-accent-gold);
+      color: var(--color-accent-gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(231, 181, 94, 0.25);
+    }
+
+    .headline-name {
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: -0.5px;
+      text-transform: uppercase;
+    }
+
+    .headline-sub {
+      font-size: 0.85rem;
+      color: var(--color-text-muted);
+      font-weight: 600;
+    }
+
+    .golden-ticket-badge-pill {
+      background: linear-gradient(135deg, #b45309 0%, #d97706 50%, #f59e0b 100%);
+      color: #ffffff;
+      padding: 7px 18px;
+      border-radius: var(--radius-pill);
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      box-shadow: 0 4px 18px rgba(217, 119, 6, 0.45);
+      border: 1px solid rgba(254, 240, 138, 0.4);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ==========================================================================
+       PODIUM 3 BESAR (3D STAGE & GOLDEN GLOW)
+       ========================================================================== */
+    .podium-stage {
+      display: grid;
+      grid-template-columns: 1fr 1.15fr 1fr;
+      align-items: flex-end;
+      gap: 1.25rem;
+      margin-top: 0.5rem;
+    }
+
+    .podium-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.3s ease;
+    }
+
+    .podium-col:hover {
+      transform: translateY(-4px);
+    }
+
+    /* Podium Card Box */
+    .podium-card {
+      width: 100%;
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem 1.25rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Juara 1: Emas (Center - Higher Elevation) */
+    .podium-col.rank-1 .podium-card {
+      background: linear-gradient(180deg, rgba(231, 181, 94, 0.18) 0%, rgba(15, 30, 52, 0.95) 100%);
+      border: 2px solid var(--color-accent-gold);
+      box-shadow: 0 15px 45px rgba(231, 181, 94, 0.28), 0 0 35px rgba(231, 181, 94, 0.2) inset;
+      min-height: 380px;
+      justify-content: space-between;
+    }
+
+    /* Juara 2: Perak (Left) */
+    .podium-col.rank-2 .podium-card {
+      background: linear-gradient(180deg, rgba(148, 163, 184, 0.12) 0%, rgba(15, 30, 52, 0.9) 100%);
+      border: 1.5px solid rgba(148, 163, 184, 0.45);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      min-height: 330px;
+      justify-content: space-between;
+    }
+
+    /* Juara 3: Perunggu (Right) */
+    .podium-col.rank-3 .podium-card {
+      background: linear-gradient(180deg, rgba(180, 83, 9, 0.15) 0%, rgba(15, 30, 52, 0.9) 100%);
+      border: 1.5px solid rgba(217, 119, 6, 0.45);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      min-height: 310px;
+      justify-content: space-between;
+    }
+
+    /* Rank Crown / Trophy Badge */
+    .podium-rank-icon {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
+      font-weight: 900;
+      margin-bottom: 10px;
+      position: relative;
+    }
+
+    .podium-col.rank-1 .podium-rank-icon {
+      width: 72px;
+      height: 72px;
+      background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+      color: #0f172a;
+      box-shadow: 0 0 25px rgba(251, 191, 36, 0.7);
+      animation: goldGlow 2.5s infinite alternate;
+    }
+
+    @keyframes goldGlow {
+      from { box-shadow: 0 0 15px rgba(251, 191, 36, 0.5); }
+      to { box-shadow: 0 0 35px rgba(251, 191, 36, 0.9); }
+    }
+
+    .podium-col.rank-2 .podium-rank-icon {
+      background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%);
+      color: #0f172a;
+      box-shadow: 0 0 18px rgba(148, 163, 184, 0.4);
+    }
+
+    .podium-col.rank-3 .podium-rank-icon {
+      background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);
+      color: #ffffff;
+      box-shadow: 0 0 18px rgba(180, 83, 9, 0.4);
+    }
+
+    .podium-predicate {
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .podium-col.rank-1 .podium-predicate { color: var(--color-gold-bright); }
+    .podium-col.rank-2 .podium-predicate { color: #cbd5e1; }
+    .podium-col.rank-3 .podium-predicate { color: #f59e0b; }
+
+    .podium-name {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.3;
+      margin-bottom: 4px;
+      max-width: 90%;
+    }
+
+    .podium-col.rank-1 .podium-name {
+      font-size: 1.45rem;
+      color: #ffffff;
+      text-shadow: 0 2px 10px rgba(231, 181, 94, 0.35);
+    }
+
+    .podium-school {
+      font-size: 0.825rem;
+      color: var(--color-text-muted);
+      font-weight: 500;
+      margin-bottom: 12px;
+      max-width: 85%;
+    }
+
+    .podium-score-tag {
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-md);
+      padding: 8px 18px;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      width: 80%;
+    }
+
+    .podium-col.rank-1 .podium-score-tag {
+      border-color: rgba(231, 181, 94, 0.5);
+      background: rgba(231, 181, 94, 0.1);
+    }
+
+    .score-value {
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .podium-col.rank-1 .score-value {
+      color: var(--color-gold-bright);
+      font-size: 2.6rem;
+    }
+
+    .score-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--color-text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
+
+    .golden-ticket-badge {
+      margin-top: 10px;
+      font-size: 0.675rem;
+      font-weight: 800;
+      background: linear-gradient(90deg, #d97706, #fbbf24);
+      color: #0f172a;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      letter-spacing: 0.4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* ==========================================================================
+       LEADERBOARD RANKS 4 - 10 (GRID & CARDS)
+       ========================================================================== */
+    .roster-section {
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    .roster-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 0.75rem;
+    }
+
+    .roster-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .roster-sub {
+      font-size: 0.775rem;
+      color: var(--color-text-muted);
+    }
+
+    .roster-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 8px;
+    }
+
+    .roster-table th {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--color-text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 6px 14px;
+      text-align: left;
+    }
+
+    .roster-row {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      transition: all 0.2s ease;
+    }
+
+    .roster-row:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(231, 181, 94, 0.3);
+      transform: translateX(4px);
+    }
+
+    .roster-table td {
+      padding: 10px 14px;
+      font-size: 0.85rem;
+    }
+
+    .roster-table td:first-child {
+      border-top-left-radius: 10px;
+      border-bottom-left-radius: 10px;
+    }
+
+    .roster-table td:last-child {
+      border-top-right-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
+
+    .rank-number-box {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      color: #ffffff;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+    }
+
+    .student-name-box strong {
+      display: block;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .student-name-box span {
+      font-size: 0.75rem;
+      color: var(--color-accent-gold);
+      font-family: monospace;
+    }
+
+    .school-box {
+      color: #cbd5e1;
+      font-weight: 500;
+    }
+
+    .score-box {
+      text-align: center;
+    }
+
+    .score-box strong {
+      font-size: 1.25rem;
+      font-weight: 900;
+      color: #ffffff;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .score-breakdown-mini {
+      font-size: 0.7rem;
+      color: var(--color-text-dim);
+    }
+
+    .status-badge-mini {
+      font-size: 0.725rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.05);
+      color: #cbd5e1;
+    }
+
+    /* ==========================================================================
+       BOTTOM NEWS TICKER / RUNNING TEXT (OFFICIAL BROADCAST)
+       ========================================================================== */
+    .ticker-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: linear-gradient(90deg, #091524 0%, #0e223d 50%, #091524 100%);
+      border-top: 2px solid var(--color-accent-gold);
+      box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      height: 48px;
+      overflow: hidden;
+    }
+
+    .ticker-badge {
+      background: linear-gradient(135deg, #b45309 0%, #d97706 100%);
+      color: #ffffff;
+      padding: 0 18px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      font-weight: 900;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      flex-shrink: 0;
+      box-shadow: 5px 0 15px rgba(0, 0, 0, 0.5);
+      z-index: 2;
+    }
+
+    .ticker-content-track {
+      flex: 1;
+      overflow: hidden;
+      white-space: nowrap;
+      position: relative;
+    }
+
+    .ticker-text {
+      display: inline-block;
+      white-space: nowrap;
+      animation: tickerMove 35s linear infinite;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #f8fafc;
+      letter-spacing: 0.3px;
+    }
+
+    .ticker-text span.gold-highlight {
+      color: var(--color-accent-gold);
+      font-weight: 700;
+    }
+
+    .ticker-text span.bullet {
+      color: #e7b55e;
+      margin: 0 14px;
+      font-size: 1.1rem;
+      vertical-align: middle;
+    }
+
+    @keyframes tickerMove {
+      0% { transform: translate3d(100%, 0, 0); }
+      100% { transform: translate3d(-100%, 0, 0); }
+    }
+
+    .ticker-content-track:hover .ticker-text {
+      animation-play-state: paused;
+    }
+
+    /* ==========================================================================
+       FREEZE MODE OVERLAY BANNER
+       ========================================================================== */
+    .freeze-overlay-banner {
+      display: none;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.9) 0%, rgba(30, 64, 175, 0.95) 100%);
+      border: 1px solid rgba(147, 197, 253, 0.4);
+      color: #ffffff;
+      padding: 12px 20px;
+      border-radius: var(--radius-md);
+      box-shadow: 0 8px 30px rgba(37, 99, 235, 0.35);
+      text-align: center;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 0.5rem;
+      animation: slideDown 0.4s ease;
+    }
+
+    @keyframes slideDown {
+      from { transform: translateY(-10px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 900px) {
+      .podium-stage {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      .podium-col.rank-1 { order: 1; }
+      .podium-col.rank-2 { order: 2; }
+      .podium-col.rank-3 { order: 3; }
+      .podium-col.rank-1 .podium-card,
+      .podium-col.rank-2 .podium-card,
+      .podium-col.rank-3 .podium-card {
+        min-height: auto;
+      }
+      .broadcast-header {
+        padding: 0.75rem 1rem;
+      }
+      .stage-arena {
+        padding: 1rem 1rem 6.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================================================
+       HEADER BROADCAST BAR (TOP)
+       ========================================================================== -->
+  <header class="broadcast-header">
+    <div style="display: flex; align-items: center; gap: 14px;">
+      <a href="/" class="brand-group" title="Kembali ke Beranda OMEGA PLUS">
+        <img src="https://file.garden/aehADr1aKQol7cT9/Omega_Plus_Circular_Emblem-removebg-preview.png" onerror="this.src='logo.png'" alt="Logo OMEGA PLUS" class="brand-logo" />
+        <div>
+          <div class="brand-title">OMEGA PLUS 2026</div>
+          <div class="brand-sub">SMP NEGERI 1 PAMEKASAN &bull; LIVE ARENA</div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Center Live Pill & Clock -->
+    <div class="header-center-info">
+      <div class="live-status-pill" id="liveStatusPill">
+        <span class="pulse-dot" id="livePulseDot"></span>
+        <span id="liveStatusText">LIVE BROADCAST</span>
+      </div>
+      <div class="clock-display" id="clockWIB">--:--:-- WIB</div>
+    </div>
+
+    <!-- Header Actions (Auto-cycle, Audio, Fullscreen) -->
+    <div class="header-controls">
+      <button type="button" class="ctrl-btn active" id="btnToggleCycle" onclick="toggleAutoCycle()" title="Jeda / Lanjutkan Pergantian Otomatis">
+        <i data-lucide="play" id="iconCycle" style="width: 14px; height: 14px;"></i>
+        <span id="labelCycle">Auto: ON (12s)</span>
+      </button>
+
+      <button type="button" class="ctrl-btn" id="btnToggleSound" onclick="toggleSound()" title="Aktifkan / Bisukan Audio Nada Juara">
+        <i data-lucide="volume-2" id="iconSound" style="width: 14px; height: 14px;"></i>
+        <span id="labelSound">Audio</span>
+      </button>
+
+      <button type="button" class="ctrl-btn" onclick="toggleFullscreen()" title="Tampilan Layar Penuh Aula">
+        <i data-lucide="maximize" style="width: 14px; height: 14px;"></i>
+        <span>Fullscreen</span>
+      </button>
+
+      <a href="pengumuman.html" class="ctrl-btn" title="Buka Portal Pengumuman Mandiri">
+        <i data-lucide="search" style="width: 14px; height: 14px;"></i>
+        <span>Cek Mandiri</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       SUB-BAR: SUBJECT TABS & CYCLE PROGRESS
+       ========================================================================== -->
+  <div class="stage-subbar">
+    <!-- Mapel Tabs -->
+    <div class="mapel-tabs">
+      <button type="button" class="mapel-tab-btn active" id="tabMapelIPA" onclick="selectMapel('IPA')">
+        <i data-lucide="flask-conical" style="width: 14px; height: 14px;"></i> IPA
+      </button>
+      <button type="button" class="mapel-tab-btn" id="tabMapelMatematika" onclick="selectMapel('Matematika')">
+        <i data-lucide="calculator" style="width: 14px; height: 14px;"></i> Matematika
+      </button>
+      <button type="button" class="mapel-tab-btn" id="tabMapelInggris" onclick="selectMapel('Bahasa Inggris')">
+        <i data-lucide="languages" style="width: 14px; height: 14px;"></i> B. Inggris
+      </button>
+      <button type="button" class="mapel-tab-btn" id="tabMapelIPS" onclick="selectMapel('IPS')">
+        <i data-lucide="globe" style="width: 14px; height: 14px;"></i> IPS
+      </button>
+    </div>
+
+    <!-- Level Tabs -->
+    <div class="level-tabs">
+      <button type="button" class="level-btn active" id="tabLevel2" onclick="selectLevel('Level 2 (Kelas 4-6)')">
+        Level 2 (Kelas 4-6)
+      </button>
+      <button type="button" class="level-btn" id="tabLevel1" onclick="selectLevel('Level 1 (Kelas 1-3)')">
+        Level 1 (Kelas 1-3)
+      </button>
+    </div>
+
+    <!-- Cycle Progress Indicator -->
+    <div class="cycle-timer-wrap">
+      <span id="cycleTimerText">Ganti Mapel: 12s</span>
+      <div class="cycle-progress-bar">
+        <div class="cycle-progress-fill" id="cycleProgressFill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MAIN STAGE ARENA
+       ========================================================================== -->
+  <main class="stage-arena">
+
+    <!-- Freeze Mode Banner (Muncul jika Panitia Mengunci Skor) -->
+    <div class="freeze-overlay-banner" id="freezeBanner">
+      <i data-lucide="lock" style="width: 20px; height: 20px; color: #fef08a;"></i>
+      <div>
+        <strong>PAPAN SKOR DALAM STATUS FREEZE (DIBEKUKAN OLEH DEWAN JURI)</strong>
+        <div style="font-size: 0.8rem; opacity: 0.9;">Koreksi tahap akhir sedang difinalisasi untuk persiapan Penganugerahan Juara di Closing Ceremony.</div>
+      </div>
+    </div>
+
+    <!-- Headline Active Mapel -->
+    <div class="subject-headline">
+      <div class="headline-title">
+        <div class="headline-icon" id="activeHeadlineIcon">
+          <i data-lucide="flask-conical" style="width: 24px; height: 24px;"></i>
+        </div>
+        <div>
+          <h1 class="headline-name" id="activeHeadlineText">IPA — LEVEL 2 (KELAS 4-6)</h1>
+          <div class="headline-sub" id="activeHeadlineSub">Live Scoring Papan Peringkat Real-time &bull; Babak Penyisihan</div>
+        </div>
+      </div>
+
+      <div class="golden-ticket-badge-pill">
+        <i data-lucide="sparkles" style="width: 16px; height: 16px;"></i>
+        <span>Kouta 3 Tiket Emas Bebas Tes Masuk SMPN 1 Pamekasan</span>
+      </div>
+    </div>
+
+    <!-- PODIUM 3 BESAR (JUARA 2, JUARA 1, JUARA 3) -->
+    <section class="podium-stage" id="podiumContainer">
+      <!-- Juara 2 (Perak) -->
+      <div class="podium-col rank-2">
+        <div class="podium-card" id="podiumCard2">
+          <div>
+            <div class="podium-rank-icon">🥈</div>
+            <div class="podium-predicate">JUARA 2 &bull; MEDALI PERAK</div>
+            <h2 class="podium-name" id="podiumName2">Daffa Pratama</h2>
+            <p class="podium-school" id="podiumSchool2">SDIT Al-Ittihad Sumenep</p>
+          </div>
+          <div class="podium-score-tag">
+            <span class="score-value" id="podiumScore2">96</span>
+            <span class="score-label">POIN AKHIR</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Juara 1 (Emas - Podium Utama) -->
+      <div class="podium-col rank-1">
+        <div class="podium-card" id="podiumCard1">
+          <div>
+            <div class="podium-rank-icon">👑</div>
+            <div class="podium-predicate">JUARA 1 &bull; MEDALI EMAS</div>
+            <h2 class="podium-name" id="podiumName1">Amalia Utami</h2>
+            <p class="podium-school" id="podiumSchool1">SD Negeri Jungcancang 1 Pamekasan</p>
+            <div class="golden-ticket-badge">
+              <i data-lucide="award" style="width: 12px; height: 12px;"></i> GOLDEN TICKET PPDB
+            </div>
+          </div>
+          <div class="podium-score-tag">
+            <span class="score-value" id="podiumScore1">101</span>
+            <span class="score-label">POIN AKHIR TERTINGGI</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Juara 3 (Perunggu) -->
+      <div class="podium-col rank-3">
+        <div class="podium-card" id="podiumCard3">
+          <div>
+            <div class="podium-rank-icon">🥉</div>
+            <div class="podium-predicate">JUARA 3 &bull; MEDALI PERUNGGU</div>
+            <h2 class="podium-name" id="podiumName3">Bilqis Azzahra</h2>
+            <p class="podium-school" id="podiumSchool3">MIN 1 Sampang</p>
+          </div>
+          <div class="podium-score-tag">
+            <span class="score-value" id="podiumScore3">89</span>
+            <span class="score-label">POIN AKHIR</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ROSTER PERINGKAT 4 S.D. 10 -->
+    <section class="roster-section">
+      <div class="roster-header">
+        <div class="roster-title">
+          <i data-lucide="list-ordered" style="width: 18px; height: 18px; color: var(--color-accent-gold);"></i>
+          <span>Papan Peringkat 4 s.d. 10</span>
+        </div>
+        <div class="roster-sub">Kalkulasi: Benar (+4), Salah (-1), Kosong (0)</div>
+      </div>
+
+      <table class="roster-table">
+        <thead>
+          <tr>
+            <th style="width: 60px;">Rank</th>
+            <th>Nama Siswa & No. Registrasi</th>
+            <th>Asal Sekolah</th>
+            <th style="text-align: center; width: 120px;">Skor Poin</th>
+            <th style="text-align: right; width: 180px;">Keterangan</th>
+          </tr>
+        </thead>
+        <tbody id="rosterTableBody">
+          <!-- Rendered via JS -->
+        </tbody>
+      </table>
+    </section>
+
+  </main>
+
+  <!-- ==========================================================================
+       BOTTOM NEWS TICKER / RUNNING TEXT (OFFICIAL BROADCAST)
+       ========================================================================== -->
+  <footer class="ticker-bar">
+    <div class="ticker-badge">
+      <i data-lucide="radio" style="width: 16px; height: 16px;"></i>
+      <span>WARTA RESMI</span>
+    </div>
+    <div class="ticker-content-track">
+      <div class="ticker-text" id="tickerTextContainer">
+        🔴 <span class="gold-highlight">LIVE SCOREBOARD OMEGA PLUS 2026:</span> Sistem penilaian lembar jawaban olimpiade berjalan secara digital, transparan, dan terenkripsi.
+        <span class="bullet">&bull;</span>
+        Selamat kepada para kandidat Juara 1 sementara yang berhak meraih <span class="gold-highlight">GOLDEN TICKET PPDB SMP Negeri 1 Pamekasan Bebas Tes</span>!
+        <span class="bullet">&bull;</span>
+        Bagi peserta yang memerlukan e-sertifikat dan rincian skor mandiri, silakan kunjungi menu <span class="gold-highlight">Portal Pengumuman</span>.
+        <span class="bullet">&bull;</span>
+        Tetap junjung tinggi sportivitas dan kejujuran akademik. SMP Negeri 1 Pamekasan: Semangat berprestasi, tumbuh bersama! ✦
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==========================================================================
+       JAVASCRIPT LOGIC & REALTIME SYNC
+       ========================================================================== -->
+  <script>
+    lucide.createIcons();
+
+    // State Variables
+    let currentMapel = "IPA";
+    let currentLevel = "Level 2 (Kelas 4-6)";
+    let autoCycleEnabled = true;
+    let cycleIntervalSeconds = 12;
+    let cycleTimer = null;
+    let cycleCounter = 12;
+    let isSoundMuted = false;
+    let isFrozen = false;
+
+    // Daftar Mapel dan Level untuk Siklus Otomatis
+    const MAPEL_LIST = ["IPA", "Matematika", "Bahasa Inggris", "IPS"];
+    const MAPEL_ICONS = {
+      "IPA": "flask-conical",
+      "Matematika": "calculator",
+      "Bahasa Inggris": "languages",
+      "IPS": "globe"
+    };
+
+    // Master Mock Data Live Score Realtime (Fallback & Offline High Fidelity)
+    const LIVE_DATA_STORE = {
+      "IPA": {
+        "Level 2 (Kelas 4-6)": [
+          { rank: 1, nama: "Amalia Utami", noPendaftaran: "OMP-2026-0001", sekolah: "SD Negeri Jungcancang 1 Pamekasan", score: 101, benar: 26, salah: 3, kosong: 1, status: "JUARA 1 (MEDALI EMAS)" },
+          { rank: 2, nama: "Daffa Pratama", noPendaftaran: "OMP-2026-0006", sekolah: "SDIT Al-Ittihad Sumenep", score: 96, benar: 25, salah: 4, kosong: 1, status: "JUARA 2 (MEDALI PERAK)" },
+          { rank: 3, nama: "Bilqis Azzahra", noPendaftaran: "OMP-2026-0007", sekolah: "MIN 1 Sampang", score: 89, benar: 23, salah: 3, kosong: 4, status: "JUARA 3 (MEDALI PERUNGGU)" },
+          { rank: 4, nama: "Fajar Maulana", noPendaftaran: "OMP-2026-0012", sekolah: "SDN Barurambat Kota 1 Pamekasan", score: 84, benar: 22, salah: 4, kosong: 4, status: "JUARA HARAPAN 1" },
+          { rank: 5, nama: "Zahra Putri", noPendaftaran: "OMP-2026-0013", sekolah: "SD Plus Nurul Hikmah Pamekasan", score: 80, benar: 21, salah: 4, kosong: 5, status: "JUARA HARAPAN 2" },
+          { rank: 6, nama: "Aditya Nugraha", noPendaftaran: "OMP-2026-0014", sekolah: "SDN Kolor 2 Sumenep", score: 76, benar: 20, salah: 4, kosong: 6, status: "PESERTA BERPRESTASI" },
+          { rank: 7, nama: "Naila Fitria", noPendaftaran: "OMP-2026-0015", sekolah: "SDN Parteker 1 Pamekasan", score: 71, benar: 19, salah: 5, kosong: 6, status: "PESERTA BERPRESTASI" },
+          { rank: 8, nama: "Fariz Ramadhan", noPendaftaran: "OMP-2026-0016", sekolah: "SDN Banyuanyar 1 Sampang", score: 67, benar: 18, salah: 5, kosong: 7, status: "PESERTA BERPRESTASI" }
+        ],
+        "Level 1 (Kelas 1-3)": [
+          { rank: 1, nama: "Dimas Anggara", noPendaftaran: "OMP-2026-0021", sekolah: "SDN Bugih 1 Pamekasan", score: 95, benar: 24, salah: 1, kosong: 5, status: "JUARA 1 (MEDALI EMAS)" },
+          { rank: 2, nama: "Elina Maharani", noPendaftaran: "OMP-2026-0022", sekolah: "SDN Jungcancang 1 Pamekasan", score: 88, benar: 23, salah: 4, kosong: 3, status: "JUARA 2 (MEDALI PERAK)" },
+          { rank: 3, nama: "Gilang Ramadhan", noPendaftaran: "OMP-2026-0023", sekolah: "MIN 1 Pamekasan", score: 82, benar: 21, salah: 2, kosong: 7, status: "JUARA 3 (MEDALI PERUNGGU)" },
+          { rank: 4, nama: "Hanafi Qolbi", noPendaftaran: "OMP-2026-0024", sekolah: "SD Plus Nurul Hikmah", score: 77, benar: 20, salah: 3, kosong: 7, status: "JUARA HARAPAN 1" },
+          { rank: 5, nama: "Indah Permata", noPendaftaran: "OMP-2026-0025", sekolah: "SDIT Al-Ittihad Sumenep", score: 73, benar: 19, salah: 3, kosong: 8, status: "JUARA HARAPAN 2" }
+        ]
+      },
+      "Matematika": {
+        "Level 2 (Kelas 4-6)": [
+          { rank: 1, nama: "Muhammad Farhan Pratama", noPendaftaran: "OMP-2026-0002", sekolah: "SD Plus Nurul Hikmah Pamekasan", score: 108, benar: 27, salah: 0, kosong: 3, status: "JUARA 1 (MEDALI EMAS)" },
+          { rank: 2, nama: "Rayhan Firmansyah", noPendaftaran: "OMP-2026-0008", sekolah: "SDN Lawangan Daya 2 Pamekasan", score: 102, benar: 26, salah: 2, kosong: 2, status: "JUARA 2 (MEDALI PERAK)" },
+          { rank: 3, nama: "Salsa Nabila", noPendaftaran: "OMP-2026-0009", sekolah: "SDIT Bina Insan Mulia Sumenep", score: 94, benar: 24, salah: 2, kosong: 4, status: "JUARA 3 (MEDALI PERUNGGU)" },
+          { rank: 4, nama: "Kevin Sanjaya", noPendaftaran: "OMP-2026-0017", sekolah: "SD Katolik Santo Mikael Pamekasan", score: 91, benar: 23, salah: 1, kosong: 6, status: "JUARA HARAPAN 1" },
+          { rank: 5, nama: "Putri Maulida", noPendaftaran: "OMP-2026-0018", sekolah: "MIN 2 Pamekasan", score: 87, benar: 22, salah: 1, kosong: 7, status: "JUARA HARAPAN 2" },
+          { rank: 6, nama: "Zaki Mubarak", noPendaftaran: "OMP-2026-0019", sekolah: "SDN Kolor 1 Sumenep", score: 81, benar: 21, salah: 3, kosong: 6, status: "PESERTA BERPRESTASI" }
+        ],
+        "Level 1 (Kelas 1-3)": [
+          { rank: 1, nama: "Alya Zahira Putri", noPendaftaran: "OMP-2026-0005", sekolah: "SDN Barurambat Kota 1 Pamekasan", score: 104, benar: 26, salah: 0, kosong: 4, status: "JUARA 1 (MEDALI EMAS)" },
+          { rank: 2, nama: "Bima Sakti", noPendaftaran: "OMP-2026-0026", sekolah: "SDIT Al-Ittihad Sumenep", score: 97, benar: 25, salah: 3, kosong: 2, status: "JUARA 2 (MEDALI PERAK)" },
+          { rank: 3, nama: "Citra Kirana", noPendaftaran: "OMP-2026-0027", sekolah: "SD Plus Nurul Hikmah", score: 90, benar: 23, salah: 2, kosong: 5, status: "JUARA 3 (MEDALI PERUNGGU)" },
+          { rank: 4, nama: "Danish Arya", noPendaftaran: "OMP-2026-0028", sekolah: "MIN 1 Sampang", score: 83, benar: 21, salah: 1, kosong: 8, status: "JUARA HARAPAN 1" }
+        ]
+      },
+      "Bahasa Inggris": {
+        "Level 2 (Kelas 4-6)": [
+          { rank: 1, nama: "Siti Nurhaliza Azzahra", noPendaftaran: "OMP-2026-0003", sekolah: "SDIT Al-Ittihad Sumenep", score: 112, benar: 28, salah: 0, kosong: 2, status: "JUARA 1 (MEDALI EMAS)" },
+          { rank: 2, nama: "Jessica Amanda", noPendaftaran: "OMP-2026-0010", sekolah: "SD Plus Nurul Hikmah Pamekasan", score: 105, benar: 27, salah: 3, kosong: 0, status: "JUARA 2 (MEDALI PERAK)" },
+          { rank: 3, nama: "Arka Danendra", noPendaftaran: "OMP-2026-0011", sekolah: "SDN Jungcancang 2 Pamekasan", score: 98, benar: 25, salah: 2, kosong: 3, status: "JUARA 3 (MEDALI PERUNGGU)" },
+          { rank: 4, nama: "Celine Wijaya", noPendaftaran: "OMP-2026-0031", sekolah: "SD Katolik Santo Mikael", score: 93, benar: 24, salah: 3, kosong: 3, status: "JUARA HARAPAN 1" },
+          { rank: 5, nama: "Rizky Pratama", noPendaftaran: "OMP-2026-0032", sekolah: "SDN Bugih 3 Pamekasan", score: 88, benar: 23, salah: 4, kosong: 3, status: "JUARA HARAPAN 2" }
+        ],
+        "Level 1 (Kelas 1-3)": [
+          { rank: 1, nama: "Kayla Aurelia", noPendaftaran: "OMP-2026-0035", sekolah: "SD Plus Nurul Hikmah", score: 99, benar: 25, salah: 1, kosong: 4, status: "JUARA 1 (MEDALI EMAS)" },
+          { rank: 2, nama: "Nathan Emmanuel", noPendaftaran: "OMP-2026-0036", sekolah: "SD Katolik Santo Mikael", score: 93, benar: 24, salah: 3, kosong: 3, status: "JUARA 2 (MEDALI PERAK)" },
+          { rank: 3, nama: "Aisyah Humaira", noPendaftaran: "OMP-2026-0037", sekolah: "SDIT Bina Insan Sumenep", score: 86, benar: 22, salah: 2, kosong: 6, status: "JUARA 3 (MEDALI PERUNGGU)" }
+        ]
+      },
+      "IPS": {
+        "Level 2 (Kelas 4-6)": [
+          { rank: 1, nama: "Achmad Rifqi Fauzan", noPendaftaran: "OMP-2026-0004", sekolah: "MIN 1 Sampang", score: 99, benar: 25, salah: 1, kosong: 4, status: "JUARA 1 (MEDALI EMAS)" },
+          { rank: 2, nama: "Nadira Kayla", noPendaftaran: "OMP-2026-0041", sekolah: "SDN Pademawu Barat 1 Pamekasan", score: 92, benar: 24, salah: 4, kosong: 2, status: "JUARA 2 (MEDALI PERAK)" },
+          { rank: 3, nama: "Arya Bagus", noPendaftaran: "OMP-2026-0042", sekolah: "SDN Barurambat Timur 2 Pamekasan", score: 86, benar: 22, salah: 2, kosong: 6, status: "JUARA 3 (MEDALI PERUNGGU)" },
+          { rank: 4, nama: "Fathir Muhammad", noPendaftaran: "OMP-2026-0043", sekolah: "SDN Kolor 1 Sumenep", score: 81, benar: 21, salah: 3, kosong: 6, status: "JUARA HARAPAN 1" },
+          { rank: 5, nama: "Hanifah Zahra", noPendaftaran: "OMP-2026-0044", sekolah: "SD Plus Nurul Hikmah", score: 76, benar: 20, salah: 4, kosong: 6, status: "JUARA HARAPAN 2" }
+        ],
+        "Level 1 (Kelas 1-3)": [
+          { rank: 1, nama: "Ilham Ramadhan", noPendaftaran: "OMP-2026-0047", sekolah: "SDN Jungcancang 1 Pamekasan", score: 91, benar: 23, salah: 1, kosong: 6, status: "JUARA 1 (MEDALI EMAS)" },
+          { rank: 2, nama: "Jasmine Putri", noPendaftaran: "OMP-2026-0048", sekolah: "SD Plus Nurul Hikmah", score: 84, benar: 22, salah: 4, kosong: 4, status: "JUARA 2 (MEDALI PERAK)" },
+          { rank: 3, nama: "Kenzo Alvaro", noPendaftaran: "OMP-2026-0049", sekolah: "SD Katolik Santo Mikael", score: 78, benar: 20, salah: 2, kosong: 8, status: "JUARA 3 (MEDALI PERUNGGU)" }
+        ]
+      }
+    };
+
+    // Digital Clock WIB
+    function updateClockWIB() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const s = String(now.getSeconds()).padStart(2, '0');
+      document.getElementById('clockWIB').innerText = `${h}:${m}:${s} WIB`;
+    }
+    setInterval(updateClockWIB, 1000);
+    updateClockWIB();
+
+    // Render Stage Arena
+    function renderArena() {
+      // 1. Update Headline
+      document.getElementById('activeHeadlineText').innerText = `${currentMapel.toUpperCase()} — ${currentLevel.toUpperCase()}`;
+      document.getElementById('activeHeadlineSub').innerText = `Live Scoring Papan Peringkat Real-time • ${currentLevel}`;
+      
+      const iconKey = MAPEL_ICONS[currentMapel] || 'trophy';
+      const iconBox = document.getElementById('activeHeadlineIcon');
+      iconBox.innerHTML = `<i data-lucide="${iconKey}" style="width: 24px; height: 24px;"></i>`;
+
+      // 2. Ambil data list
+      const subjectData = (LIVE_DATA_STORE[currentMapel] && LIVE_DATA_STORE[currentMapel][currentLevel]) || [];
+
+      const top1 = subjectData[0] || { nama: "-", sekolah: "-", score: 0, status: "JUARA 1" };
+      const top2 = subjectData[1] || { nama: "-", sekolah: "-", score: 0, status: "JUARA 2" };
+      const top3 = subjectData[2] || { nama: "-", sekolah: "-", score: 0, status: "JUARA 3" };
+
+      // Render Podium 1
+      document.getElementById('podiumName1').innerText = top1.nama;
+      document.getElementById('podiumSchool1').innerText = top1.sekolah;
+      document.getElementById('podiumScore1').innerText = top1.score;
+
+      // Render Podium 2
+      document.getElementById('podiumName2').innerText = top2.nama;
+      document.getElementById('podiumSchool2').innerText = top2.sekolah;
+      document.getElementById('podiumScore2').innerText = top2.score;
+
+      // Render Podium 3
+      document.getElementById('podiumName3').innerText = top3.nama;
+      document.getElementById('podiumSchool3').innerText = top3.sekolah;
+      document.getElementById('podiumScore3').innerText = top3.score;
+
+      // Render Roster 4 s.d. 10
+      const rosterRows = subjectData.slice(3, 10);
+      const tbody = document.getElementById('rosterTableBody');
+
+      if (rosterRows.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 25px; color: var(--color-text-dim);">Belum ada data nilai tambahan untuk kategori ini.</td></tr>`;
+      } else {
+        let html = '';
+        rosterRows.forEach(r => {
+          html += `
+            <tr class="roster-row">
+              <td>
+                <div class="rank-number-box">${r.rank}</div>
+              </td>
+              <td>
+                <div class="student-name-box">
+                  <strong>${r.nama}</strong>
+                  <span>${r.noPendaftaran}</span>
+                </div>
+              </td>
+              <td>
+                <div class="school-box">${r.sekolah}</div>
+              </td>
+              <td class="score-box">
+                <strong>${r.score}</strong>
+                <div class="score-breakdown-mini">B: ${r.benar || 0} &bull; S: ${r.salah || 0} &bull; K: ${r.kosong || 0}</div>
+              </td>
+              <td style="text-align: right;">
+                <span class="status-badge-mini">
+                  <i data-lucide="check" style="width: 12px; height: 12px; color: #10b981;"></i>
+                  ${r.status}
+                </span>
+              </td>
+            </tr>
+          `;
+        });
+        tbody.innerHTML = html;
+      }
+
+      lucide.createIcons();
+    }
+
+    // Ganti Mata Pelajaran
+    function selectMapel(mapel) {
+      currentMapel = mapel;
+      document.querySelectorAll('.mapel-tab-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById(`tabMapel${mapel.replace(/\s+/g, '')}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      resetCycleCountdown();
+      playChimeEffect();
+      renderArena();
+    }
+
+    // Ganti Level
+    function selectLevel(level) {
+      currentLevel = level;
+      document.querySelectorAll('.level-btn').forEach(btn => btn.classList.remove('active'));
+      if (level.includes('Level 2')) {
+        document.getElementById('tabLevel2').classList.add('active');
+      } else {
+        document.getElementById('tabLevel1').classList.add('active');
+      }
+
+      resetCycleCountdown();
+      playChimeEffect();
+      renderArena();
+    }
+
+    // Auto Cycle Logic (Berputar otomatis tiap 12 detik)
+    function startAutoCycle() {
+      if (cycleTimer) clearInterval(cycleTimer);
+      cycleCounter = cycleIntervalSeconds;
+
+      cycleTimer = setInterval(() => {
+        if (!autoCycleEnabled) return;
+
+        cycleCounter--;
+        const pct = (cycleCounter / cycleIntervalSeconds) * 100;
+        const fillBar = document.getElementById('cycleProgressFill');
+        if (fillBar) fillBar.style.width = `${pct}%`;
+
+        const timerText = document.getElementById('cycleTimerText');
+        if (timerText) timerText.innerText = `Ganti Mapel: ${cycleCounter}s`;
+
+        if (cycleCounter <= 0) {
+          cycleToNextCategory();
+          cycleCounter = cycleIntervalSeconds;
+        }
+      }, 1000);
+    }
+
+    function resetCycleCountdown() {
+      cycleCounter = cycleIntervalSeconds;
+      const fillBar = document.getElementById('cycleProgressFill');
+      if (fillBar) fillBar.style.width = '100%';
+    }
+
+    function cycleToNextCategory() {
+      const curIdx = MAPEL_LIST.indexOf(currentMapel);
+      const nextIdx = (curIdx + 1) % MAPEL_LIST.length;
+      
+      // Jika kembali ke awal mapel, toggle level
+      if (nextIdx === 0) {
+        currentLevel = currentLevel.includes('Level 2') ? 'Level 1 (Kelas 1-3)' : 'Level 2 (Kelas 4-6)';
+        document.querySelectorAll('.level-btn').forEach(btn => btn.classList.remove('active'));
+        if (currentLevel.includes('Level 2')) {
+          document.getElementById('tabLevel2').classList.add('active');
+        } else {
+          document.getElementById('tabLevel1').classList.add('active');
+        }
+      }
+
+      selectMapel(MAPEL_LIST[nextIdx]);
+    }
+
+    // Toggle Auto Cycle Button (Pause / Play)
+    function toggleAutoCycle() {
+      autoCycleEnabled = !autoCycleEnabled;
+      const btn = document.getElementById('btnToggleCycle');
+      const icon = document.getElementById('iconCycle');
+      const label = document.getElementById('labelCycle');
+
+      if (autoCycleEnabled) {
+        btn.classList.add('active');
+        icon.setAttribute('data-lucide', 'play');
+        label.innerText = 'Auto: ON (12s)';
+      } else {
+        btn.classList.remove('active');
+        icon.setAttribute('data-lucide', 'pause');
+        label.innerText = 'Auto: PAUSED';
+      }
+      lucide.createIcons();
+    }
+
+    // Web Audio API Synthesizer (Chime Efek Juara)
+    function playChimeEffect() {
+      if (isSoundMuted) return;
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sine';
+        // Nada E5 -> B5 manis dan berkelas
+        osc.frequency.setValueAtTime(659.25, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(987.77, ctx.currentTime + 0.15);
+
+        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start();
+        osc.stop(ctx.currentTime + 0.36);
+      } catch (e) {
+        // Audio error silently handled
+      }
+    }
+
+    // Toggle Sound Button
+    function toggleSound() {
+      isSoundMuted = !isSoundMuted;
+      const btn = document.getElementById('btnToggleSound');
+      const icon = document.getElementById('iconSound');
+      const label = document.getElementById('labelSound');
+
+      if (isSoundMuted) {
+        btn.classList.remove('active');
+        icon.setAttribute('data-lucide', 'volume-x');
+        label.innerText = 'Muted';
+      } else {
+        btn.classList.add('active');
+        icon.setAttribute('data-lucide', 'volume-2');
+        label.innerText = 'Audio ON';
+        playChimeEffect();
+      }
+      lucide.createIcons();
+    }
+
+    // Fullscreen Toggle (F11 / Layar Proyektor Aula)
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          console.warn("Fullscreen request denied:", err);
+        });
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    // Fetch Live Scoreboard dari Backend Google Apps Script / Cloudflare Worker
+    async function syncLiveScoreBackend() {
+      try {
+        const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '/api';
+        const res = await fetch(`${apiUrl}?action=getLiveScoreboard`);
+        if (res.ok) {
+          const result = await res.json();
+          if (result.status === 'success') {
+            // Update Data Store jika ada data baru dari GAS
+            if (result.liveScores) {
+              Object.keys(result.liveScores).forEach(mapel => {
+                if (!LIVE_DATA_STORE[mapel]) LIVE_DATA_STORE[mapel] = {};
+                Object.assign(LIVE_DATA_STORE[mapel], result.liveScores[mapel]);
+              });
+            }
+
+            // Update Running Text jika ada
+            if (result.runningText) {
+              document.getElementById('tickerTextContainer').innerHTML = result.runningText;
+            }
+
+            // Update Freeze Status
+            if (result.broadcastStatus === 'FREEZE') {
+              setFreezeMode(true);
+            } else {
+              setFreezeMode(false);
+            }
+
+            renderArena();
+          }
+        }
+      } catch (err) {
+        // Fallback tetap menggunakan LIVE_DATA_STORE lokal yang sudah di-seed
+        console.warn("Backend sync fallback lokal:", err);
+      }
+    }
+
+    function setFreezeMode(freeze) {
+      isFrozen = freeze;
+      const banner = document.getElementById('freezeBanner');
+      const pill = document.getElementById('liveStatusPill');
+      const pulse = document.getElementById('livePulseDot');
+      const text = document.getElementById('liveStatusText');
+
+      if (freeze) {
+        banner.style.display = 'flex';
+        pill.style.color = '#38bdf8';
+        pulse.style.background = '#38bdf8';
+        pulse.style.boxShadow = '0 0 10px #38bdf8';
+        text.innerText = 'SKOR DIBEKUKAN (FREEZE)';
+      } else {
+        banner.style.display = 'none';
+        pill.style.color = '#ef4444';
+        pulse.style.background = '#ef4444';
+        pulse.style.boxShadow = '0 0 10px #ef4444';
+        text.innerText = 'LIVE BROADCAST';
+      }
+      lucide.createIcons();
+    }
+
+    // Inisialisasi awal
+    renderArena();
+    startAutoCycle();
+    syncLiveScoreBackend();
+
+    // Polling backend setiap 20 detik
+    setInterval(syncLiveScoreBackend, 20000);
+  </script>
+</body>
+</html>

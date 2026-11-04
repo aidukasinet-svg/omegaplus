@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Presensi Scan QR Pengawas - OMEGA PLUS 2026</title>
+  <meta name="description" content="Portal Khusus Pengawas Ruang Ujian OMEGA PLUS 2026 SMP Negeri 1 Pamekasan. Scan QR Code Presensi Siswa Real-time & BAP Digital.">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="https://file.garden/aehADr1aKQol7cT9/Omega_Plus_Circular_Emblem-removebg-preview.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Work+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <!-- HTML5-QRCode Scanner Library -->
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
+  <!-- Konfigurasi Global -->
+  <script src="config.js"></script>
+
+  <style>
+    :root {
+      --color-primary-navy:     #19365f;
+      --color-primary-royal:    #285891;
+      --color-dark-navy:        #0e223d;
+      --color-accent-gold:      #e7b55e;
+      --color-accent-gold-dark: #b88628;
+
+      --color-bg-page:          #f1f5f9;
+      --color-bg-surface:       #ffffff;
+      --color-border-light:     #e2e8f0;
+
+      --color-success:          #10b981;
+      --color-danger:           #ef4444;
+      --color-warning:          #f59e0b;
+
+      --radius-md:              10px;
+      --radius-lg:              16px;
+      --radius-pill:            9999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Work Sans', sans-serif;
+      background-color: var(--color-bg-page);
+      color: #1e293b;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    h1, h2, h3, h4, .brand-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    /* Top Bar Mobile-First */
+    .top-bar-pengawas {
+      background: var(--color-primary-navy);
+      color: #ffffff;
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 12px rgba(25, 54, 95, 0.2);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .top-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .top-bar-left img {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1.5px solid var(--color-accent-gold);
+      background: #ffffff;
+    }
+
+    .top-bar-left h2 {
+      font-size: 0.95rem;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .top-bar-left p {
+      font-size: 0.7rem;
+      color: var(--color-accent-gold);
+      font-weight: 600;
+    }
+
+    .btn-top-exit {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #ffffff;
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      font-size: 0.775rem;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .container-scanner {
+      max-width: 640px;
+      margin: 1.25rem auto 3rem;
+      padding: 0 1rem;
+      width: 100%;
+    }
+
+    /* Room Select Box */
+    .room-selector-box {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+      border: 1px solid var(--color-border-light);
+      margin-bottom: 1.25rem;
+    }
+
+    .room-select-control {
+      width: 100%;
+      padding: 10px 14px;
+      border: 2px solid var(--color-primary-royal);
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--color-primary-navy);
+      background: #ffffff;
+      outline: none;
+      cursor: pointer;
+    }
+
+    /* Camera Viewfinder Box */
+    .scanner-card {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+      border: 1px solid var(--color-border-light);
+      margin-bottom: 1.25rem;
+    }
+
+    .scanner-card-header {
+      background: #0f172a;
+      color: #ffffff;
+      padding: 0.85rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    #reader {
+      width: 100%;
+      min-height: 280px;
+      background: #000000;
+      border: none;
+    }
+
+    .scanner-controls-bar {
+      padding: 10px 16px;
+      background: #ffffff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--color-border-light);
+    }
+
+    .btn-toggle-cam {
+      background: #1e293b;
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 7px 16px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Scan Feedback Alert */
+    .scan-feedback-banner {
+      display: none;
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius-md);
+      margin-bottom: 1.25rem;
+      animation: popIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .feedback-success {
+      background: #ecfdf5;
+      border: 2px solid #a7f3d0;
+      color: #065f46;
+    }
+
+    .feedback-wrong-room {
+      background: #fff1f2;
+      border: 2.5px solid #fecdd3;
+      color: #9f1239;
+      animation: shakeWrong 0.4s ease;
+    }
+
+    @keyframes shakeWrong {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+
+    /* Room Progress Card */
+    .progress-room-card {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      border: 1px solid var(--color-border-light);
+      margin-bottom: 1.25rem;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+    }
+
+    .progress-track-big {
+      height: 12px;
+      background: #e2e8f0;
+      border-radius: var(--radius-pill);
+      overflow: hidden;
+      margin: 10px 0 6px;
+    }
+
+    .progress-fill-big {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+      border-radius: var(--radius-pill);
+      transition: width 0.4s ease;
+    }
+
+    /* Student Attendance Table */
+    .attendance-list-wrap {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-border-light);
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+    }
+
+    .attendance-item {
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #f1f5f9;
+      gap: 10px;
+    }
+
+    .attendance-item:last-child {
+      border-bottom: none;
+    }
+
+    .seat-badge-small {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: #e7f0fb;
+      color: var(--color-primary-navy);
+      font-weight: 800;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .status-badge-presence {
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      font-size: 0.725rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .status-hadir {
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+    }
+
+    .status-absen {
+      background: #f1f5f9;
+      color: #64748b;
+      border: 1px solid #cbd5e1;
+    }
+
+    /* BAP Button */
+    .btn-bap-action {
+      background: linear-gradient(135deg, var(--color-primary-navy) 0%, var(--color-primary-royal) 100%);
+      color: #ffffff;
+      width: 100%;
+      padding: 13px;
+      border-radius: var(--radius-md);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 800;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 6px 18px rgba(25, 54, 95, 0.25);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <header class="top-bar-pengawas">
+    <div class="top-bar-left">
+      <img src="https://file.garden/aehADr1aKQol7cT9/Omega_Plus_Circular_Emblem-removebg-preview.png" onerror="this.src='logo.png'" alt="Logo" />
+      <div>
+        <h2>PORTAL SCAN PRESIENSI</h2>
+        <p>OMEGA PLUS 2026 • SMPN 1 PAMEKASAN</p>
+      </div>
+    </div>
+
+    <a href="ruang.html" class="btn-top-exit">
+      <i data-lucide="map-pin" style="width: 13px; height: 13px;"></i> Cek Meja
+    </a>
+  </header>
+
+  <main class="container-scanner">
+
+    <!-- 1. Room Selector -->
+    <div class="room-selector-box">
+      <label for="selectRuangPengawas" style="display: block; font-size: 0.8rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">
+        Pilih Ruangan yang Anda Awasi:
+      </label>
+      <select id="selectRuangPengawas" class="room-select-control" onchange="gantiRuangPengawas(this.value)">
+        <option value="Ruang 04">Ruang 04 (Laboratorium IPA 1 - Gedung B Lantai 2)</option>
+        <option value="Ruang 01">Ruang 01 (Kelas 7A - Gedung A Lantai 1)</option>
+        <option value="Ruang 02">Ruang 02 (Kelas 7B - Gedung A Lantai 1)</option>
+        <option value="Ruang 03">Ruang 03 (Kelas 7C - Gedung A Lantai 2)</option>
+        <option value="Ruang 05">Ruang 05 (Lab Komputer 2 - Gedung C Lantai 2)</option>
+      </select>
+    </div>
+
+    <!-- 2. QR Scanner Box -->
+    <div class="scanner-card">
+      <div class="scanner-card-header">
+        <span style="display: flex; align-items: center; gap: 6px;">
+          <i data-lucide="camera" style="width: 16px; height: 16px; color: var(--color-accent-gold);"></i>
+          Kamera Pemindai QR
+        </span>
+        <span id="camStatusBadge" style="font-size: 0.7rem; color: #10b981; font-weight: bold;">● SCANNER AKTIF</span>
+      </div>
+
+      <!-- Viewfinder -->
+      <div id="reader"></div>
+
+      <div class="scanner-controls-bar">
+        <span style="font-size: 0.75rem; color: #64748b;">Arahkan ke QR Kartu Peserta</span>
+        <button type="button" class="btn-toggle-cam" onclick="toggleCameraScanner()">
+          <i data-lucide="power" style="width: 14px; height: 14px;"></i>
+          <span id="txtToggleCam">Jeda Kamera</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 3. Dynamic Feedback Banner -->
+    <div id="scanFeedbackArea"></div>
+
+    <!-- 4. Progress Kehadiran di Ruangan -->
+    <div class="progress-room-card">
+      <div style="display: flex; justify-content: space-between; align-items: baseline;">
+        <span style="font-size: 0.825rem; font-weight: 700; color: var(--color-primary-navy);">Rekap Kehadiran Peserta:</span>
+        <span style="font-size: 1.15rem; font-weight: 800; color: #10b981;">
+          <span id="counterHadir">0</span> / <span id="counterTotal">20</span> Siswa
+        </span>
+      </div>
+
+      <div class="progress-track-big">
+        <div class="progress-fill-big" id="progressBarPresence" style="width: 0%;"></div>
+      </div>
+
+      <div style="font-size: 0.75rem; color: #64748b; display: flex; justify-content: space-between;">
+        <span id="percentPresenceTxt">0% Hadir</span>
+        <span id="remainingPresenceTxt">20 Siswa Belum Hadir</span>
+      </div>
+    </div>
+
+    <!-- 5. Daftar Siswa di Ruangan Ini -->
+    <div class="attendance-list-wrap">
+      <div style="padding: 12px 16px; background: #f8fafc; border-bottom: 1px solid var(--color-border-light); font-size: 0.8rem; font-weight: 700; color: var(--color-primary-navy); display: flex; justify-content: space-between; align-items: center;">
+        <span>Daftar Siswa Terdaftar di <span id="currentRoomTitle">Ruang 04</span>:</span>
+        <span style="font-size: 0.72rem; color: #64748b;">(Klik status untuk ubah manual)</span>
+      </div>
+
+      <div id="attendanceListBody">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+
+    <!-- 6. Submit BAP Digital -->
+    <button type="button" class="btn-bap-action" onclick="bukaModalBAP()">
+      <i data-lucide="clipboard-check" style="width: 18px; height: 18px;"></i>
+      <span>Buat Berita Acara Ujian (BAP) Ruangan</span>
+    </button>
+
+  </main>
+
+  <!-- ==========================================================================
+       MODAL BAP DIGITAL
+       ========================================================================== -->
+  <div id="modalBAP" style="display: none; position: fixed; inset: 0; z-index: 2000; background: rgba(10,25,47,0.8); backdrop-filter: blur(6px); align-items: center; justify-content: center; padding: 1rem; overflow-y: auto;">
+    <div style="background: #ffffff; border-radius: var(--radius-lg); max-width: 520px; width: 100%; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.3);">
+      <div style="background: var(--color-primary-navy); color: #ffffff; padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="font-size: 1.05rem; font-weight: 700;"><i data-lucide="file-check" style="width: 16px; height: 16px; display:inline; vertical-align:middle; color:var(--color-accent-gold);"></i> Berita Acara Pelaksanaan (BAP)</h3>
+        <button type="button" onclick="tutupModalBAP()" style="background: transparent; border: none; color: #ffffff; cursor: pointer;">
+          <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+        </button>
+      </div>
+
+      <form id="formBAP" onsubmit="submitBAPForm(event)" style="padding: 1.25rem;">
+        <div style="font-size: 0.85rem; margin-bottom: 12px; background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px;">
+          <div><strong>Ruang Ujian:</strong> <span id="bapRuang">Ruang 04</span></div>
+          <div><strong>Jumlah Terdaftar:</strong> <span id="bapTotal">20</span> Siswa</div>
+          <div><strong>Jumlah Hadir:</strong> <span id="bapHadir" style="color: #047857; font-weight: bold;">0</span> Siswa</div>
+          <div><strong>Jumlah Tidak Hadir:</strong> <span id="bapAbsen" style="color: #be123c; font-weight: bold;">0</span> Siswa</div>
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #1e293b; margin-bottom: 4px;">Nama Pengawas Ruang:</label>
+          <input type="text" id="bapNamaPengawas" class="form-control" style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 6px;" required placeholder="Nama Lengkap & Gelar">
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+          <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #1e293b; margin-bottom: 4px;">Catatan Khusus Kejadian Ujian:</label>
+          <textarea id="bapCatatan" rows="3" style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 6px; font-family: inherit; font-size: 0.85rem;" placeholder="Contoh: Ujian berjalan tertib, naskah soal lengkap, tidak ada peserta sakit."></textarea>
+        </div>
+
+        <div style="display: flex; gap: 8px; justify-content: flex-end;">
+          <button type="button" onclick="tutupModalBAP()" style="padding: 8px 16px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer;">Batal</button>
+          <button type="submit" style="padding: 8px 16px; background: var(--color-primary-navy); color: #ffffff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Kirim BAP ke Panitia</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Audio Chimes (Web Audio API Synthesizer) -->
+  <script>
+    // Audio synthesizer for success chime and error buzzer (No external mp3 required!)
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playBeepSuccess() {
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.1); // A5
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.35);
+      } catch (e) {}
+    }
+
+    function playBeepError() {
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(150, audioCtx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.45);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.45);
+      } catch (e) {}
+    }
+
+    // In-Memory Representative Room Roster
+    let currentRoom = "Ruang 04";
+    let roomRoster = [
+      { noMeja: 1, noReg: "OMP-2026-0010", kode: "02-03-010", nama: "Dimas Aditya", sekolah: "SDN Jungcancang 2", ruang: "Ruang 04", hadir: true, waktuHadir: "07.05 WIB" },
+      { noMeja: 2, noReg: "OMP-2026-0011", kode: "02-03-011", nama: "Fatimah Azzahra", sekolah: "SD Plus Nurul Hikmah", ruang: "Ruang 04", hadir: true, waktuHadir: "07.08 WIB" },
+      { noMeja: 3, noReg: "OMP-2026-0012", kode: "02-03-012", nama: "Reza Mahendra", sekolah: "SDIT Al-Furqan", ruang: "Ruang 04", hadir: false, waktuHadir: "" },
+      { noMeja: 4, noReg: "OMP-2026-0013", kode: "02-03-013", nama: "Naila Safira", sekolah: "SDN Bugih 1", ruang: "Ruang 04", hadir: false, waktuHadir: "" },
+      { noMeja: 12, noReg: "OMP-2026-0001", kode: "02-03-001", nama: "Amalia Utami", sekolah: "SD Negeri Jungcancang 1", ruang: "Ruang 04", hadir: false, waktuHadir: "" }
+    ];
+
+    // External students for smart wrong-room guard test
+    const ALL_REGISTERED_STUDENTS = [
+      ...roomRoster,
+      { noMeja: 5, noReg: "OMP-2026-0002", kode: "02-01-001", nama: "Muhammad Farhan Pratama", sekolah: "SD Plus Nurul Hikmah", ruang: "Ruang 02", hadir: false },
+      { noMeja: 8, noReg: "OMP-2026-0003", kode: "02-02-005", nama: "Siti Nurhaliza Azzahra", sekolah: "SDIT Al-Ittihad Sumenep", ruang: "Ruang 03", hadir: false },
+      { noMeja: 17, noReg: "OMP-2026-0004", kode: "02-04-012", nama: "Achmad Rifqi Fauzan", sekolah: "MIN 1 Sampang", ruang: "Ruang 05", hadir: false }
+    ];
+
+    let html5QrCode = null;
+    let isScannerRunning = false;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      lucide.createIcons();
+      renderRosterList();
+      startCameraScanner();
+    });
+
+    // Start Camera Scanner
+    function startCameraScanner() {
+      try {
+        html5QrCode = new Html5Qrcode("reader");
+        const config = { fps: 10, qrbox: { width: 220, height: 220 } };
+
+        html5QrCode.start(
+          { facingMode: "environment" },
+          config,
+          (decodedText, decodedResult) => {
+            handleScannedCode(decodedText);
+          },
+          (errorMessage) => {
+            // Scanner searching frames - ignore
+          }
+        ).then(() => {
+          isScannerRunning = true;
+          document.getElementById('camStatusBadge').innerText = "● SCANNER AKTIF";
+          document.getElementById('camStatusBadge').style.color = "#10b981";
+          document.getElementById('txtToggleCam').innerText = "Jeda Kamera";
+        }).catch(err => {
+          console.warn("Unable to start real camera, user might be on desktop or no camera allowed:", err);
+          document.getElementById('camStatusBadge').innerText = "● SIMULATOR SIAP";
+          document.getElementById('camStatusBadge').style.color = "#f59e0b";
+          document.getElementById('reader').innerHTML = `
+            <div style="color: #cbd5e1; text-align: center; padding: 2.5rem 1rem;">
+              <i data-lucide="camera-off" style="width: 32px; height: 32px; margin: 0 auto 8px; color: #94a3b8;"></i>
+              <div style="font-size: 0.9rem; font-weight: bold;">Simulasi Scan Siap Digunakan</div>
+              <div style="font-size: 0.75rem; color: #94a3b8; margin: 6px 0 12px;">Kamera tidak terdeteksi atau izin belum diberikan. Gunakan tombol cepat di bawah untuk simulasi presensi:</div>
+              <div style="display: flex; gap: 6px; justify-content: center; flex-wrap: wrap;">
+                <button type="button" onclick="handleScannedCode('OMP-2026-0001|Amalia Utami|02-03-001')" style="padding: 6px 12px; background: #10b981; color: #ffffff; border: none; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">
+                  Scan Amalia (Ruang 04 - Benar)
+                </button>
+                <button type="button" onclick="handleScannedCode('OMP-2026-0002|Farhan|02-01-001')" style="padding: 6px 12px; background: #ef4444; color: #ffffff; border: none; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">
+                  Scan Farhan (Ruang 02 - Salah Ruang)
+                </button>
+              </div>
+            </div>
+          `;
+          lucide.createIcons();
+        });
+      } catch (e) {
+        console.error("Html5Qrcode error:", e);
+      }
+    }
+
+    function toggleCameraScanner() {
+      if (!html5QrCode) return;
+      if (isScannerRunning) {
+        html5QrCode.stop().then(() => {
+          isScannerRunning = false;
+          document.getElementById('camStatusBadge').innerText = "○ DIJEDA";
+          document.getElementById('camStatusBadge').style.color = "#94a3b8";
+          document.getElementById('txtToggleCam').innerText = "Nyalakan Kamera";
+        });
+      } else {
+        startCameraScanner();
+      }
+    }
+
+    // Process Scanned QR
+    let lastScanTime = 0;
+    function handleScannedCode(decoded) {
+      const now = Date.now();
+      if (now - lastScanTime < 2500) return; // Prevent double rapid firing
+      lastScanTime = now;
+
+      // Extract No Pendaftaran / ID from format "OMP-2026-0001|Nama|Kode" or URL
+      let regId = decoded;
+      if (decoded.includes('|')) {
+        regId = decoded.split('|')[0].trim();
+      } else if (decoded.includes('verify=')) {
+        regId = new URL(decoded).searchParams.get('verify') || decoded;
+      }
+
+      // Find student in master database
+      const student = ALL_REGISTERED_STUDENTS.find(s => 
+        s.noReg.toLowerCase() === regId.toLowerCase() || 
+        s.kode.toLowerCase() === regId.toLowerCase() ||
+        (decoded.includes(s.noReg))
+      );
+
+      const feedback = document.getElementById('scanFeedbackArea');
+
+      if (!student) {
+        playBeepError();
+        feedback.className = "scan-feedback-banner feedback-wrong-room";
+        feedback.style.display = "block";
+        feedback.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <i data-lucide="x-circle" style="width: 24px; height: 24px; color: #ef4444; flex-shrink: 0;"></i>
+            <div>
+              <strong>QR TIDAK TERDAFTAR!</strong>
+              <div style="font-size: 0.8rem;">Data "${regId}" tidak tercatat dalam basis data peserta OMEGA PLUS 2026.</div>
+            </div>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      // Check Room Guard!
+      if (student.ruang !== currentRoom) {
+        playBeepError();
+        feedback.className = "scan-feedback-banner feedback-wrong-room";
+        feedback.style.display = "block";
+        feedback.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <i data-lucide="alert-octagon" style="width: 28px; height: 28px; color: #ef4444; flex-shrink: 0;"></i>
+            <div>
+              <div style="font-size: 0.95rem; font-weight: 800; color: #be123c;">⚠️ PERINGATAN: SALAH RUANGAN!</div>
+              <div style="font-size: 0.85rem; color: #881337; margin-top: 2px;">
+                Siswa <strong>${student.nama}</strong> (${student.kode}) terdaftar di <strong>${student.ruang}</strong>, bukan di ${currentRoom}.
+              </div>
+              <div style="font-size: 0.775rem; color: #9f1239; margin-top: 4px; font-weight: 600;">
+                👉 Mohon arahkan siswa untuk menuju ke <strong>${student.ruang}</strong>.
+              </div>
+            </div>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      // Success: Correct Room
+      playBeepSuccess();
+      const timeStr = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
+      student.hadir = true;
+      student.waktuHadir = timeStr;
+
+      // Update in room roster if exists
+      const inRoster = roomRoster.find(r => r.noReg === student.noReg);
+      if (inRoster) {
+        inRoster.hadir = true;
+        inRoster.waktuHadir = timeStr;
+      } else {
+        roomRoster.push(student);
+      }
+
+      renderRosterList();
+
+      feedback.className = "scan-feedback-banner feedback-success";
+      feedback.style.display = "block";
+      feedback.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 34px; height: 34px; border-radius: 50%; background: #10b981; color: #ffffff; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <i data-lucide="check" style="width: 20px; height: 20px;"></i>
+          </div>
+          <div>
+            <div style="font-size: 0.95rem; font-weight: 800; color: #065f46;">PRESIENSI BERHASIL! (MEJA #${student.noMeja})</div>
+            <div style="font-size: 0.85rem; color: #047857;">
+              <strong>${student.nama}</strong> (${student.sekolah}) tercatat HADIR pukul ${timeStr}.
+            </div>
+          </div>
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
+    // Render Room Roster
+    function renderRosterList() {
+      const listContainer = document.getElementById('attendanceListBody');
+      document.getElementById('currentRoomTitle').innerText = currentRoom;
+
+      const hadirCount = roomRoster.filter(r => r.hadir).length;
+      const totalCount = roomRoster.length;
+      const percent = Math.round((hadirCount / totalCount) * 100) || 0;
+
+      document.getElementById('counterHadir').innerText = hadirCount;
+      document.getElementById('counterTotal').innerText = totalCount;
+      document.getElementById('progressBarPresence').style.width = percent + '%';
+      document.getElementById('percentPresenceTxt').innerText = `${percent}% Hadir (${hadirCount} Siswa)`;
+      document.getElementById('remainingPresenceTxt').innerText = `${totalCount - hadirCount} Siswa Belum Hadir`;
+
+      listContainer.innerHTML = roomRoster.map(s => `
+        <div class="attendance-item">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div class="seat-badge-small">#${s.noMeja}</div>
+            <div>
+              <div style="font-weight: 800; font-size: 0.875rem; color: var(--color-primary-navy);">${s.nama}</div>
+              <div style="font-size: 0.75rem; color: #64748b;">${s.kode} • ${s.sekolah}</div>
+            </div>
+          </div>
+
+          <div>
+            <span class="status-badge-presence ${s.hadir ? 'status-hadir' : 'status-absen'}" onclick="manualTogglePresence('${s.noReg}')" title="Klik untuk ubah">
+              <i data-lucide="${s.hadir ? 'check-circle-2' : 'clock'}" style="width: 13px; height: 13px;"></i>
+              <span>${s.hadir ? `HADIR (${s.waktuHadir})` : 'BELUM HADIR'}</span>
+            </span>
+          </div>
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    function manualTogglePresence(noReg) {
+      const s = roomRoster.find(r => r.noReg === noReg);
+      if (s) {
+        s.hadir = !s.hadir;
+        s.waktuHadir = s.hadir ? (new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB') : '';
+        renderRosterList();
+      }
+    }
+
+    function gantiRuangPengawas(ruangBaru) {
+      currentRoom = ruangBaru;
+      Swal.fire({
+        icon: 'info',
+        title: 'Beralih ke ' + ruangBaru,
+        text: 'Memuat data peserta dan kapasitas meja untuk ' + ruangBaru,
+        timer: 1000,
+        showConfirmButton: false
+      });
+      renderRosterList();
+    }
+
+    // Modal BAP
+    function bukaModalBAP() {
+      const hadirCount = roomRoster.filter(r => r.hadir).length;
+      const totalCount = roomRoster.length;
+
+      document.getElementById('bapRuang').innerText = currentRoom;
+      document.getElementById('bapTotal').innerText = totalCount;
+      document.getElementById('bapHadir').innerText = hadirCount;
+      document.getElementById('bapAbsen').innerText = (totalCount - hadirCount);
+
+      document.getElementById('modalBAP').style.display = 'flex';
+      lucide.createIcons();
+    }
+
+    function tutupModalBAP() {
+      document.getElementById('modalBAP').style.display = 'none';
+    }
+
+    function submitBAPForm(e) {
+      e.preventDefault();
+      const namaPengawas = document.getElementById('bapNamaPengawas').value;
+      const catatan = document.getElementById('bapCatatan').value;
+
+      Swal.fire({
+        icon: 'success',
+        title: 'BAP Berhasil Disubmit!',
+        text: `Berita Acara Ujian untuk ${currentRoom} telah terkirim dan disahkan oleh pengawas ${namaPengawas}. Rekap data tersimpan di sekretariat panitia.`,
+        confirmButtonText: 'Selesai'
+      });
+      tutupModalBAP();
+    }
+  </script>
+
+  <!-- Proteksi Demo Guard -->
+  <script src="demo-guard.js"></script>
+</body>
+</html>

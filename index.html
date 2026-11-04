@@ -1441,12 +1441,19 @@
         <li><a href="#mapel">Bidang & Sesi</a></li>
         <li><a href="#jadwal">Jadwal & Biaya</a></li>
         <li><a href="#alur">Alur</a></li>
+        <li><a href="ruang.html" style="color: #60a5fa; font-weight: 600;"><i data-lucide="map-pin" style="width: 14px; height: 14px; vertical-align: middle; margin-right: 2px;"></i> Denah & Meja</a></li>
+        <li><a href="livescore.html" target="_blank" style="color: #fbbf24; font-weight: 700;"><i data-lucide="tv" style="width: 14px; height: 14px; vertical-align: middle; margin-right: 2px;"></i> Live Score</a></li>
+        <li><a href="pengumuman.html" style="color: var(--color-accent-gold); font-weight: 700;">Pengumuman & Nilai</a></li>
         <li><a href="#faq">FAQ</a></li>
         <li><a href="#kontak">Kontak</a></li>
       </ul>
 
       <!-- Desktop Action Buttons (Cek Status & Daftar Sekarang) -->
       <div class="nav-actions">
+        <a href="pengumuman.html" class="btn-nav-status" style="border-color: rgba(231, 181, 94, 0.45); color: var(--color-accent-gold);" title="Cek Hasil Ujian & E-Sertifikat">
+          <i data-lucide="award" style="width: 14px; height: 14px;"></i>
+          <span>Cek Nilai</span>
+        </a>
         <a href="pendaftaran.html#status" class="btn-nav-status">
           <i data-lucide="search" style="width: 14px; height: 14px;"></i>
           <span>Cek Status</span>
@@ -1517,6 +1524,27 @@
             </a>
           </li>
           <li>
+            <a href="ruang.html" style="background: rgba(96, 165, 250, 0.1); border-left: 3px solid #60a5fa;">
+              <span class="mobile-nav-icon" style="color: #60a5fa;"><i data-lucide="map-pin" style="width: 17px; height: 17px;"></i></span>
+              <span class="mobile-nav-label" style="color: #60a5fa; font-weight: 700;">Denah & Meja Ujian</span>
+              <i data-lucide="chevron-right" class="mobile-nav-arrow" style="width: 16px; height: 16px; color: #60a5fa;"></i>
+            </a>
+          </li>
+          <li>
+            <a href="livescore.html" target="_blank" style="background: rgba(251, 191, 36, 0.12); border-left: 3px solid #fbbf24;">
+              <span class="mobile-nav-icon" style="color: #fbbf24;"><i data-lucide="tv" style="width: 17px; height: 17px;"></i></span>
+              <span class="mobile-nav-label" style="color: #fbbf24; font-weight: 700;">Live Scoreboard Layar Aula</span>
+              <i data-lucide="external-link" class="mobile-nav-arrow" style="width: 16px; height: 16px; color: #fbbf24;"></i>
+            </a>
+          </li>
+          <li>
+            <a href="pengumuman.html" style="background: rgba(231, 181, 94, 0.12); border-left: 3px solid var(--color-accent-gold);">
+              <span class="mobile-nav-icon" style="color: var(--color-accent-gold);"><i data-lucide="award" style="width: 17px; height: 17px;"></i></span>
+              <span class="mobile-nav-label" style="color: var(--color-accent-gold); font-weight: 700;">Pengumuman & Nilai</span>
+              <i data-lucide="chevron-right" class="mobile-nav-arrow" style="width: 16px; height: 16px; color: var(--color-accent-gold);"></i>
+            </a>
+          </li>
+          <li>
             <a href="#faq" onclick="handleMobileLinkClick(event, '#faq')">
               <span class="mobile-nav-icon"><i data-lucide="help-circle" style="width: 17px; height: 17px;"></i></span>
               <span class="mobile-nav-label">Tanya Jawab (FAQ)</span>
@@ -1556,6 +1584,11 @@
     <div class="container hero-grid">
       
       <div class="hero-content">
+        <div style="background: rgba(231, 181, 94, 0.15); border: 1.5px solid rgba(231, 181, 94, 0.4); border-radius: 9999px; padding: 6px 16px; display: inline-flex; align-items: center; gap: 8px; margin-bottom: 1rem; font-size: 0.8rem; font-weight: 700; color: var(--color-accent-gold);">
+          <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#10b981; box-shadow: 0 0 10px #10b981;"></span>
+          <span>PENGUMUMAN NILAI & E-SERTIFIKAT TELAH DIBUKA</span>
+          <a href="pengumuman.html" style="color: #ffffff; text-decoration: underline; margin-left: 4px; font-weight: 800;">Cek Ranking &rarr;</a>
+        </div>
         <div class="hero-eyebrow">
           <i data-lucide="sparkles" style="width: 14px; height: 14px;"></i> Olimpiade Akademik SD/MI Terbesar Se-Madura
         </div>
@@ -1570,8 +1603,11 @@
           <a href="pendaftaran.html" class="btn-hero-primary">
             <i data-lucide="user-check" style="width: 18px; height: 18px;"></i> Daftar Peserta Sekarang
           </a>
+          <a href="pengumuman.html" class="btn-hero-secondary" style="border-color: rgba(231, 181, 94, 0.4); color: #ffffff;">
+            <i data-lucide="award" style="width: 16px; height: 16px; color: var(--color-accent-gold);"></i> Cek Nilai & Peringkat
+          </a>
           <a href="pendaftaran.html#status" class="btn-hero-secondary">
-            <i data-lucide="search" style="width: 16px; height: 16px;"></i> Cek Status Peserta
+            <i data-lucide="search" style="width: 16px; height: 16px;"></i> Cek Status
           </a>
         </div>
 
@@ -2087,6 +2123,9 @@
           <li><a href="#alur">Alur Pendaftaran</a></li>
           <li><a href="pendaftaran.html">Formulir Pendaftaran Online</a></li>
           <li><a href="pendaftaran.html#status">Cek Status Peserta</a></li>
+          <li><a href="ruang.html" style="color: #60a5fa; font-weight: 600;">Cari Ruang & Meja Ujian</a></li>
+          <li><a href="livescore.html" target="_blank" style="color: #fbbf24; font-weight: 600;">Live Scoreboard Layar Aula</a></li>
+          <li><a href="pengumuman.html" style="color: var(--color-accent-gold); font-weight: 600;">Pengumuman & E-Sertifikat</a></li>
         </ul>
       </div>
 

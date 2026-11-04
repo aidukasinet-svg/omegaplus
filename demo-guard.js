@@ -21,17 +21,24 @@
   const appConfig = window.APP_CONFIG || {};
   const demoConfig = appConfig.DEMO_MODE || {
     LOCKED: true,
+    LOCK_ALL_PAGES: true,
     DEVELOPER_WA: "088228511309",
     DEVELOPER_WA_LINK: "https://wa.me/6288228511309?text=" + encodeURIComponent("Halo Developer OMEGA PLUS 2026, kami dari pihak panitia/sekolah ingin konfirmasi mengenai kelanjutan proyek dan aktivasi penuh sistem pendaftaran website."),
-    BADGE: "PREVIEW EKSKLUSIF SISTEM",
-    TITLE: "Sistem Pendaftaran Siap Diaktifkan",
-    DESCRIPTION: "Portal Pendaftaran Online, Cek Status Real-time, dan Dashboard Verifikasi Peserta OMEGA PLUS 2026 telah selesai dikembangkan dan saat ini dalam status <strong>Preview Terbatas</strong>.<br><br>Akses penuh ke formulir dan database akan langsung diaktifkan segera setelah konfirmasi kesepakatan kerjasama (deal) dengan pihak sekolah/panitia difinalisasi."
+    BADGE: "AKSES SISTEM DIKUNCI",
+    TITLE: "Website Sedang Dikunci",
+    DESCRIPTION: "Akses ke seluruh portal informasi, pendaftaran online, dan dashboard OMEGA PLUS 2026 saat ini dinonaktifkan oleh developer.<br><br>Silakan hubungi developer untuk proses aktivasi dan pembukaan sistem."
   };
 
-  // Jika proteksi dinonaktifkan (sudah deal), jangan jalankan apa pun
-  if (!demoConfig.LOCKED) {
+  // Cek jika ada parameter unlock rahasia di URL lokal (?unlock=omega2026)
+  const isUrlUnlocked = window.location.search.includes('unlock=omega2026');
+
+  // Jika proteksi dinonaktifkan atau ada bypass key, jangan jalankan apa pun
+  if (!demoConfig.LOCKED || isUrlUnlocked) {
     return;
   }
+
+  // Tentukan apakah seluruh web dikunci atau hanya halaman fungsional
+  const lockAll = demoConfig.LOCK_ALL_PAGES !== false;
 
   // Tentukan apakah halaman saat ini adalah landing page atau halaman fungsional
   const currentPath = window.location.pathname.toLowerCase();
@@ -268,12 +275,14 @@
     backdrop.innerHTML = `
       <div class="demo-guard-modal" id="demoGuardModal">
         <div class="demo-guard-top-accent"></div>
+        ${lockAll ? '' : `
         <button type="button" class="demo-guard-btn-x" id="demoGuardCloseXBtn" aria-label="Tutup notifikasi">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
         </button>
+        `}
 
         <div class="demo-guard-body">
           <div class="demo-guard-icon-wrap">
@@ -296,15 +305,15 @@
 
           <div class="demo-guard-status-card">
             <div class="demo-guard-status-row">
-              <span class="demo-guard-status-label">Status Pengembangan:</span>
-              <span class="demo-guard-status-val" style="color: #059669;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                Siap Tayang (100% Selesai)
+              <span class="demo-guard-status-label">Status Sistem:</span>
+              <span class="demo-guard-status-val" style="color: #ef4444;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>
+                Terkunci (Dinonaktifkan)
               </span>
             </div>
             <div class="demo-guard-status-row">
-              <span class="demo-guard-status-label">Aktivasi Modul:</span>
-              <span class="demo-guard-status-val dot-gold" style="color: #b88628;">Menunggu Konfirmasi Deal</span>
+              <span class="demo-guard-status-label">Aktivasi Akses:</span>
+              <span class="demo-guard-status-val dot-gold" style="color: #b88628;">Menunggu Konfirmasi</span>
             </div>
             <div class="demo-guard-status-row">
               <span class="demo-guard-status-label">Narahubung Developer:</span>
@@ -320,9 +329,11 @@
               <span>Hubungi Developer via WhatsApp</span>
             </a>
             
+            ${lockAll ? '' : `
             <button type="button" class="btn-guard-close" id="demoGuardSecondaryBtn">
               ${isFunctionalPage ? '← Kembali ke Halaman Utama' : 'Tutup Notifikasi & Lanjut Lihat Beranda'}
             </button>
+            `}
           </div>
         </div>
       </div>
@@ -330,11 +341,12 @@
 
     document.body.appendChild(backdrop);
 
-    // Event listener tombol tutup
+    // Event listener tombol tutup (hanya jika tidak locked all)
     const closeBtn = backdrop.querySelector('#demoGuardCloseXBtn');
     const secondaryBtn = backdrop.querySelector('#demoGuardSecondaryBtn');
 
     function handleDismiss() {
+      if (lockAll) return; // Tidak bisa ditutup saat mode kunci total
       if (isFunctionalPage) {
         window.location.href = 'index.html';
       } else {
@@ -342,16 +354,18 @@
       }
     }
 
-    closeBtn.addEventListener('click', handleDismiss);
-    secondaryBtn.addEventListener('click', handleDismiss);
+    if (closeBtn) closeBtn.addEventListener('click', handleDismiss);
+    if (secondaryBtn) secondaryBtn.addEventListener('click', handleDismiss);
 
     backdrop.addEventListener('click', function (e) {
+      if (lockAll) return;
       if (e.target === backdrop) {
         handleDismiss();
       }
     });
 
     document.addEventListener('keydown', function (e) {
+      if (lockAll) return;
       if (e.key === 'Escape' && backdrop.classList.contains('active')) {
         handleDismiss();
       }
@@ -378,6 +392,7 @@
 
   // Sembunyikan Modal
   function hideModal() {
+    if (lockAll) return;
     const backdrop = document.getElementById('demoGuardBackdrop');
     if (backdrop) {
       backdrop.classList.remove('active');
@@ -389,10 +404,10 @@
   function init() {
     injectStyles();
 
-    // 1. Jika di halaman fungsional (pendaftaran/admin), langsung kunci saat load
-    if (isFunctionalPage) {
+    // 1. Jika lockAll aktif atau di halaman fungsional, langsung kunci saat load
+    if (lockAll || isFunctionalPage) {
       showModal();
-      return;
+      if (lockAll) return;
     }
 
     // 2. Jika di landing page, pasang delegasi klik pada semua link & tombol pendaftaran / admin

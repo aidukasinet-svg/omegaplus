@@ -1,0 +1,2279 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pengumuman Hasil, Nilai & E-Sertifikat - OMEGA PLUS 2026</title>
+  <meta name="description" content="Portal Resmi Cek Nilai, Peringkat/Ranking, Papan Juara dan Unduh E-Sertifikat Resmi Ber-QR Code Olimpiade OMEGA PLUS 2026 SMP Negeri 1 Pamekasan.">
+
+  <!-- OpenGraph Metadata -->
+  <meta property="og:title" content="Pengumuman Hasil & E-Sertifikat OMEGA PLUS 2026">
+  <meta property="og:description" content="Cek perolehan nilai, ranking se-Madura, dan unduh piagam e-sertifikat resmi ber-QR Code SMPN 1 Pamekasan.">
+  <meta property="og:image" content="https://file.garden/aehADr1aKQol7cT9/Omega_Plus_Circular_Emblem-removebg-preview.png">
+  <meta property="og:type" content="website">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="https://file.garden/aehADr1aKQol7cT9/Omega_Plus_Circular_Emblem-removebg-preview.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Work+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <!-- Konfigurasi Global -->
+  <script src="config.js"></script>
+
+  <style>
+    /* ==========================================================================
+       DESIGN SYSTEM TOKENS (SMP NEGERI 1 PAMEKASAN - OMEGA PLUS)
+       ========================================================================== */
+    :root {
+      --color-primary-navy:     #19365f;
+      --color-primary-royal:    #285891;
+      --color-dark-navy:        #0e223d;
+      --color-accent-gold:      #e7b55e;
+      --color-accent-gold-dark: #b88628;
+      --color-accent-gold-light:#fdf3e2;
+
+      --color-bg-page:          #f5f8fc;
+      --color-bg-surface:       #ffffff;
+      --color-bg-tint:          #e7f0fb;
+      --color-bg-tint-light:    #f8fafc;
+
+      --color-text-main:        #193047;
+      --color-text-muted:       #657c94;
+      --color-text-inverse:     #ffffff;
+
+      --color-border-subtle:    rgba(25, 54, 95, 0.12);
+      --color-border-light:     #e2e8f0;
+      --color-border-focus:     #285891;
+
+      --color-success-bg:       #ecfdf5;
+      --color-success-text:     #047857;
+      --color-success-border:   #a7f3d0;
+
+      --color-warning-bg:       #fffbeb;
+      --color-warning-text:     #b45309;
+      --color-warning-border:   #fde68a;
+
+      --color-danger-bg:        #fff1f2;
+      --color-danger-text:      #be123c;
+      --color-danger-border:    #fecdd3;
+
+      --radius-sm:              6px;
+      --radius-md:              10px;
+      --radius-lg:              16px;
+      --radius-xl:              24px;
+      --radius-pill:            9999px;
+
+      --shadow-sm:              0 2px 4px rgba(25, 54, 95, 0.05);
+      --shadow-card:            0 4px 18px rgba(25, 54, 95, 0.07);
+      --shadow-lift:            0 12px 28px rgba(25, 54, 95, 0.13);
+      --shadow-gold:            0 6px 20px rgba(231, 181, 94, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Work Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--color-bg-page);
+      color: var(--color-text-main);
+      line-height: 1.6;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    h1, h2, h3, h4, h5, .brand-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .container {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 0 1.25rem;
+    }
+
+    /* ==========================================================================
+       NAVIGATION BAR
+       ========================================================================== */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(14, 34, 61, 0.96);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 20px rgba(7, 18, 33, 0.35);
+    }
+
+    .navbar-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.25rem;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand-link {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      text-decoration: none;
+      color: #ffffff;
+      flex-shrink: 0;
+    }
+
+    .brand-logo-img {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+      border-radius: 50%;
+      background: #ffffff;
+      padding: 2px;
+      border: 2px solid var(--color-accent-gold);
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.15;
+    }
+
+    .brand-title-main {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: #ffffff;
+    }
+
+    .brand-subtitle {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      color: var(--color-accent-gold);
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: rgba(226, 232, 240, 0.85);
+      text-decoration: none;
+      font-size: 0.825rem;
+      font-weight: 600;
+      transition: color 0.2s ease;
+      padding: 6px 2px;
+      position: relative;
+    }
+
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--color-accent-gold);
+    }
+
+    .nav-links a.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--color-accent-gold);
+      border-radius: 2px;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-nav-action {
+      padding: 8px 16px;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      color: #0e223d;
+      background: linear-gradient(135deg, #f7cb75 0%, #e7b55e 100%);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: var(--radius-pill);
+      text-decoration: none;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 12px rgba(231, 181, 94, 0.3);
+      transition: all 0.2s ease;
+    }
+
+    .btn-nav-action:hover {
+      filter: brightness(1.06);
+      transform: translateY(-1px);
+    }
+
+    .btn-nav-outline {
+      padding: 7px 15px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: var(--radius-pill);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-nav-outline:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* ==========================================================================
+       HERO BANNER SECTION
+       ========================================================================== */
+    .hero-banner {
+      background: linear-gradient(135deg, var(--color-dark-navy) 0%, var(--color-primary-navy) 50%, var(--color-primary-royal) 100%);
+      color: #ffffff;
+      padding: 3.5rem 0 4.25rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-banner::before {
+      content: '';
+      position: absolute;
+      top: -30%;
+      right: -10%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(231, 181, 94, 0.12) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(231, 181, 94, 0.15);
+      border: 1px solid rgba(231, 181, 94, 0.4);
+      color: var(--color-accent-gold);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      padding: 5px 14px;
+      border-radius: var(--radius-pill);
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-title {
+      font-size: clamp(1.85rem, 3.8vw, 2.75rem);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+      margin-bottom: 0.85rem;
+    }
+
+    .hero-desc {
+      font-size: clamp(0.925rem, 1.8vw, 1.05rem);
+      color: #cbd5e1;
+      max-width: 680px;
+      margin: 0 auto 2rem;
+      line-height: 1.6;
+    }
+
+    /* Tab Switcher Pills */
+    .tab-pills-container {
+      display: inline-flex;
+      background: rgba(14, 34, 61, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: var(--radius-pill);
+      padding: 5px;
+      gap: 6px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .tab-pill-btn {
+      background: transparent;
+      border: none;
+      color: #cbd5e1;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 9px 20px;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      white-space: nowrap;
+    }
+
+    .tab-pill-btn:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .tab-pill-btn.active {
+      background: var(--color-accent-gold);
+      color: #0e223d;
+      font-weight: 700;
+      box-shadow: 0 4px 14px rgba(231, 181, 94, 0.4);
+    }
+
+    /* ==========================================================================
+       MAIN CONTENT CARDS & SECTIONS
+       ========================================================================== */
+    .main-body {
+      flex: 1;
+      margin-top: -2rem;
+      padding-bottom: 4rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    .card-panel {
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 2.25rem 2rem;
+      box-shadow: var(--shadow-card);
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      .card-panel {
+        padding: 1.5rem 1.15rem;
+      }
+    }
+
+    /* Search Box System */
+    .search-box-wrap {
+      max-width: 680px;
+      margin: 0 auto 2rem;
+      text-align: center;
+    }
+
+    .search-input-group {
+      display: flex;
+      gap: 10px;
+      background: #ffffff;
+      border: 2px solid var(--color-border-subtle);
+      border-radius: var(--radius-pill);
+      padding: 6px 8px 6px 20px;
+      box-shadow: 0 6px 18px rgba(25, 54, 95, 0.08);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .search-input-group:focus-within {
+      border-color: var(--color-primary-royal);
+      box-shadow: 0 0 0 4px rgba(40, 88, 145, 0.15);
+    }
+
+    .search-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-family: inherit;
+      font-size: 0.95rem;
+      color: var(--color-text-main);
+      background: transparent;
+    }
+
+    .search-input::placeholder {
+      color: #94a3b8;
+    }
+
+    .btn-search-action {
+      background: linear-gradient(135deg, var(--color-primary-navy) 0%, var(--color-primary-royal) 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 11px 24px;
+      font-size: 0.875rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn-search-action:hover {
+      filter: brightness(1.1);
+      transform: translateY(-1px);
+    }
+
+    /* Demo Quick Chips */
+    .quick-chips-wrap {
+      margin-top: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip-label {
+      font-size: 0.775rem;
+      color: var(--color-text-muted);
+      font-weight: 600;
+    }
+
+    .chip-btn {
+      background: var(--color-bg-tint);
+      border: 1px solid rgba(40, 88, 145, 0.2);
+      color: var(--color-primary-navy);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 11px;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .chip-btn:hover {
+      background: var(--color-primary-royal);
+      color: #ffffff;
+      border-color: var(--color-primary-royal);
+    }
+
+    /* ==========================================================================
+       SCORE RESULT CARD (PRESTIGIOUS VIEW)
+       ========================================================================== */
+    .result-container {
+      margin-top: 2rem;
+      animation: fadeIn 0.35s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .score-card {
+      background: #ffffff;
+      border: 2px solid rgba(231, 181, 94, 0.55);
+      border-radius: var(--radius-xl);
+      box-shadow: 0 16px 40px rgba(25, 54, 95, 0.12);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .score-card-top-bar {
+      height: 8px;
+      background: linear-gradient(90deg, #19365f 0%, #285891 35%, #e7b55e 100%);
+    }
+
+    .score-card-header {
+      padding: 2rem 2.25rem 1.5rem;
+      border-bottom: 1px solid var(--color-border-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      background: linear-gradient(180deg, #fbfcfe 0%, #ffffff 100%);
+    }
+
+    .student-badge-rank {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--color-accent-gold-light);
+      border: 1px solid rgba(231, 181, 94, 0.6);
+      color: var(--color-accent-gold-dark);
+      font-size: 0.8rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 5px 14px;
+      border-radius: var(--radius-pill);
+      margin-bottom: 0.75rem;
+    }
+
+    .student-name-main {
+      font-size: clamp(1.4rem, 2.5vw, 1.85rem);
+      font-weight: 800;
+      color: var(--color-primary-navy);
+      line-height: 1.25;
+      margin-bottom: 4px;
+    }
+
+    .student-school-main {
+      font-size: 0.95rem;
+      color: var(--color-text-muted);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge-status-pill {
+      padding: 8px 18px;
+      border-radius: var(--radius-pill);
+      font-size: 0.825rem;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .badge-gold {
+      background: linear-gradient(135deg, #fef8ee 0%, #fef3c7 100%);
+      color: #92400e;
+      border: 1.5px solid #f59e0b;
+    }
+
+    .badge-green {
+      background: var(--color-success-bg);
+      color: var(--color-success-text);
+      border: 1.5px solid var(--color-success-border);
+    }
+
+    .badge-blue {
+      background: var(--color-bg-tint);
+      color: var(--color-primary-royal);
+      border: 1.5px solid rgba(40, 88, 145, 0.3);
+    }
+
+    /* Score Metrics Grid */
+    .score-metrics-grid {
+      padding: 2rem 2.25rem;
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 2rem;
+      border-bottom: 1px solid var(--color-border-light);
+    }
+
+    @media (max-width: 860px) {
+      .score-metrics-grid {
+        grid-template-columns: 1fr;
+        padding: 1.5rem;
+        gap: 1.5rem;
+      }
+    }
+
+    .score-highlight-box {
+      background: linear-gradient(135deg, #f8fafc 0%, #eef5fc 100%);
+      border: 1px solid rgba(40, 88, 145, 0.15);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .score-circle-number {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--color-primary-navy) 0%, var(--color-primary-royal) 100%);
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 24px rgba(25, 54, 95, 0.25);
+      flex-shrink: 0;
+      border: 3px solid var(--color-accent-gold);
+    }
+
+    .score-circle-number .val {
+      font-size: 2.1rem;
+      font-weight: 800;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      line-height: 1;
+    }
+
+    .score-circle-number .lbl {
+      font-size: 0.65rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--color-accent-gold);
+      font-weight: 700;
+      margin-top: 3px;
+    }
+
+    .score-breakdown-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+
+    .score-breakdown-table tr {
+      border-bottom: 1px dashed #e2e8f0;
+    }
+
+    .score-breakdown-table tr:last-child {
+      border-bottom: none;
+    }
+
+    .score-breakdown-table td {
+      padding: 6px 0;
+    }
+
+    .score-breakdown-table .td-label {
+      color: var(--color-text-muted);
+      font-weight: 500;
+    }
+
+    .score-breakdown-table .td-val {
+      text-align: right;
+      font-weight: 700;
+      color: var(--color-text-main);
+    }
+
+    /* Rank & Position Box */
+    .rank-stats-box {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .rank-big-row {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 0.5rem;
+    }
+
+    .rank-big-number {
+      font-size: 2.75rem;
+      font-weight: 800;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: var(--color-primary-navy);
+      line-height: 1;
+    }
+
+    .rank-big-denom {
+      font-size: 1.1rem;
+      color: var(--color-text-muted);
+      font-weight: 600;
+    }
+
+    .rank-progress-bar-wrap {
+      margin-top: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .rank-progress-track {
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: var(--radius-pill);
+      overflow: hidden;
+    }
+
+    .rank-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--color-accent-gold) 0%, #10b981 100%);
+      border-radius: var(--radius-pill);
+      transition: width 1s ease;
+    }
+
+    .rank-sub-desc {
+      font-size: 0.8125rem;
+      color: var(--color-text-muted);
+      line-height: 1.45;
+    }
+
+    /* Meta Info Strip */
+    .score-card-meta {
+      padding: 1.25rem 2.25rem;
+      background: #fbfcfe;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem 3rem;
+      font-size: 0.825rem;
+      border-bottom: 1px solid var(--color-border-light);
+    }
+
+    .meta-item-cell {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .meta-item-lbl {
+      color: var(--color-text-muted);
+      font-size: 0.725rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .meta-item-val {
+      color: var(--color-primary-navy);
+      font-weight: 700;
+      font-size: 0.875rem;
+    }
+
+    /* Actions Footer */
+    .score-card-actions {
+      padding: 1.5rem 2.25rem;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-action-cert {
+      background: linear-gradient(135deg, #f7cb75 0%, #e7b55e 100%);
+      color: #0e223d;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 800;
+      padding: 12px 24px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 14px rgba(231, 181, 94, 0.35);
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-action-cert:hover {
+      filter: brightness(1.08);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(231, 181, 94, 0.45);
+    }
+
+    .btn-action-secondary {
+      background: #ffffff;
+      color: var(--color-primary-navy);
+      border: 1.5px solid var(--color-border-light);
+      padding: 11px 20px;
+      border-radius: var(--radius-md);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-action-secondary:hover {
+      background: var(--color-bg-tint-light);
+      border-color: var(--color-primary-royal);
+    }
+
+    .btn-action-wa {
+      background: #25d366;
+      color: #ffffff;
+      border: none;
+      padding: 11px 20px;
+      border-radius: var(--radius-md);
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-action-wa:hover {
+      background: #1eb956;
+      transform: translateY(-1px);
+    }
+
+    /* ==========================================================================
+       TAB 2: LEADERBOARD & PODIUM STYLING
+       ========================================================================== */
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--color-border-light);
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .filter-select {
+      padding: 8px 14px;
+      border-radius: var(--radius-md);
+      border: 1.5px solid var(--color-border-light);
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--color-text-main);
+      background: #ffffff;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .filter-select:focus {
+      border-color: var(--color-primary-royal);
+    }
+
+    /* Podium 3 Besar */
+    .podium-container {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 1.25rem;
+      margin: 2rem 0 3rem;
+      padding: 0 1rem;
+    }
+
+    @media (max-width: 640px) {
+      .podium-container {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+
+    .podium-card {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 1.5rem 1.25rem;
+      text-align: center;
+      flex: 1;
+      max-width: 280px;
+      box-shadow: var(--shadow-card);
+      position: relative;
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .podium-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lift);
+    }
+
+    .podium-card.first {
+      order: 2;
+      border-color: var(--color-accent-gold);
+      background: linear-gradient(180deg, #fffdf8 0%, #ffffff 100%);
+      transform: translateY(-16px);
+      box-shadow: 0 16px 36px rgba(231, 181, 94, 0.25);
+    }
+
+    .podium-card.first:hover {
+      transform: translateY(-20px);
+    }
+
+    .podium-card.second {
+      order: 1;
+      border-color: #cbd5e1;
+    }
+
+    .podium-card.third {
+      order: 3;
+      border-color: #d97706;
+    }
+
+    @media (max-width: 640px) {
+      .podium-card.first {
+        order: 1;
+        transform: none;
+        max-width: 100%;
+      }
+      .podium-card.second {
+        order: 2;
+        max-width: 100%;
+      }
+      .podium-card.third {
+        order: 3;
+        max-width: 100%;
+      }
+    }
+
+    .podium-medal-badge {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      margin: -2.5rem auto 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      font-weight: 800;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      border: 3px solid #ffffff;
+    }
+
+    .medal-gold {
+      background: linear-gradient(135deg, #fce588 0%, #e7b55e 100%);
+      color: #78350f;
+    }
+
+    .medal-silver {
+      background: linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%);
+      color: #334155;
+    }
+
+    .medal-bronze {
+      background: linear-gradient(135deg, #fed7aa 0%, #d97706 100%);
+      color: #7c2d12;
+    }
+
+    .podium-title {
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .podium-name {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--color-primary-navy);
+      margin-bottom: 4px;
+      line-height: 1.25;
+    }
+
+    .podium-school {
+      font-size: 0.8rem;
+      color: var(--color-text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .podium-score {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--color-primary-royal);
+    }
+
+    /* Leaderboard Table */
+    .leaderboard-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      border: 1px solid var(--color-border-light);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      font-size: 0.875rem;
+    }
+
+    .leaderboard-table th {
+      background: var(--color-bg-tint-light);
+      color: var(--color-text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.725rem;
+      letter-spacing: 0.5px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--color-border-light);
+      text-align: left;
+    }
+
+    .leaderboard-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--color-border-light);
+      color: var(--color-text-main);
+    }
+
+    .leaderboard-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .leaderboard-table tr:hover td {
+      background: #f8fafc;
+    }
+
+    .rank-pill-table {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: #334155;
+    }
+
+    /* ==========================================================================
+       TAB 3: VERIFIKASI KEASLIAN E-SERTIFIKAT (AUTHENTICATOR)
+       ========================================================================== */
+    .auth-badge-verified {
+      background: var(--color-success-bg);
+      border: 2px solid var(--color-success-border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .auth-icon-big {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #047857;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(4, 120, 87, 0.25);
+    }
+
+    /* ==========================================================================
+       CERTIFICATE PRINT MODAL & PIAGAM PREVIEW ENGINE
+       ========================================================================== */
+    .cert-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      background: rgba(10, 25, 47, 0.85);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+
+    .cert-modal-box {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      max-width: 960px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .cert-modal-header {
+      background: var(--color-primary-navy);
+      color: #ffffff;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .cert-modal-header h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .cert-modal-body {
+      padding: 1.5rem;
+      background: #e2e8f0;
+      display: flex;
+      justify-content: center;
+      overflow-x: auto;
+    }
+
+    /* The Certificate Paper (A4 Landscape Scale) */
+    .certificate-sheet {
+      width: 842px; /* Standard A4 landscape pixel width at 72dpi */
+      min-height: 595px; /* A4 landscape height */
+      background: #ffffff;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      position: relative;
+      box-sizing: border-box;
+      font-family: 'Work Sans', sans-serif;
+      color: #0f172a;
+    }
+
+    .cert-border-outer {
+      border: 4px solid #19365f;
+      height: 100%;
+      padding: 6px;
+      box-sizing: border-box;
+    }
+
+    .cert-border-inner {
+      border: 2px solid #e7b55e;
+      height: 100%;
+      padding: 24px 30px;
+      box-sizing: border-box;
+      text-align: center;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .cert-kop {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 8px;
+    }
+
+    .cert-kop img {
+      width: 58px;
+      height: 58px;
+      object-fit: contain;
+    }
+
+    .cert-inst-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13pt;
+      font-weight: 800;
+      color: #19365f;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .cert-inst-sub {
+      font-size: 9.5pt;
+      color: #475569;
+      font-weight: 600;
+      margin-top: 1px;
+    }
+
+    .cert-main-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 24pt;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: #19365f;
+      text-transform: uppercase;
+      margin: 8px 0 2px;
+    }
+
+    .cert-no-surat {
+      font-size: 9.5pt;
+      color: #64748b;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    .cert-given-text {
+      font-size: 10pt;
+      color: #334155;
+      font-style: italic;
+    }
+
+    .cert-recipient-name {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 20pt;
+      font-weight: 800;
+      color: #19365f;
+      text-decoration: underline;
+      text-decoration-color: #e7b55e;
+      text-underline-offset: 6px;
+      margin: 8px 0 4px;
+    }
+
+    .cert-recipient-school {
+      font-size: 11pt;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 10px;
+    }
+
+    .cert-as-text {
+      font-size: 10pt;
+      color: #334155;
+      margin-bottom: 6px;
+    }
+
+    .cert-predicate-box {
+      display: inline-block;
+      margin: 0 auto 12px;
+      background: linear-gradient(135deg, #19365f 0%, #285891 100%);
+      color: #ffffff;
+      padding: 6px 24px;
+      border-radius: 9999px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 12pt;
+      font-weight: 800;
+      letter-spacing: 1px;
+      border: 2px solid #e7b55e;
+    }
+
+    .cert-event-desc {
+      font-size: 9pt;
+      color: #475569;
+      max-width: 620px;
+      margin: 0 auto 15px;
+      line-height: 1.4;
+    }
+
+    .cert-signatures {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding: 0 30px;
+      margin-top: 10px;
+    }
+
+    .cert-sig-box {
+      width: 200px;
+      text-align: center;
+      font-size: 8.5pt;
+    }
+
+    .cert-sig-line {
+      margin-top: 50px;
+      border-bottom: 1px solid #19365f;
+      font-weight: 700;
+      color: #19365f;
+      padding-bottom: 2px;
+    }
+
+    .cert-qr-area {
+      text-align: center;
+    }
+
+    .cert-qr-area img {
+      width: 68px;
+      height: 68px;
+      border: 1px dashed #94a3b8;
+      padding: 2px;
+      background: #ffffff;
+    }
+
+    .cert-modal-footer {
+      background: #ffffff;
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--color-border-light);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    /* Print Styles */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      .cert-modal-backdrop, .cert-modal-body, .certificate-sheet, .certificate-sheet * {
+        visibility: visible;
+      }
+      .cert-modal-backdrop {
+        position: absolute;
+        left: 0;
+        top: 0;
+        background: transparent;
+        padding: 0;
+        margin: 0;
+        display: block !important;
+      }
+      .cert-modal-header, .cert-modal-footer {
+        display: none !important;
+      }
+      .certificate-sheet {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100% !important;
+        height: 100% !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 20px !important;
+      }
+      @page {
+        size: A4 landscape;
+        margin: 0;
+      }
+    }
+
+    /* Footer */
+    .site-footer {
+      background: var(--color-dark-navy);
+      color: #ffffff;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 3rem 0 2rem;
+      margin-top: auto;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 1.5rem;
+      text-align: center;
+      font-size: 0.8125rem;
+      color: rgba(255, 255, 255, 0.5);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================================================
+       TOP NAVBAR
+       ========================================================================== -->
+  <nav class="navbar" id="siteNavbar">
+    <div class="navbar-container">
+      <a href="/" class="brand-link" aria-label="Beranda OMEGA PLUS 2026">
+        <img src="https://file.garden/aehADr1aKQol7cT9/Omega_Plus_Circular_Emblem-removebg-preview.png" onerror="this.src='logo.png'" class="brand-logo-img" alt="Logo OMEGA PLUS" />
+        <div class="brand-text">
+          <span class="brand-title-main">OMEGA PLUS 2026</span>
+          <span class="brand-subtitle">SMP NEGERI 1 PAMEKASAN</span>
+        </div>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html">Beranda</a></li>
+        <li><a href="pendaftaran.html">Pendaftaran</a></li>
+        <li><a href="ruang.html">Denah & Meja</a></li>
+        <li><a href="livescore.html" target="_blank" style="color: #fbbf24; font-weight: 700;"><i data-lucide="tv" style="width: 14px; height: 14px; vertical-align: middle;"></i> Live Score</a></li>
+        <li><a href="pengumuman.html" class="active">Pengumuman & Nilai</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="pendaftaran.html" class="btn-nav-outline">
+          <i data-lucide="edit-3" style="width: 14px; height: 14px;"></i> Daftar Lomba
+        </a>
+        <a href="admin.html" class="btn-nav-action">
+          <i data-lucide="shield-check" style="width: 14px; height: 14px;"></i> Portal Admin
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ==========================================================================
+       HERO BANNER & TAB SWITCHER
+       ========================================================================== -->
+  <header class="hero-banner">
+    <div class="container">
+      <div class="hero-eyebrow">
+        <i data-lucide="award" style="width: 14px; height: 14px;"></i>
+        Pusat Pengumuman Resmi & E-Sertifikat
+      </div>
+      <h1 class="hero-title">Hasil Ujian, Peringkat & Piagam</h1>
+      <p class="hero-desc">
+        Cek perolehan skor ujian, posisi peringkat se-Madura, dan unduh E-Sertifikat resmi ber-QR Code verifikasi keaslian SMP Negeri 1 Pamekasan secara instan.
+      </p>
+
+      <!-- Tab Buttons -->
+      <div class="tab-pills-container">
+        <button type="button" class="tab-pill-btn active" id="tabBtnCek" onclick="switchMainTab('cek')">
+          <i data-lucide="search" style="width: 15px; height: 15px;"></i> Cek Nilai Mandiri
+        </button>
+        <button type="button" class="tab-pill-btn" id="tabBtnLeaderboard" onclick="switchMainTab('leaderboard')">
+          <i data-lucide="trophy" style="width: 15px; height: 15px;"></i> Papan Juara Top 10
+        </button>
+        <button type="button" class="tab-pill-btn" id="tabBtnVerify" onclick="switchMainTab('verify')">
+          <i data-lucide="badge-check" style="width: 15px; height: 15px;"></i> Verifikasi Sertifikat
+        </button>
+        <a href="livescore.html" target="_blank" class="tab-pill-btn" style="text-decoration: none; color: #fbbf24; border-color: rgba(251, 191, 36, 0.45); background: rgba(251, 191, 36, 0.1);">
+          <i data-lucide="tv" style="width: 15px; height: 15px;"></i> Live Score Layar Aula &rarr;
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       MAIN CONTENT CONTAINER
+       ========================================================================== -->
+  <main class="main-body">
+    <div class="container">
+
+      <!-- ====================================================================
+           TAB 1: CEK NILAI & PERINGKAT MANDIRI
+           ==================================================================== -->
+      <section id="panelCekNilai" class="card-panel">
+        <div class="search-box-wrap">
+          <h2 style="font-size: 1.35rem; color: var(--color-primary-navy); margin-bottom: 0.5rem; font-weight: 800;">
+            Pencarian Skor & Peringkat Siswa
+          </h2>
+          <p style="font-size: 0.875rem; color: var(--color-text-muted); margin-bottom: 1.5rem;">
+            Masukkan <strong>Nomor Pendaftaran</strong> (misal: <code>OMP-2026-0001</code>), <strong>Nomor Peserta Mapel</strong> (misal: <code>02-03-001</code>), atau <strong>Nomor HP</strong> saat mendaftar.
+          </p>
+
+          <div class="search-input-group">
+            <input type="text" id="inputQueryNilai" class="search-input" placeholder="Ketik No. Pendaftaran / No. Peserta / HP..." onkeypress="if(event.key==='Enter') executeSearchNilai()">
+            <button type="button" class="btn-search-action" onclick="executeSearchNilai()">
+              <i data-lucide="search" style="width: 16px; height: 16px;"></i>
+              <span>Cek Nilai Saya</span>
+            </button>
+          </div>
+
+          <!-- Quick Test Demo Chips -->
+          <div class="quick-chips-wrap">
+            <span class="chip-label">Coba Contoh Cepat:</span>
+            <button type="button" class="chip-btn" onclick="quickFillSearch('OMP-2026-0001')">Juara 1 IPA (Amalia)</button>
+            <button type="button" class="chip-btn" onclick="quickFillSearch('OMP-2026-0002')">Juara 1 Matematika (Farhan)</button>
+            <button type="button" class="chip-btn" onclick="quickFillSearch('OMP-2026-0003')">Juara 2 B. Inggris (Siti)</button>
+            <button type="button" class="chip-btn" onclick="quickFillSearch('OMP-2026-0004')">Finalis IPS (Rifqi)</button>
+          </div>
+        </div>
+
+        <!-- SEARCH RESULT CONTAINER -->
+        <div id="nilaiResultArea">
+          <!-- State Default / Placeholder -->
+          <div style="text-align: center; padding: 3rem 1rem; background: #f8fafc; border-radius: var(--radius-lg); border: 1px dashed #cbd5e1;">
+            <div style="width: 64px; height: 64px; border-radius: 50%; background: #e7f0fb; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: var(--color-primary-royal);">
+              <i data-lucide="file-text" style="width: 32px; height: 32px;"></i>
+            </div>
+            <h3 style="font-size: 1.1rem; color: var(--color-primary-navy); margin-bottom: 0.35rem;">Belum Ada Data yang Ditampilkan</h3>
+            <p style="font-size: 0.85rem; color: var(--color-text-muted); max-width: 480px; margin: 0 auto;">
+              Gunakan kotak pencarian di atas untuk melihat rincian skor, peringkat se-Madura, status penghargaan, dan mengunduh E-Sertifikat resmi.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           TAB 2: PAPAN PERINGKAT / TOP 10 LEADERBOARD
+           ==================================================================== -->
+      <section id="panelLeaderboard" class="card-panel" style="display: none;">
+        <div class="filter-bar">
+          <div>
+            <div style="font-size: 0.75rem; font-weight: 700; color: var(--color-primary-royal); text-transform: uppercase; letter-spacing: 1px;">Papan Juara Bergengsi</div>
+            <h2 style="font-size: 1.35rem; color: var(--color-primary-navy); font-weight: 800;">Top Peringkat Se-Madura</h2>
+          </div>
+
+          <div class="filter-group">
+            <label for="filterLevelLead" style="font-size: 0.825rem; font-weight: 600; color: var(--color-text-muted);">Tingkatan:</label>
+            <select id="filterLevelLead" class="filter-select" onchange="renderLeaderboardView()">
+              <option value="Level 2 (Kelas 4-6)">Level 2 (SD/MI Kelas 4 - 6)</option>
+              <option value="Level 1 (Kelas 1-3)">Level 1 (SD/MI Kelas 1 - 3)</option>
+            </select>
+
+            <label for="filterMapelLead" style="font-size: 0.825rem; font-weight: 600; color: var(--color-text-muted); margin-left: 8px;">Mapel:</label>
+            <select id="filterMapelLead" class="filter-select" onchange="renderLeaderboardView()">
+              <option value="IPA">IPA (Sains)</option>
+              <option value="Matematika">Matematika</option>
+              <option value="Bahasa Inggris">Bahasa Inggris</option>
+              <option value="IPS">IPS</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- PODIUM 3 BESAR -->
+        <div class="podium-container" id="podiumArea">
+          <!-- Dynamically populated via JS -->
+        </div>
+
+        <!-- TABEL PERINGKAT 4 - 10 -->
+        <div style="margin-top: 2rem;">
+          <h3 style="font-size: 1.05rem; font-weight: 800; color: var(--color-primary-navy); margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;">
+            <i data-lucide="list-ordered" style="width: 18px; height: 18px; color: var(--color-primary-royal);"></i>
+            Daftar Peringkat 4 s.d. 10 Besar
+          </h3>
+          <div style="overflow-x: auto;">
+            <table class="leaderboard-table" id="leaderboardTable">
+              <thead>
+                <tr>
+                  <th style="width: 70px; text-align: center;">Rank</th>
+                  <th>Nama Peserta</th>
+                  <th>Asal Sekolah</th>
+                  <th style="width: 140px; text-align: center;">No. Peserta</th>
+                  <th style="width: 100px; text-align: right;">Total Nilai</th>
+                  <th style="width: 150px; text-align: center;">Status</th>
+                </tr>
+              </thead>
+              <tbody id="leaderboardTableBody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           TAB 3: VERIFIKASI KEASLIAN E-SERTIFIKAT
+           ==================================================================== -->
+      <section id="panelVerify" class="card-panel" style="display: none;">
+        <div class="search-box-wrap">
+          <h2 style="font-size: 1.35rem; color: var(--color-primary-navy); margin-bottom: 0.5rem; font-weight: 800;">
+            Verifikasi Keaslian Sertifikat Digital
+          </h2>
+          <p style="font-size: 0.875rem; color: var(--color-text-muted); margin-bottom: 1.5rem;">
+            Fitur validasi publik resmi untuk sekolah lanjutan dan Dinas Pendidikan guna memastikan keabsahan E-Sertifikat OMEGA PLUS 2026 jalur prestasi.
+          </p>
+
+          <div class="search-input-group">
+            <input type="text" id="inputVerifyCert" class="search-input" placeholder="Masukkan Nomor Sertifikat / Nomor Pendaftaran..." onkeypress="if(event.key==='Enter') executeVerifyCert()">
+            <button type="button" class="btn-search-action" onclick="executeVerifyCert()">
+              <i data-lucide="shield-check" style="width: 16px; height: 16px;"></i>
+              <span>Verifikasi Dokumen</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="verifyResultArea">
+          <div style="text-align: center; padding: 2.5rem 1rem; color: var(--color-text-muted); background: #f8fafc; border-radius: var(--radius-lg); border: 1px dashed #cbd5e1;">
+            <i data-lucide="badge-check" style="width: 36px; height: 36px; margin: 0 auto 10px; color: #10b981;"></i>
+            <p>Masukkan Nomor Registrasi / Nomor Sertifikat yang tercetak pada sertifikat fisik/PDF untuk memverifikasi keaslian dokumen.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ==========================================================================
+       CERTIFICATE PRINT / VIEW MODAL
+       ========================================================================== -->
+  <div class="cert-modal-backdrop" id="certModalBackdrop" onclick="if(event.target===this) closeCertModal()">
+    <div class="cert-modal-box">
+      <div class="cert-modal-header">
+        <h3><i data-lucide="award" style="width: 18px; height: 18px; color: var(--color-accent-gold);"></i> E-Sertifikat Resmi OMEGA PLUS 2026</h3>
+        <button type="button" onclick="closeCertModal()" style="background: transparent; border: none; color: #ffffff; cursor: pointer;">
+          <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+        </button>
+      </div>
+
+      <div class="cert-modal-body">
+        <!-- THE CERTIFICATE SHEET -->
+        <div class="certificate-sheet" id="printCertificateSheet">
+          <div class="cert-border-outer">
+            <div class="cert-border-inner">
+              
+              <!-- Kop Lembaga -->
+              <div>
+                <div class="cert-kop">
+                  <img src="https://file.garden/aehADr1aKQol7cT9/Omega_Plus_Circular_Emblem-removebg-preview.png" onerror="this.src='logo.png'" alt="Logo SMPN 1" />
+                  <div>
+                    <div class="cert-inst-title">PANITIA OLIMPIADE AKADEMIK OMEGA PLUS 2026</div>
+                    <div class="cert-inst-sub">SMP NEGERI 1 PAMEKASAN • KABUPATEN PAMEKASAN</div>
+                  </div>
+                </div>
+
+                <div class="cert-main-title">PIAGAM PENGHARGAAN</div>
+                <div class="cert-no-surat" id="certNoDisplay">Nomor: 421.2/012/OMEGA-PLUS/SMPN1/2026</div>
+              </div>
+
+              <!-- Isi Penerima -->
+              <div>
+                <div class="cert-given-text">Diberikan dengan penuh kehormatan dan apresiasi kepada:</div>
+                <div class="cert-recipient-name" id="certRecipientName">AMALIA UTAMI</div>
+                <div class="cert-recipient-school" id="certRecipientSchool">SD NEGERI JUNGCANCANG 1 PAMEKASAN</div>
+                <div class="cert-as-text">Sebagai:</div>
+                <div>
+                  <div class="cert-predicate-box" id="certPredicateBox">JUARA 1 (MEDALI EMAS)</div>
+                </div>
+                <div class="cert-event-desc" id="certEventDesc">
+                  Dalam Ajang Olimpiade Akademik SD/MI Se-Madura (Mata Pelajaran IPA - Level 2) yang diselenggarakan oleh SMP Negeri 1 Pamekasan pada tahun 2026.
+                </div>
+              </div>
+
+              <!-- Tanda Tangan & QR Code Validasi -->
+              <div class="cert-signatures">
+                <div class="cert-sig-box">
+                  <div>Mengetahui,</div>
+                  <div style="font-weight: 700; color: #19365f; margin-bottom: 2px;">Ketua Panitia OMEGA PLUS</div>
+                  <div class="cert-sig-line">RASYIDI, S.Pd.</div>
+                  <div>NIP. 19820514 200801 1 009</div>
+                </div>
+
+                <div class="cert-qr-area">
+                  <img id="certQrImg" src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=VERIFIKASI-OMEGA" alt="QR Verifikasi" />
+                  <div style="font-size: 7pt; font-weight: 700; color: #19365f; margin-top: 3px;">SCAN VALIDASI RESMI</div>
+                </div>
+
+                <div class="cert-sig-box">
+                  <div>Pamekasan, 2026</div>
+                  <div style="font-weight: 700; color: #19365f; margin-bottom: 2px;">Kepala SMP Negeri 1 Pamekasan</div>
+                  <div class="cert-sig-line">Drs. H. JAELANI, M.Pd.</div>
+                  <div>Pembina Utama Muda (IV/c)</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cert-modal-footer">
+        <button type="button" class="btn-action-secondary" onclick="closeCertModal()">Tutup</button>
+        <button type="button" class="btn-action-cert" onclick="window.print()">
+          <i data-lucide="printer" style="width: 16px; height: 16px;"></i> Cetak / Simpan PDF
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       SITE FOOTER
+       ========================================================================== -->
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+          <img src="https://file.garden/aehADr1aKQol7cT9/Omega_Plus_Circular_Emblem-removebg-preview.png" onerror="this.src='logo.png'" width="42" height="42" style="border-radius: 50%; background: #ffffff; padding: 2px; border: 2px solid var(--color-accent-gold);" alt="Logo" />
+          <h3 style="margin: 0; font-size: 1.15rem; color: #ffffff;">SMP NEGERI 1 PAMEKASAN</h3>
+        </div>
+        <p style="font-size: 0.85rem; line-height: 1.6; color: rgba(255, 255, 255, 0.7); max-width: 380px;">
+          Penyelenggara Olimpiade Akademik SD/MI OMEGA PLUS 2026 Se-Madura. Portal Pengumuman Hasil, Peringkat, dan E-Sertifikat Digital Resmi Ber-QR Code.
+        </p>
+      </div>
+
+      <div>
+        <h4 style="font-size: 0.95rem; margin-bottom: 12px; color: var(--color-accent-gold);">Tautan Utama</h4>
+        <ul style="list-style: none; font-size: 0.85rem; line-height: 2; color: rgba(255, 255, 255, 0.8);">
+          <li><a href="index.html" style="color: inherit; text-decoration: none;">Beranda Acara</a></li>
+          <li><a href="pendaftaran.html" style="color: inherit; text-decoration: none;">Formulir Pendaftaran</a></li>
+          <li><a href="pendaftaran.html#status" style="color: inherit; text-decoration: none;">Cek Status Peserta</a></li>
+          <li><a href="pengumuman.html" style="color: inherit; text-decoration: none;">Pengumuman & E-Sertifikat</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 style="font-size: 0.95rem; margin-bottom: 12px; color: var(--color-accent-gold);">Sekretariat Panitia</h4>
+        <p style="font-size: 0.85rem; line-height: 1.6; color: rgba(255, 255, 255, 0.7);">
+          Kampus SMP Negeri 1 Pamekasan<br>
+          Jl. Raden Abdul Azis No. 24, Gladak Anyar, Kab. Pamekasan, Jawa Timur 69317
+        </p>
+      </div>
+    </div>
+
+    <div class="container footer-bottom">
+      <p>© 2026 Panitia OMEGA PLUS • SMP Negeri 1 Pamekasan. Hak Cipta Dilindungi Undang-Undang.</p>
+    </div>
+  </footer>
+
+  <!-- ==========================================================================
+       CLIENT SCRIPT LOGIC (ROBUST OFFLINE / LIVE RESILIENT)
+       ========================================================================== -->
+  <script>
+    // In-Memory Representative Demo Dataset (Aktif jika backend belum terhubung / testing offline)
+    const SAMPLE_NILAI_DATABASE = [
+      {
+        noPendaftaran: "OMP-2026-0001",
+        kodePeserta: "02-03-001",
+        nama: "Amalia Utami",
+        sekolah: "SD Negeri Jungcancang 1 Pamekasan",
+        level: "Level 2 (Kelas 4-6)",
+        mapel: "IPA",
+        skorBenar: 26,
+        skorSalah: 3,
+        skorKosong: 1,
+        nilaiAkhir: 101, // (26*4) - 3 = 101
+        skorSkala100: 94.5,
+        rankingMapel: 1,
+        totalPesertaMapel: 148,
+        statusHasil: "JUARA 1 (MEDALI EMAS)",
+        statusKelulusan: "LOLOS KE BABAK FINAL",
+        noSertifikat: "421.2/001/OMEGA-PLUS/SMPN1/2026",
+        catatanJuri: "Penguasaan konsep Biologi & Fisika sangat prima. Terpilih sebagai Juara 1 Mapel IPA Tingkat SD/MI Se-Madura."
+      },
+      {
+        noPendaftaran: "OMP-2026-0002",
+        kodePeserta: "02-01-001",
+        nama: "Muhammad Farhan Pratama",
+        sekolah: "SD Plus Nurul Hikmah Pamekasan",
+        level: "Level 2 (Kelas 4-6)",
+        mapel: "Matematika",
+        skorBenar: 25,
+        skorSalah: 2,
+        skorKosong: 3,
+        nilaiAkhir: 98,
+        skorSkala100: 92.0,
+        rankingMapel: 1,
+        totalPesertaMapel: 165,
+        statusHasil: "JUARA 1 (MEDALI EMAS)",
+        statusKelulusan: "LOLOS KE BABAK FINAL",
+        noSertifikat: "421.2/002/OMEGA-PLUS/SMPN1/2026",
+        catatanJuri: "Kecepatan dan ketepatan pemecahan soal logika & geometri luar biasa tinggi."
+      },
+      {
+        noPendaftaran: "OMP-2026-0003",
+        kodePeserta: "02-02-005",
+        nama: "Siti Nurhaliza Azzahra",
+        sekolah: "SDIT Al-Ittihad Sumenep",
+        level: "Level 2 (Kelas 4-6)",
+        mapel: "Bahasa Inggris",
+        skorBenar: 24,
+        skorSalah: 4,
+        skorKosong: 2,
+        nilaiAkhir: 92,
+        skorSkala100: 89.0,
+        rankingMapel: 2,
+        totalPesertaMapel: 130,
+        statusHasil: "JUARA 2 (MEDALI PERAK)",
+        statusKelulusan: "LOLOS KE BABAK FINAL",
+        noSertifikat: "421.2/003/OMEGA-PLUS/SMPN1/2026",
+        catatanJuri: "Grammar dan Reading Comprehension sangat kuat. Peraih Medali Perak Tingkat Madura."
+      },
+      {
+        noPendaftaran: "OMP-2026-0004",
+        kodePeserta: "02-04-012",
+        nama: "Achmad Rifqi Fauzan",
+        sekolah: "MIN 1 Sampang",
+        level: "Level 2 (Kelas 4-6)",
+        mapel: "IPS",
+        skorBenar: 23,
+        skorSalah: 5,
+        skorKosong: 2,
+        nilaiAkhir: 87,
+        skorSkala100: 86.5,
+        rankingMapel: 4,
+        totalPesertaMapel: 112,
+        statusHasil: "JUARA HARAPAN 1",
+        statusKelulusan: "LOLOS KE BABAK FINAL",
+        noSertifikat: "421.2/004/OMEGA-PLUS/SMPN1/2026",
+        catatanJuri: "Wawasan sejarah kebangsaan dan geografi nusantara sangat baik."
+      },
+      {
+        noPendaftaran: "OMP-2026-0005",
+        kodePeserta: "01-01-003",
+        nama: "Alya Zahira Putri",
+        sekolah: "SDN Barurambat Kota 1 Pamekasan",
+        level: "Level 1 (Kelas 1-3)",
+        mapel: "Matematika",
+        skorBenar: 27,
+        skorSalah: 1,
+        skorKosong: 2,
+        nilaiAkhir: 107,
+        skorSkala100: 96.0,
+        rankingMapel: 1,
+        totalPesertaMapel: 120,
+        statusHasil: "JUARA 1 (MEDALI EMAS)",
+        statusKelulusan: "LOLOS KE BABAK FINAL",
+        noSertifikat: "421.2/005/OMEGA-PLUS/SMPN1/2026",
+        catatanJuri: "Akurasi berhitung cepat tingkat awal sangat memukau."
+      },
+      {
+        noPendaftaran: "OMP-2026-0006",
+        kodePeserta: "01-03-008",
+        nama: "Bagas Satria Wibawa",
+        sekolah: "SDN Dhalpenang 1 Sampang",
+        level: "Level 1 (Kelas 1-3)",
+        mapel: "IPA",
+        skorBenar: 22,
+        skorSalah: 6,
+        skorKosong: 2,
+        nilaiAkhir: 82,
+        skorSkala100: 82.5,
+        rankingMapel: 3,
+        totalPesertaMapel: 95,
+        statusHasil: "JUARA 3 (MEDALI PERUNGGU)",
+        statusKelulusan: "LOLOS KE BABAK FINAL",
+        noSertifikat: "421.2/006/OMEGA-PLUS/SMPN1/2026",
+        catatanJuri: "Capaian sains dasar tingkat pemula sangat membanggakan."
+      }
+    ];
+
+    let currentActiveItem = null;
+
+    // Inisialisasi saat load
+    document.addEventListener("DOMContentLoaded", function() {
+      lucide.createIcons();
+
+      // Cek Query Parameter URL (Misal: ?verify=... atau ?q=...)
+      const urlParams = new URLSearchParams(window.location.search);
+      const verifyQuery = urlParams.get('verify') || urlParams.get('sertifikat');
+      const searchQuery = urlParams.get('q') || urlParams.get('no');
+
+      if (verifyQuery) {
+        switchMainTab('verify');
+        document.getElementById('inputVerifyCert').value = verifyQuery;
+        executeVerifyCert();
+      } else if (searchQuery) {
+        switchMainTab('cek');
+        document.getElementById('inputQueryNilai').value = searchQuery;
+        executeSearchNilai();
+      } else {
+        renderLeaderboardView();
+      }
+    });
+
+    // Tab Switcher Controller
+    function switchMainTab(tab) {
+      const panelCek = document.getElementById('panelCekNilai');
+      const panelLead = document.getElementById('panelLeaderboard');
+      const panelVerify = document.getElementById('panelVerify');
+
+      const btnCek = document.getElementById('tabBtnCek');
+      const btnLead = document.getElementById('tabBtnLeaderboard');
+      const btnVerify = document.getElementById('tabBtnVerify');
+
+      panelCek.style.display = 'none';
+      panelLead.style.display = 'none';
+      panelVerify.style.display = 'none';
+
+      btnCek.classList.remove('active');
+      btnLead.classList.remove('active');
+      btnVerify.classList.remove('active');
+
+      if (tab === 'cek') {
+        panelCek.style.display = 'block';
+        btnCek.classList.add('active');
+      } else if (tab === 'leaderboard') {
+        panelLead.style.display = 'block';
+        btnLead.classList.add('active');
+        renderLeaderboardView();
+      } else if (tab === 'verify') {
+        panelVerify.style.display = 'block';
+        btnVerify.classList.add('active');
+      }
+      lucide.createIcons();
+    }
+
+    // Quick Fill Search
+    function quickFillSearch(keyword) {
+      document.getElementById('inputQueryNilai').value = keyword;
+      executeSearchNilai();
+    }
+
+    // Eksekusi Pencarian Nilai
+    async function executeSearchNilai() {
+      const rawQuery = document.getElementById('inputQueryNilai').value.trim();
+      if (!rawQuery) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Masukkan Kata Kunci',
+          text: 'Harap masukkan Nomor Pendaftaran, Nomor Peserta, atau Nomor WhatsApp Anda.'
+        });
+        return;
+      }
+
+      const container = document.getElementById('nilaiResultArea');
+      container.innerHTML = `
+        <div style="text-align: center; padding: 3rem 1rem;">
+          <div style="display:inline-block;width:30px;height:30px;border:3px solid #285891;border-top-color:transparent;border-radius:50%;animation:spin 0.6s linear infinite;"></div>
+          <p style="margin-top: 12px; color: #657c94; font-weight: 500;">Memeriksa basis data nilai OMEGA PLUS 2026...</p>
+        </div>
+      `;
+
+      try {
+        const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '/api';
+        let foundItem = null;
+
+        // Coba request ke API jika bukan protocol file:
+        try {
+          const res = await fetch(`${apiUrl}?action=cekNilai&keyword=${encodeURIComponent(rawQuery)}`);
+          if (res.ok) {
+            const json = await res.json();
+            if (json.status === 'locked') {
+              container.innerHTML = `
+                <div style="text-align: center; padding: 2.5rem 1.5rem; background: #fffbeb; border: 1.5px solid #fde68a; border-radius: var(--radius-lg);">
+                  <i data-lucide="lock" style="width: 36px; height: 36px; color: #b45309; margin: 0 auto 10px;"></i>
+                  <h3 style="color: #92400e; font-size: 1.15rem; font-weight: 800; margin-bottom: 6px;">Pengumuman Belum Dibuka</h3>
+                  <p style="color: #b45309; font-size: 0.9rem; max-width: 520px; margin: 0 auto;">
+                    ${json.message || 'Panitia OMEGA PLUS 2026 sedang melakukan sinkronisasi dan verifikasi nilai akhir. Pengumuman resmi akan segera dibuka.'}
+                  </p>
+                </div>
+              `;
+              lucide.createIcons();
+              return;
+            } else if (json.status === 'success' && json.data) {
+              foundItem = Array.isArray(json.data) ? json.data[0] : json.data;
+            }
+          }
+        } catch (apiErr) {
+          console.warn("API request failed or offline, falling back to local dataset:", apiErr);
+        }
+
+        // Fallback: Cari di dataset lokal jika API belum merespons
+        if (!foundItem) {
+          const q = rawQuery.toLowerCase();
+          foundItem = SAMPLE_NILAI_DATABASE.find(item => 
+            item.noPendaftaran.toLowerCase().includes(q) ||
+            item.kodePeserta.toLowerCase().includes(q) ||
+            item.nama.toLowerCase().includes(q) ||
+            (item.noSertifikat && item.noSertifikat.toLowerCase().includes(q))
+          );
+        }
+
+        if (!foundItem) {
+          container.innerHTML = `
+            <div style="text-align: center; padding: 2.5rem 1.5rem; background: #fff1f2; border: 1px solid #fecdd3; border-radius: var(--radius-lg);">
+              <i data-lucide="alert-circle" style="width: 36px; height: 36px; color: #e11d48; margin: 0 auto 10px;"></i>
+              <h3 style="color: #be123c; font-size: 1.1rem; font-weight: 800; margin-bottom: 4px;">Data Tidak Ditemukan</h3>
+              <p style="color: #e11d48; font-size: 0.875rem; max-width: 500px; margin: 0 auto;">
+                Nomor pendaftaran atau nomor peserta <strong>"${rawQuery}"</strong> belum terdaftar dalam daftar nilai resmi. Pastikan kode yang Anda masukkan sesuai dengan Kartu Ujian Resmi.
+              </p>
+            </div>
+          `;
+          lucide.createIcons();
+          return;
+        }
+
+        // Tampilkan Hasil Sukses
+        currentActiveItem = foundItem;
+        renderScoreCard(foundItem, container);
+
+      } catch (err) {
+        container.innerHTML = `<div style="text-align: center; padding: 2rem; color: #dc2626;">Terjadi kendala saat memuat nilai: ${err.message}</div>`;
+      }
+    }
+
+    // Render Kartu Hasil Nilai
+    function renderScoreCard(item, container) {
+      const isGold = (item.statusHasil || '').includes('JUARA 1') || (item.statusHasil || '').includes('EMAS');
+      const isSilver = (item.statusHasil || '').includes('JUARA 2') || (item.statusHasil || '').includes('PERAK');
+      const isBronze = (item.statusHasil || '').includes('JUARA 3') || (item.statusHasil || '').includes('PERUNGGU');
+
+      let badgeClass = 'badge-blue';
+      let iconName = 'award';
+      if (isGold) { badgeClass = 'badge-gold'; iconName = 'crown'; }
+      else if (isSilver) { badgeClass = 'badge-gold'; iconName = 'medal'; }
+      else if (isBronze) { badgeClass = 'badge-gold'; iconName = 'medal'; }
+      else { badgeClass = 'badge-green'; iconName = 'check-circle'; }
+
+      const percentScore = Math.min(100, Math.round(((item.totalPesertaMapel - item.rankingMapel + 1) / item.totalPesertaMapel) * 100));
+
+      container.innerHTML = `
+        <div class="result-container">
+          <div class="score-card">
+            <div class="score-card-top-bar"></div>
+            
+            <div class="score-card-header">
+              <div>
+                <div class="student-badge-rank">
+                  <i data-lucide="map-pin" style="width: 14px; height: 14px;"></i>
+                  ${item.level} • Mapel ${item.mapel}
+                </div>
+                <h3 class="student-name-main">${item.nama}</h3>
+                <div class="student-school-main">
+                  <i data-lucide="school" style="width: 16px; height: 16px; color: var(--color-primary-royal);"></i>
+                  <span>${item.sekolah}</span>
+                </div>
+              </div>
+
+              <div class="badge-status-pill ${badgeClass}">
+                <i data-lucide="${iconName}" style="width: 18px; height: 18px;"></i>
+                <span>${item.statusHasil || 'PESERTA KOMPETISI'}</span>
+              </div>
+            </div>
+
+            <!-- Grid Nilai & Ranking -->
+            <div class="score-metrics-grid">
+              
+              <!-- Highlight Nilai & Breakdown -->
+              <div class="score-highlight-box">
+                <div class="score-circle-number">
+                  <span class="val">${item.nilaiAkhir}</span>
+                  <span class="lbl">TOTAL SKOR</span>
+                </div>
+                <div style="flex: 1;">
+                  <div style="font-size: 0.8rem; font-weight: 700; color: var(--color-primary-navy); margin-bottom: 6px; text-transform: uppercase;">
+                    Rincian Lembar Jawaban:
+                  </div>
+                  <table class="score-breakdown-table">
+                    <tr>
+                      <td class="td-label">Jawaban Benar (+4)</td>
+                      <td class="td-val" style="color: #047857;">${item.skorBenar || '-'} soal</td>
+                    </tr>
+                    <tr>
+                      <td class="td-label">Jawaban Salah (-1)</td>
+                      <td class="td-val" style="color: #be123c;">${item.skorSalah || '0'} soal</td>
+                    </tr>
+                    <tr>
+                      <td class="td-label">Tidak Dijawab (0)</td>
+                      <td class="td-val">${item.skorKosong || '0'} soal</td>
+                    </tr>
+                    <tr>
+                      <td class="td-label">Status Kelulusan</td>
+                      <td class="td-val" style="color: var(--color-primary-royal); font-weight: 800;">${item.statusKelulusan || 'LULUS KOMPETISI'}</td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Posisi Peringkat / Ranking -->
+              <div class="rank-stats-box">
+                <div style="font-size: 0.75rem; font-weight: 700; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
+                  Peringkat Capaian Se-Madura
+                </div>
+                <div class="rank-big-row">
+                  <span class="rank-big-number">#${item.rankingMapel}</span>
+                  <span class="rank-big-denom">dari ${item.totalPesertaMapel} peserta</span>
+                </div>
+                
+                <div class="rank-progress-bar-wrap">
+                  <div class="rank-progress-track">
+                    <div class="rank-progress-fill" style="width: ${percentScore}%;"></div>
+                  </div>
+                </div>
+
+                <div class="rank-sub-desc">
+                  Peserta berada pada <strong>Top ${Math.max(1, 100 - percentScore)}%</strong> dari total seluruh peserta kompetisi mapel ${item.mapel}.
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Meta Strip -->
+            <div class="score-card-meta">
+              <div class="meta-item-cell">
+                <span class="meta-item-lbl">No. Registrasi</span>
+                <span class="meta-item-val">${item.noPendaftaran}</span>
+              </div>
+              <div class="meta-item-cell">
+                <span class="meta-item-lbl">Nomor Peserta Ujian</span>
+                <span class="meta-item-val" style="color: #047857;">${item.kodePeserta}</span>
+              </div>
+              <div class="meta-item-cell">
+                <span class="meta-item-lbl">Nomor E-Sertifikat</span>
+                <span class="meta-item-val">${item.noSertifikat || '-'}</span>
+              </div>
+              <div class="meta-item-cell">
+                <span class="meta-item-lbl">Dewan Juri / Evaluasi</span>
+                <span class="meta-item-val" style="font-weight: 500; color: #475569;">${item.catatanJuri || 'Sesuai ketetapan Dewan Juri SMPN 1 Pamekasan'}</span>
+              </div>
+            </div>
+
+            <!-- Aksi Tombol -->
+            <div class="score-card-actions">
+              <div>
+                <button type="button" class="btn-action-cert" onclick="openCertificateModal()">
+                  <i data-lucide="award" style="width: 18px; height: 18px;"></i>
+                  <span>Unduh E-Sertifikat Resmi (PDF)</span>
+                </button>
+              </div>
+
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button type="button" class="btn-action-secondary" onclick="window.print()">
+                  <i data-lucide="printer" style="width: 15px; height: 15px;"></i>
+                  <span>Cetak Lembar Nilai</span>
+                </button>
+                <button type="button" class="btn-action-wa" onclick="shareToWhatsApp()">
+                  <i data-lucide="share-2" style="width: 15px; height: 15px;"></i>
+                  <span>Bagikan ke WhatsApp</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      `;
+
+      lucide.createIcons();
+    }
+
+    // Modal E-Sertifikat
+    function openCertificateModal() {
+      if (!currentActiveItem) return;
+      const item = currentActiveItem;
+
+      document.getElementById('certNoDisplay').innerText = `Nomor: ${item.noSertifikat || '421.2/012/OMEGA-PLUS/SMPN1/2026'}`;
+      document.getElementById('certRecipientName').innerText = item.nama.toUpperCase();
+      document.getElementById('certRecipientSchool').innerText = item.sekolah.toUpperCase();
+      document.getElementById('certPredicateBox').innerText = (item.statusHasil || 'PESERTA APRESIASI').toUpperCase();
+      document.getElementById('certEventDesc').innerText = `Dalam Ajang Olimpiade Akademik SD/MI Se-Madura (Mata Pelajaran ${item.mapel} - ${item.level}) yang diselenggarakan oleh SMP Negeri 1 Pamekasan pada tahun 2026.`;
+
+      // Set Dynamic QR Code
+      const verifyUrl = `${window.location.origin}/pengumuman.html?verify=${encodeURIComponent(item.noPendaftaran)}`;
+      const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=${encodeURIComponent(verifyUrl)}`;
+      document.getElementById('certQrImg').src = qrApi;
+
+      document.getElementById('certModalBackdrop').style.display = 'flex';
+      lucide.createIcons();
+    }
+
+    function closeCertModal() {
+      document.getElementById('certModalBackdrop').style.display = 'none';
+    }
+
+    // Share to WhatsApp
+    function shareToWhatsApp() {
+      if (!currentActiveItem) return;
+      const item = currentActiveItem;
+      const msg = `Alhamdulillah! Selamat kepada *${item.nama}* dari *${item.sekolah}* telah meraih *${item.statusHasil}* (Peringkat #${item.rankingMapel} dari ${item.totalPesertaMapel} peserta) pada ajang OMEGA PLUS 2026 SMP Negeri 1 Pamekasan dengan Skor: ${item.nilaiAkhir}.\n\nCek pengumuman & E-Sertifikat resmi di:\n${window.location.href}`;
+      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    // TAB 2: RENDER LEADERBOARD
+    function renderLeaderboardView() {
+      const levelSel = document.getElementById('filterLevelLead').value;
+      const mapelSel = document.getElementById('filterMapelLead').value;
+
+      // Filter sample
+      let list = SAMPLE_NILAI_DATABASE.filter(i => i.level === levelSel && i.mapel === mapelSel);
+
+      // Jika tidak ada di sample, gunakan seluruh sample untuk demonstrasi visual
+      if (list.length === 0) {
+        list = SAMPLE_NILAI_DATABASE.filter(i => i.mapel === mapelSel);
+        if (list.length === 0) list = SAMPLE_NILAI_DATABASE;
+      }
+
+      // Sort by ranking
+      list.sort((a, b) => a.rankingMapel - b.rankingMapel);
+
+      const top1 = list[0] || { nama: "Amalia Utami", sekolah: "SDN Jungcancang 1", nilaiAkhir: 101, statusHasil: "JUARA 1" };
+      const top2 = list[1] || { nama: "Muhammad Farhan", sekolah: "SD Plus Nurul Hikmah", nilaiAkhir: 98, statusHasil: "JUARA 2" };
+      const top3 = list[2] || { nama: "Siti Nurhaliza", sekolah: "SDIT Al-Ittihad", nilaiAkhir: 92, statusHasil: "JUARA 3" };
+
+      // Render Podium
+      const podiumArea = document.getElementById('podiumArea');
+      podiumArea.innerHTML = `
+        <!-- Juara 2 -->
+        <div class="podium-card second">
+          <div class="podium-medal-badge medal-silver">2</div>
+          <div class="podium-title" style="color: #64748b;">JUARA 2 • MEDALI PERAK</div>
+          <div class="podium-name">${top2.nama}</div>
+          <div class="podium-school">${top2.sekolah}</div>
+          <div class="podium-score">${top2.nilaiAkhir} <span style="font-size:0.75rem; color:#94a3b8;">PTS</span></div>
+        </div>
+
+        <!-- Juara 1 -->
+        <div class="podium-card first">
+          <div class="podium-medal-badge medal-gold">1</div>
+          <div class="podium-title" style="color: #d97706;">JUARA 1 • MEDALI EMAS</div>
+          <div class="podium-name" style="font-size: 1.15rem; color: #19365f;">${top1.nama}</div>
+          <div class="podium-school">${top1.sekolah}</div>
+          <div class="podium-score" style="color: #d97706; font-size: 1.6rem;">${top1.nilaiAkhir} <span style="font-size:0.75rem; color:#94a3b8;">PTS</span></div>
+        </div>
+
+        <!-- Juara 3 -->
+        <div class="podium-card third">
+          <div class="podium-medal-badge medal-bronze">3</div>
+          <div class="podium-title" style="color: #b45309;">JUARA 3 • MEDALI PERUNGGU</div>
+          <div class="podium-name">${top3.nama}</div>
+          <div class="podium-school">${top3.sekolah}</div>
+          <div class="podium-score">${top3.nilaiAkhir} <span style="font-size:0.75rem; color:#94a3b8;">PTS</span></div>
+        </div>
+      `;
+
+      // Render Table 4 - 10
+      const tbody = document.getElementById('leaderboardTableBody');
+      const tableRows = list.slice(3).concat(
+        [
+          { rankingMapel: 5, nama: "Naufal Al-Ghifari", sekolah: "SDN Bugih 1 Pamekasan", kodePeserta: "02-03-018", nilaiAkhir: 84, statusHasil: "FINALIS" },
+          { rankingMapel: 6, nama: "Aisyah Putri Maharani", sekolah: "SDN Lawangan Daya 2", kodePeserta: "02-03-024", nilaiAkhir: 81, statusHasil: "FINALIS" },
+          { rankingMapel: 7, nama: "Dimas Arya Pratama", sekolah: "SDIT Al-Furqan Bangkalan", kodePeserta: "02-03-030", nilaiAkhir: 79, statusHasil: "FINALIS" }
+        ]
+      );
+
+      tbody.innerHTML = tableRows.map(row => `
+        <tr>
+          <td style="text-align: center;"><span class="rank-pill-table">#${row.rankingMapel}</span></td>
+          <td><strong>${row.nama}</strong></td>
+          <td style="color: #475569;">${row.sekolah}</td>
+          <td style="text-align: center; font-family: monospace; font-weight: bold; color: #047857;">${row.kodePeserta}</td>
+          <td style="text-align: right; font-weight: bold; color: var(--color-primary-navy);">${row.nilaiAkhir}</td>
+          <td style="text-align: center;">
+            <span style="display:inline-block; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: bold; background: #e0f2fe; color: #0369a1;">
+              ${row.statusHasil || 'FINALIS'}
+            </span>
+          </td>
+        </tr>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    // TAB 3: VERIFIKASI KEASLIAN SERTIFIKAT
+    function executeVerifyCert() {
+      const q = document.getElementById('inputVerifyCert').value.trim();
+      const container = document.getElementById('verifyResultArea');
+
+      if (!q) {
+        Swal.fire({ icon: 'warning', title: 'Kata Kunci Kosong', text: 'Masukkan Nomor Sertifikat atau Nomor Pendaftaran.' });
+        return;
+      }
+
+      // Cari di dataset
+      const found = SAMPLE_NILAI_DATABASE.find(i => 
+        i.noPendaftaran.toLowerCase().includes(q.toLowerCase()) || 
+        (i.noSertifikat && i.noSertifikat.toLowerCase().includes(q.toLowerCase()))
+      );
+
+      if (found) {
+        container.innerHTML = `
+          <div>
+            <div class="auth-badge-verified">
+              <div class="auth-icon-big">
+                <i data-lucide="check" style="width: 32px; height: 32px;"></i>
+              </div>
+              <div>
+                <h3 style="color: #047857; font-size: 1.15rem; font-weight: 800; margin-bottom: 2px;">
+                  SERTIFIKAT DIGITAL TERVERIFIKASI ASLI & RESMI
+                </h3>
+                <p style="color: #065f46; font-size: 0.85rem; margin: 0;">
+                  Dokumen ini sah terdaftar di pangkalan data resmi SMP Negeri 1 Pamekasan untuk keperluan Portofolio & Jalur Prestasi PPDB.
+                </p>
+              </div>
+            </div>
+
+            <div style="background: #ffffff; border: 1px solid var(--color-border-light); border-radius: var(--radius-lg); padding: 1.5rem;">
+              <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                <tr style="border-bottom: 1px solid #f1f5f9;"><td style="padding: 8px 0; width: 35%; color: #64748b; font-weight: 600;">Nomor Sertifikat</td><td style="font-weight: 800; color: #19365f;">: ${found.noSertifikat}</td></tr>
+                <tr style="border-bottom: 1px solid #f1f5f9;"><td style="padding: 8px 0; color: #64748b; font-weight: 600;">Nama Penerima</td><td style="font-weight: 800; color: #19365f;">: ${found.nama}</td></tr>
+                <tr style="border-bottom: 1px solid #f1f5f9;"><td style="padding: 8px 0; color: #64748b; font-weight: 600;">Asal Sekolah (SD/MI)</td><td>: ${found.sekolah}</td></tr>
+                <tr style="border-bottom: 1px solid #f1f5f9;"><td style="padding: 8px 0; color: #64748b; font-weight: 600;">Kategori / Bidang</td><td>: ${found.level} - Mata Pelajaran ${found.mapel}</td></tr>
+                <tr style="border-bottom: 1px solid #f1f5f9;"><td style="padding: 8px 0; color: #64748b; font-weight: 600;">Predikat Prestasi</td><td>: <span style="background: #fef3c7; color: #b45309; padding: 2px 8px; border-radius: 4px; font-weight: 800;">${found.statusHasil}</span></td></tr>
+                <tr style="border-bottom: 1px solid #f1f5f9;"><td style="padding: 8px 0; color: #64748b; font-weight: 600;">Institusi Penerbit</td><td>: SMP Negeri 1 Pamekasan</td></tr>
+                <tr><td style="padding: 8px 0; color: #64748b; font-weight: 600;">Status Tanda Tangan Digital</td><td>: <strong style="color: #047857;">Ditandatangani Resmi (Kepala Sekolah & Panitia)</strong></td></tr>
+              </table>
+
+              <div style="margin-top: 1.5rem; text-align: right;">
+                <button type="button" class="btn-action-cert" onclick="currentActiveItem = SAMPLE_NILAI_DATABASE.find(x => x.noPendaftaran === '${found.noPendaftaran}'); openCertificateModal();">
+                  <i data-lucide="eye" style="width: 16px; height: 16px;"></i> Pratinjau Dokumen Piagam
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 2rem; background: #fff1f2; border: 1px solid #fecdd3; border-radius: var(--radius-lg);">
+            <i data-lucide="alert-triangle" style="width: 36px; height: 36px; color: #e11d48; margin: 0 auto 10px;"></i>
+            <h4 style="color: #be123c; font-weight: 800;">Sertifikat Tidak Ditemukan</h4>
+            <p style="color: #e11d48; font-size: 0.85rem; max-width: 480px; margin: 0 auto;">
+              Nomor sertifikat <strong>"${q}"</strong> tidak tercatat dalam arsip resmi panitia OMEGA PLUS 2026. Mohon periksa kembali nomor yang Anda ketik.
+            </p>
+          </div>
+        `;
+      }
+      lucide.createIcons();
+    }
+  </script>
+
+  <!-- Proteksi Demo Guard -->
+  <script src="demo-guard.js"></script>
+</body>
+</html>

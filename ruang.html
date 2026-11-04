@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cari Ruang, Meja & Denah Ujian - OMEGA PLUS 2026</title>
+  <meta name="description" content="Pencarian Mandiri Ruang Ujian, Gedung, Nomor Meja dan Denah Interaktif Lokasi Kampus SMP Negeri 1 Pamekasan untuk Peserta OMEGA PLUS 2026.">
+
+  <!-- OpenGraph Metadata -->
+  <meta property="og:title" content="Cari Ruang & Meja Ujian OMEGA PLUS 2026">
+  <meta property="og:description" content="Ketik nomor pendaftaran atau nama untuk mengetahui gedung, ruangan, lantai, dan nomor meja ujian Anda di SMPN 1 Pamekasan.">
+  <meta property="og:image" content="https://file.garden/aehADr1aKQol7cT9/Omega_Plus_Circular_Emblem-removebg-preview.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="https://file.garden/aehADr1aKQol7cT9/Omega_Plus_Circular_Emblem-removebg-preview.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Work+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <!-- Konfigurasi Global -->
+  <script src="config.js"></script>
+
+  <style>
+    /* ==========================================================================
+       DESIGN SYSTEM TOKENS (SMP NEGERI 1 PAMEKASAN - OMEGA PLUS)
+       ========================================================================== */
+    :root {
+      --color-primary-navy:     #19365f;
+      --color-primary-royal:    #285891;
+      --color-dark-navy:        #0e223d;
+      --color-accent-gold:      #e7b55e;
+      --color-accent-gold-dark: #b88628;
+      --color-accent-gold-light:#fdf3e2;
+
+      --color-bg-page:          #f5f8fc;
+      --color-bg-surface:       #ffffff;
+      --color-bg-tint:          #e7f0fb;
+      --color-bg-tint-light:    #f8fafc;
+
+      --color-text-main:        #193047;
+      --color-text-muted:       #657c94;
+      --color-text-inverse:     #ffffff;
+
+      --color-border-subtle:    rgba(25, 54, 95, 0.12);
+      --color-border-light:     #e2e8f0;
+      --color-border-focus:     #285891;
+
+      --color-success-bg:       #ecfdf5;
+      --color-success-text:     #047857;
+      --color-success-border:   #a7f3d0;
+
+      --color-warning-bg:       #fffbeb;
+      --color-warning-text:     #b45309;
+      --color-warning-border:   #fde68a;
+
+      --radius-sm:              6px;
+      --radius-md:              10px;
+      --radius-lg:              16px;
+      --radius-xl:              24px;
+      --radius-pill:            9999px;
+
+      --shadow-sm:              0 2px 4px rgba(25, 54, 95, 0.05);
+      --shadow-card:            0 4px 18px rgba(25, 54, 95, 0.07);
+      --shadow-lift:            0 12px 28px rgba(25, 54, 95, 0.13);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Work Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--color-bg-page);
+      color: var(--color-text-main);
+      line-height: 1.6;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    h1, h2, h3, h4, h5, .brand-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .container {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 0 1.25rem;
+    }
+
+    /* Navbar */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(14, 34, 61, 0.96);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 20px rgba(7, 18, 33, 0.35);
+    }
+
+    .navbar-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.25rem;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand-link {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      text-decoration: none;
+      color: #ffffff;
+      flex-shrink: 0;
+    }
+
+    .brand-logo-img {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+      border-radius: 50%;
+      background: #ffffff;
+      padding: 2px;
+      border: 2px solid var(--color-accent-gold);
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.15;
+    }
+
+    .brand-title-main {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: #ffffff;
+    }
+
+    .brand-subtitle {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      color: var(--color-accent-gold);
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: rgba(226, 232, 240, 0.85);
+      text-decoration: none;
+      font-size: 0.825rem;
+      font-weight: 600;
+      transition: color 0.2s ease;
+      padding: 6px 2px;
+    }
+
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--color-accent-gold);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-nav-action {
+      padding: 8px 16px;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      color: #0e223d;
+      background: linear-gradient(135deg, #f7cb75 0%, #e7b55e 100%);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: var(--radius-pill);
+      text-decoration: none;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 12px rgba(231, 181, 94, 0.3);
+      transition: all 0.2s ease;
+    }
+
+    .btn-nav-outline {
+      padding: 7px 15px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: var(--radius-pill);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Hero Banner */
+    .hero-banner {
+      background: linear-gradient(135deg, var(--color-dark-navy) 0%, var(--color-primary-navy) 50%, var(--color-primary-royal) 100%);
+      color: #ffffff;
+      padding: 3.25rem 0 4rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(231, 181, 94, 0.15);
+      border: 1px solid rgba(231, 181, 94, 0.4);
+      color: var(--color-accent-gold);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      padding: 5px 14px;
+      border-radius: var(--radius-pill);
+      margin-bottom: 1rem;
+    }
+
+    .hero-title {
+      font-size: clamp(1.8rem, 3.8vw, 2.6rem);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+      margin-bottom: 0.75rem;
+    }
+
+    .hero-desc {
+      font-size: clamp(0.9rem, 1.8vw, 1.05rem);
+      color: #cbd5e1;
+      max-width: 650px;
+      margin: 0 auto 1.75rem;
+    }
+
+    /* Main Card */
+    .main-body {
+      flex: 1;
+      margin-top: -2rem;
+      padding-bottom: 4rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    .card-panel {
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 2.25rem 2rem;
+      box-shadow: var(--shadow-card);
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      .card-panel {
+        padding: 1.5rem 1.15rem;
+      }
+    }
+
+    /* Search Box */
+    .search-box-wrap {
+      max-width: 680px;
+      margin: 0 auto 2rem;
+      text-align: center;
+    }
+
+    .search-input-group {
+      display: flex;
+      gap: 10px;
+      background: #ffffff;
+      border: 2px solid var(--color-border-subtle);
+      border-radius: var(--radius-pill);
+      padding: 6px 8px 6px 20px;
+      box-shadow: 0 6px 18px rgba(25, 54, 95, 0.08);
+      transition: all 0.2s ease;
+    }
+
+    .search-input-group:focus-within {
+      border-color: var(--color-primary-royal);
+      box-shadow: 0 0 0 4px rgba(40, 88, 145, 0.15);
+    }
+
+    .search-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-family: inherit;
+      font-size: 0.95rem;
+      color: var(--color-text-main);
+      background: transparent;
+    }
+
+    .btn-search-action {
+      background: linear-gradient(135deg, var(--color-primary-navy) 0%, var(--color-primary-royal) 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 11px 24px;
+      font-size: 0.875rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn-search-action:hover {
+      filter: brightness(1.1);
+      transform: translateY(-1px);
+    }
+
+    /* Quick Chips */
+    .quick-chips-wrap {
+      margin-top: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip-btn {
+      background: var(--color-bg-tint);
+      border: 1px solid rgba(40, 88, 145, 0.2);
+      color: var(--color-primary-navy);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 11px;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .chip-btn:hover {
+      background: var(--color-primary-royal);
+      color: #ffffff;
+    }
+
+    /* ==========================================================================
+       SEAT CARD SYSTEM (HARI-H HIGHLIGHT)
+       ========================================================================== */
+    .seat-result-card {
+      background: #ffffff;
+      border: 2px solid var(--color-border-subtle);
+      border-radius: var(--radius-xl);
+      box-shadow: 0 16px 40px rgba(25, 54, 95, 0.12);
+      overflow: hidden;
+      margin-top: 1.5rem;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .seat-header {
+      background: linear-gradient(135deg, var(--color-dark-navy) 0%, var(--color-primary-navy) 100%);
+      color: #ffffff;
+      padding: 1.75rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .seat-main-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 2rem;
+      padding: 2rem;
+      border-bottom: 1px solid var(--color-border-light);
+    }
+
+    @media (max-width: 860px) {
+      .seat-main-grid {
+        grid-template-columns: 1fr;
+        padding: 1.5rem;
+        gap: 1.5rem;
+      }
+    }
+
+    /* Huge Table Number Callout */
+    .huge-table-callout {
+      background: linear-gradient(135deg, #fffdf8 0%, #fef8ee 100%);
+      border: 2px solid var(--color-accent-gold);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(231, 181, 94, 0.2);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .huge-table-label {
+      font-size: 0.8rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--color-accent-gold-dark);
+      margin-bottom: 4px;
+    }
+
+    .huge-table-number {
+      font-size: clamp(3.2rem, 7vw, 4.5rem);
+      font-weight: 800;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: var(--color-primary-navy);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .room-badge-callout {
+      background: var(--color-primary-navy);
+      color: #ffffff;
+      padding: 6px 18px;
+      border-radius: var(--radius-pill);
+      font-size: 0.95rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Seat Room Visual Grid */
+    .seat-room-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+    }
+
+    .seat-room-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--color-primary-navy);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .seat-grid-visual {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      background: #ffffff;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      border: 1px dashed #cbd5e1;
+    }
+
+    .seat-dot {
+      height: 42px;
+      border-radius: 6px;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #64748b;
+      transition: all 0.2s ease;
+    }
+
+    .seat-dot.active-target {
+      background: linear-gradient(135deg, #f7cb75 0%, #e7b55e 100%);
+      color: #0e223d;
+      border: 2px solid #b88628;
+      box-shadow: 0 4px 14px rgba(231, 181, 94, 0.45);
+      transform: scale(1.08);
+      font-weight: 800;
+      animation: pulseMeja 2s infinite ease-in-out;
+    }
+
+    @keyframes pulseMeja {
+      0%, 100% { transform: scale(1.08); box-shadow: 0 4px 14px rgba(231, 181, 94, 0.45); }
+      50% { transform: scale(1.14); box-shadow: 0 6px 20px rgba(231, 181, 94, 0.65); }
+    }
+
+    .seat-teacher-desk {
+      grid-column: span 4;
+      background: #e2e8f0;
+      color: #475569;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-align: center;
+      padding: 4px;
+      border-radius: 4px;
+      margin-bottom: 6px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* Campus Map & Directions */
+    .campus-map-section {
+      padding: 2rem;
+      background: #ffffff;
+    }
+
+    .campus-map-header {
+      margin-bottom: 1.25rem;
+    }
+
+    .campus-visual-layout {
+      background: #f1f5f9;
+      border: 2px solid #cbd5e1;
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      position: relative;
+    }
+
+    .campus-grid-zones {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    @media (max-width: 640px) {
+      .campus-grid-zones {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .building-card {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 1rem;
+      position: relative;
+      transition: all 0.2s ease;
+    }
+
+    .building-card.target-building {
+      border: 2px solid #285891;
+      background: #eff6ff;
+      box-shadow: 0 6px 18px rgba(40, 88, 145, 0.2);
+    }
+
+    .building-card.target-building::after {
+      content: '📍 LOKASI ANDA';
+      position: absolute;
+      top: -10px;
+      right: 10px;
+      background: #ef4444;
+      color: #ffffff;
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      letter-spacing: 0.5px;
+    }
+
+    .building-name {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--color-primary-navy);
+      margin-bottom: 3px;
+    }
+
+    .building-desc {
+      font-size: 0.775rem;
+      color: var(--color-text-muted);
+      line-height: 1.4;
+    }
+
+    .campus-entrance-banner {
+      background: #19365f;
+      color: #ffffff;
+      text-align: center;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 0.775rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    /* Action Buttons */
+    .seat-actions-strip {
+      padding: 1.5rem 2rem;
+      background: #fbfcfe;
+      border-top: 1px solid var(--color-border-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-action-primary {
+      background: linear-gradient(135deg, var(--color-primary-navy) 0%, var(--color-primary-royal) 100%);
+      color: #ffffff;
+      font-size: 0.875rem;
+      font-weight: 700;
+      padding: 11px 22px;
+      border-radius: var(--radius-md);
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      text-decoration: none;
+    }
+
+    .btn-action-wa {
+      background: #25d366;
+      color: #ffffff;
+      font-size: 0.875rem;
+      font-weight: 700;
+      padding: 11px 22px;
+      border-radius: var(--radius-md);
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      text-decoration: none;
+    }
+
+    /* Site Footer */
+    .site-footer {
+      background: var(--color-dark-navy);
+      color: #ffffff;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 3rem 0 2rem;
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================================================
+       TOP NAVBAR
+       ========================================================================== -->
+  <nav class="navbar" id="siteNavbar">
+    <div class="navbar-container">
+      <a href="/" class="brand-link" aria-label="Beranda OMEGA PLUS 2026">
+        <img src="https://file.garden/aehADr1aKQol7cT9/Omega_Plus_Circular_Emblem-removebg-preview.png" onerror="this.src='logo.png'" class="brand-logo-img" alt="Logo OMEGA PLUS" />
+        <div class="brand-text">
+          <span class="brand-title-main">OMEGA PLUS 2026</span>
+          <span class="brand-subtitle">SMP NEGERI 1 PAMEKASAN</span>
+        </div>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html">Beranda</a></li>
+        <li><a href="pendaftaran.html">Pendaftaran</a></li>
+        <li><a href="ruang.html" class="active">Cari Ruang & Meja</a></li>
+        <li><a href="livescore.html" target="_blank" style="color: #fbbf24; font-weight: 700;"><i data-lucide="tv" style="width: 14px; height: 14px; vertical-align: middle;"></i> Live Score</a></li>
+        <li><a href="pengumuman.html">Pengumuman & Nilai</a></li>
+        <li><a href="presensi.html" style="color: var(--color-accent-gold); font-weight: 700;">Scan Presensi</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="presensi.html" class="btn-nav-outline" title="Portal Scanner Pengawas">
+          <i data-lucide="qr-code" style="width: 14px; height: 14px;"></i> Scan Pengawas
+        </a>
+        <a href="admin.html" class="btn-nav-action">
+          <i data-lucide="shield-check" style="width: 14px; height: 14px;"></i> Portal Admin
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ==========================================================================
+       HERO BANNER
+       ========================================================================== -->
+  <header class="hero-banner">
+    <div class="container">
+      <div class="hero-eyebrow">
+        <i data-lucide="navigation" style="width: 14px; height: 14px;"></i>
+        Panduan Lokasi Hari-H Ujian
+      </div>
+      <h1 class="hero-title">Cari Ruang, Meja & Denah Ujian</h1>
+      <p class="hero-desc">
+        Temukan lokasi gedung, lantai, ruangan ujian, dan posisi meja siswa secara mandiri agar tidak tersesat saat tiba di Kampus SMP Negeri 1 Pamekasan.
+      </p>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       MAIN CONTENT CONTAINER
+       ========================================================================== -->
+  <main class="main-body">
+    <div class="container">
+
+      <section class="card-panel">
+        <div class="search-box-wrap">
+          <h2 style="font-size: 1.35rem; color: var(--color-primary-navy); margin-bottom: 0.5rem; font-weight: 800;">
+            Pencarian Denah & Meja Siswa
+          </h2>
+          <p style="font-size: 0.875rem; color: var(--color-text-muted); margin-bottom: 1.5rem;">
+            Masukkan <strong>Nomor Pendaftaran</strong> (misal: <code>OMP-2026-0001</code>), <strong>Nomor Peserta</strong> (misal: <code>02-03-001</code>), atau <strong>Nama Siswa</strong>.
+          </p>
+
+          <div class="search-input-group">
+            <input type="text" id="inputQueryMeja" class="search-input" placeholder="Ketik No. Pendaftaran / No. Peserta / Nama..." onkeypress="if(event.key==='Enter') executeSearchMeja()">
+            <button type="button" class="btn-search-action" onclick="executeSearchMeja()">
+              <i data-lucide="search" style="width: 16px; height: 16px;"></i>
+              <span>Cari Meja Saya</span>
+            </button>
+          </div>
+
+          <!-- Quick Test Demo Chips -->
+          <div class="quick-chips-wrap">
+            <span style="font-size: 0.75rem; color: #64748b; font-weight: 600;">Coba Contoh:</span>
+            <button type="button" class="chip-btn" onclick="quickFillMeja('OMP-2026-0001')">Amalia (Ruang 4, Meja 12)</button>
+            <button type="button" class="chip-btn" onclick="quickFillMeja('OMP-2026-0002')">Farhan (Ruang 2, Meja 05)</button>
+            <button type="button" class="chip-btn" onclick="quickFillMeja('OMP-2026-0003')">Siti (Ruang 3, Meja 08)</button>
+            <button type="button" class="chip-btn" onclick="quickFillMeja('OMP-2026-0004')">Rifqi (Ruang 5, Meja 17)</button>
+          </div>
+        </div>
+
+        <!-- SEARCH RESULT CONTAINER -->
+        <div id="mejaResultArea">
+          <!-- Default Guide Placeholder -->
+          <div style="text-align: center; padding: 3rem 1.5rem; background: #f8fafc; border-radius: var(--radius-lg); border: 1px dashed #cbd5e1;">
+            <div style="width: 64px; height: 64px; border-radius: 50%; background: #e7f0fb; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: var(--color-primary-royal);">
+              <i data-lucide="map-pin" style="width: 32px; height: 32px;"></i>
+            </div>
+            <h3 style="font-size: 1.15rem; color: var(--color-primary-navy); margin-bottom: 0.35rem;">Ketik Nomor Peserta untuk Mengetahui Meja Anda</h3>
+            <p style="font-size: 0.875rem; color: var(--color-text-muted); max-width: 520px; margin: 0 auto;">
+              Sistem akan menampilkan nomor meja persis, denah susunan kursi di dalam kelas, dan petunjuk arah langkah demi langkah dari gerbang utama SMPN 1 Pamekasan.
+            </p>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ==========================================================================
+       SITE FOOTER
+       ========================================================================== -->
+  <footer class="site-footer">
+    <div class="container" style="text-align: center; font-size: 0.85rem; color: rgba(255,255,255,0.65);">
+      <p style="margin-bottom: 6px; color: #ffffff; font-weight: 700;">PANITIA OMEGA PLUS 2026 • SMP NEGERI 1 PAMEKASAN</p>
+      <p>Jl. Raden Abdul Azis No. 24, Gladak Anyar, Pamekasan, Madura • Panduan Denah & Meja Ujian Hari-H</p>
+    </div>
+  </footer>
+
+  <!-- ==========================================================================
+       CLIENT SCRIPT LOGIC
+       ========================================================================== -->
+  <script>
+    // Sample Representative Room & Seat Database (Built-in offline/instant ready)
+    const SAMPLE_SEAT_DATABASE = [
+      {
+        noPendaftaran: "OMP-2026-0001",
+        kodePeserta: "02-03-001",
+        nama: "Amalia Utami",
+        sekolah: "SD Negeri Jungcancang 1 Pamekasan",
+        level: "Level 2 (Kelas 4-6)",
+        mapel: "IPA",
+        ruang: "Ruang 04",
+        namaRuang: "Laboratorium IPA 1",
+        gedung: "Gedung B (Lantai 2)",
+        nomorMeja: 12,
+        sesi: "Sesi 1 (07.30 - 08.30 WIB)",
+        waktuHadir: "07.00 WIB (30 Menit Sebelum Ujian)",
+        pengawas: "Bpk. Subaidi, M.Pd.",
+        petunjukArah: "Dari Gerbang Utama, lurus lewati Lapangan Basket utama, lalu belok kanan ke tangga Gedung B. Naik ke Lantai 2, Ruang 04 berada di sisi kanan selasar dekat Lab Fisika."
+      },
+      {
+        noPendaftaran: "OMP-2026-0002",
+        kodePeserta: "02-01-001",
+        nama: "Muhammad Farhan Pratama",
+        sekolah: "SD Plus Nurul Hikmah Pamekasan",
+        level: "Level 2 (Kelas 4-6)",
+        mapel: "Matematika",
+        ruang: "Ruang 02",
+        namaRuang: "Ruang Kelas 7B",
+        gedung: "Gedung A (Lantai 1)",
+        nomorMeja: 5,
+        sesi: "Sesi 2 (09.00 - 10.00 WIB)",
+        waktuHadir: "08.30 WIB (30 Menit Sebelum Ujian)",
+        pengawas: "Ibu Hartatik, S.Pd.",
+        petunjukArah: "Dari Gerbang Utama, langsung belok kiri ke koridor Gedung A Lantai 1. Ruang 02 berada tepat setelah Ruang Kepala Sekolah."
+      },
+      {
+        noPendaftaran: "OMP-2026-0003",
+        kodePeserta: "02-02-005",
+        nama: "Siti Nurhaliza Azzahra",
+        sekolah: "SDIT Al-Ittihad Sumenep",
+        level: "Level 2 (Kelas 4-6)",
+        mapel: "Bahasa Inggris",
+        ruang: "Ruang 03",
+        namaRuang: "Ruang Kelas 7C",
+        gedung: "Gedung A (Lantai 2)",
+        nomorMeja: 8,
+        sesi: "Sesi 2 (09.00 - 10.00 WIB)",
+        waktuHadir: "08.30 WIB",
+        pengawas: "Ibu Nurul Aini, S.Pd.",
+        petunjukArah: "Dari Gerbang Utama, naik tangga Gedung A ke Lantai 2. Ruang 03 berada di tengah koridor Lantai 2."
+      },
+      {
+        noPendaftaran: "OMP-2026-0004",
+        kodePeserta: "02-04-012",
+        nama: "Achmad Rifqi Fauzan",
+        sekolah: "MIN 1 Sampang",
+        level: "Level 2 (Kelas 4-6)",
+        mapel: "IPS",
+        ruang: "Ruang 05",
+        namaRuang: "Laboratorium Komputer 2",
+        gedung: "Gedung C (Lantai 2)",
+        nomorMeja: 17,
+        sesi: "Sesi 1 (07.30 - 08.30 WIB)",
+        waktuHadir: "07.00 WIB",
+        pengawas: "Bpk. Hendra Wahyudi, S.Kom.",
+        petunjukArah: "Dari Lapangan Utama, jalan terus ke sayap timur menuju Gedung C. Naik ke Lantai 2, Ruang 05 berada di samping Lab Komputer 1."
+      }
+    ];
+
+    let currentSearchedSeat = null;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      lucide.createIcons();
+      const urlParams = new URLSearchParams(window.location.search);
+      const q = urlParams.get('q') || urlParams.get('no');
+      if (q) {
+        document.getElementById('inputQueryMeja').value = q;
+        executeSearchMeja();
+      }
+    });
+
+    function quickFillMeja(noReg) {
+      document.getElementById('inputQueryMeja').value = noReg;
+      executeSearchMeja();
+    }
+
+    async function executeSearchMeja() {
+      const q = document.getElementById('inputQueryMeja').value.trim();
+      if (!q) {
+        Swal.fire({ icon: 'warning', title: 'Kata Kunci Kosong', text: 'Masukkan Nomor Pendaftaran atau Nomor Peserta.' });
+        return;
+      }
+
+      const container = document.getElementById('mejaResultArea');
+      container.innerHTML = `<div style="text-align: center; padding: 2.5rem;"><div style="display:inline-block;width:28px;height:28px;border:3px solid #285891;border-top-color:transparent;border-radius:50%;animation:spin 0.6s linear infinite;"></div><p style="margin-top:10px; color:#657c94;">Mencari lokasi ruangan & meja ujian...</p></div>`;
+
+      try {
+        const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '/api';
+        let found = null;
+
+        try {
+          const res = await fetch(`${apiUrl}?action=cariMeja&keyword=${encodeURIComponent(q)}`);
+          if (res.ok) {
+            const json = await res.json();
+            if (json.status === 'success' && json.data) {
+              found = Array.isArray(json.data) ? json.data[0] : json.data;
+            }
+          }
+        } catch (e) {}
+
+        // Fallback Local
+        if (!found) {
+          const lower = q.toLowerCase();
+          found = SAMPLE_SEAT_DATABASE.find(i => 
+            i.noPendaftaran.toLowerCase().includes(lower) || 
+            i.kodePeserta.toLowerCase().includes(lower) || 
+            i.nama.toLowerCase().includes(lower)
+          );
+        }
+
+        if (!found) {
+          container.innerHTML = `
+            <div style="text-align: center; padding: 2.5rem; background: #fff1f2; border: 1px solid #fecdd3; border-radius: var(--radius-lg);">
+              <i data-lucide="alert-circle" style="width: 36px; height: 36px; color: #e11d48; margin: 0 auto 10px;"></i>
+              <h3 style="color: #be123c; font-weight: 800; margin-bottom: 4px;">Data Meja Belum Ditemukan</h3>
+              <p style="color: #e11d48; font-size: 0.875rem; max-width: 480px; margin: 0 auto;">
+                Nomor peserta <strong>"${q}"</strong> belum memiliki alokasi ruangan. Pastikan status pendaftaran Anda telah <strong>Terverifikasi</strong>.
+              </p>
+            </div>
+          `;
+          lucide.createIcons();
+          return;
+        }
+
+        currentSearchedSeat = found;
+        renderSeatCard(found, container);
+
+      } catch (err) {
+        container.innerHTML = `<div style="text-align:center; padding: 2rem; color: #dc2626;">Gagal memuat: ${err.message}</div>`;
+      }
+    }
+
+    function renderSeatCard(item, container) {
+      // Build 20 desks visual
+      let desksHtml = '';
+      for (let i = 1; i <= 20; i++) {
+        const isTarget = (i === item.nomorMeja);
+        desksHtml += `
+          <div class="seat-dot ${isTarget ? 'active-target' : ''}">
+            <span>${isTarget ? '★ ANDA' : 'Meja'}</span>
+            <strong>#${i}</strong>
+          </div>
+        `;
+      }
+
+      container.innerHTML = `
+        <div class="seat-result-card">
+          <!-- Header -->
+          <div class="seat-header">
+            <div>
+              <div style="font-size: 0.75rem; color: var(--color-accent-gold); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">
+                Identitas Peserta Ujian
+              </div>
+              <h3 style="font-size: 1.5rem; font-weight: 800; color: #ffffff; margin-bottom: 2px;">${item.nama}</h3>
+              <div style="font-size: 0.875rem; color: #cbd5e1;">${item.sekolah} • <strong>${item.level}</strong></div>
+            </div>
+
+            <div style="text-align: right;">
+              <div style="font-size: 0.75rem; color: #cbd5e1; text-transform: uppercase; font-weight: 600;">Nomor Peserta Ujian</div>
+              <div style="font-size: 1.25rem; font-weight: 800; color: var(--color-accent-gold); font-family: monospace;">${item.kodePeserta}</div>
+            </div>
+          </div>
+
+          <!-- Main Grid -->
+          <div class="seat-main-grid">
+            <!-- Huge Table Callout -->
+            <div class="huge-table-callout">
+              <div class="huge-table-label">Nomor Meja Anda</div>
+              <div class="huge-table-number">MEJA #${item.nomorMeja}</div>
+              <div class="room-badge-callout">
+                <i data-lucide="door-open" style="width: 16px; height: 16px; color: var(--color-accent-gold);"></i>
+                <span>${item.ruang} (${item.namaRuang})</span>
+              </div>
+
+              <div style="margin-top: 1.25rem; width: 100%; border-top: 1px dashed rgba(231,181,94,0.4); padding-top: 1rem; text-align: left; font-size: 0.85rem;">
+                <div style="margin-bottom: 6px;"><strong>Gedung & Lantai:</strong> ${item.gedung}</div>
+                <div style="margin-bottom: 6px;"><strong>Sesi Ujian:</strong> <span style="color:#047857; font-weight:700;">${item.sesi}</span></div>
+                <div style="margin-bottom: 6px;"><strong>Waktu Wajib Tiba:</strong> ${item.waktuHadir}</div>
+                <div><strong>Pengawas Ruang:</strong> ${item.pengawas}</div>
+              </div>
+            </div>
+
+            <!-- Seat Visual Inside Room -->
+            <div class="seat-room-box">
+              <div class="seat-room-title">
+                <span><i data-lucide="layout-grid" style="width: 15px; height: 15px; display:inline; vertical-align:middle;"></i> Denah Susunan Meja di ${item.ruang}</span>
+                <span style="font-size: 0.7rem; color: #b88628; background: #fef3c7; padding: 2px 8px; border-radius: 9999px; font-weight: bold;">Kapasitas: 20 Siswa</span>
+              </div>
+
+              <div class="seat-grid-visual">
+                <div class="seat-teacher-desk">MEJA PENGAWAS & PAPAN TULIS (DEPAN)</div>
+                ${desksHtml}
+              </div>
+
+              <div style="margin-top: 10px; font-size: 0.75rem; color: #64748b; text-align: center;">
+                Meja yang ditandai warna emas <strong>(★ ANDA)</strong> adalah posisi tempat duduk Anda.
+              </div>
+            </div>
+          </div>
+
+          <!-- Campus Map & Directions -->
+          <div class="campus-map-section">
+            <div class="campus-map-header">
+              <h4 style="font-size: 1.1rem; color: var(--color-primary-navy); font-weight: 800; display: flex; align-items: center; gap: 8px;">
+                <i data-lucide="map" style="width: 18px; height: 18px; color: var(--color-primary-royal);"></i>
+                Denah Kampus SMP Negeri 1 Pamekasan
+              </h4>
+              <p style="font-size: 0.85rem; color: var(--color-text-muted);">
+                Petunjuk denah posisi gedung di lingkungan sekolah:
+              </p>
+            </div>
+
+            <div class="campus-visual-layout">
+              <div class="campus-grid-zones">
+                <!-- Gedung A -->
+                <div class="building-card ${item.gedung.includes('Gedung A') ? 'target-building' : ''}">
+                  <div class="building-name">🏢 Gedung A (2 Lantai)</div>
+                  <div class="building-desc">Ruang 01, Ruang 02, Ruang 03, Ruang Guru & Kepsek</div>
+                </div>
+
+                <!-- Gedung B (Lab IPA) -->
+                <div class="building-card ${item.gedung.includes('Gedung B') ? 'target-building' : ''}">
+                  <div class="building-name">🔬 Gedung B (2 Lantai)</div>
+                  <div class="building-desc">Ruang 04, Ruang 05, Ruang 06, Lab IPA & Lab Fisika</div>
+                </div>
+
+                <!-- Gedung C (Lab Komputer) -->
+                <div class="building-card ${item.gedung.includes('Gedung C') ? 'target-building' : ''}">
+                  <div class="building-name">💻 Gedung C (2 Lantai)</div>
+                  <div class="building-desc">Ruang 07, Ruang 08, Ruang 09, Lab Komputer & Server</div>
+                </div>
+              </div>
+
+              <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; margin-bottom: 12px; font-size: 0.825rem; display: flex; align-items: center; justify-content: space-around; text-align: center;">
+                <div>🏀 <strong>Lapangan Utama</strong> (Titik Kumpul Apel)</div>
+                <div>🕌 <strong>Masjid Sekolah</strong></div>
+                <div>☕ <strong>Aula Pendamping</strong> (Ruang Transit Ortu)</div>
+              </div>
+
+              <div class="campus-entrance-banner">
+                ⬇ GERBANG UTAMA (JALAN RADEN ABDUL AZIS NO. 24) • TITIK MASUK & REGISTRASI AWAL
+              </div>
+            </div>
+
+            <!-- Petunjuk Langkah demi Langkah -->
+            <div style="margin-top: 1.5rem; background: #fffdf8; border: 1.5px solid #fde68a; border-radius: var(--radius-md); padding: 1rem 1.25rem;">
+              <div style="font-size: 0.825rem; font-weight: 800; color: #92400e; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+                <i data-lucide="compass" style="width: 16px; height: 16px;"></i> Petunjuk Arah Menuju Ruangan Anda:
+              </div>
+              <p style="font-size: 0.85rem; color: #78350f; line-height: 1.5;">
+                ${item.petunjukArah}
+              </p>
+            </div>
+          </div>
+
+          <!-- Actions Strip -->
+          <div class="seat-actions-strip">
+            <button type="button" class="btn-action-primary" onclick="window.print()">
+              <i data-lucide="printer" style="width: 16px; height: 16px;"></i> Cetak Tiket Meja Ini
+            </button>
+
+            <button type="button" class="btn-action-wa" onclick="shareSeatToWhatsApp()">
+              <i data-lucide="share-2" style="width: 16px; height: 16px;"></i> Kirim Info Meja ke WhatsApp
+            </button>
+          </div>
+
+        </div>
+      `;
+
+      lucide.createIcons();
+    }
+
+    function shareSeatToWhatsApp() {
+      if (!currentSearchedSeat) return;
+      const s = currentSearchedSeat;
+      const msg = `Halo! Berikut informasi Meja Ujian OMEGA PLUS 2026 SMPN 1 Pamekasan atas nama *${s.nama}*:\n\n• Ruangan: *${s.ruang} (${s.namaRuang})*\n• Lokasi: *${s.gedung}*\n• Nomor Meja: *MEJA #${s.nomorMeja}*\n• Sesi Ujian: ${s.sesi}\n• Wajib Hadir: ${s.waktuHadir}\n\nCek denah interaktif di: ${window.location.href}`;
+      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+  </script>
+
+  <!-- Proteksi Demo Guard -->
+  <script src="demo-guard.js"></script>
+</body>
+</html>

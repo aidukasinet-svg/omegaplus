@@ -38,11 +38,12 @@ const CONFIG = {
   // Konfigurasi Status Demo & Proteksi Negosiasi Proyek
   DEMO_MODE: {
     LOCKED: true, // Ubah ke 'false' ketika proyek resmi deal untuk membuka seluruh sistem secara instan
+    LOCK_ALL_PAGES: true, // 'true' = kunci total seluruh halaman termasuk landing page tanpa tombol tutup
     DEVELOPER_WA: "088228511309",
     DEVELOPER_WA_LINK: "https://wa.me/6288228511309?text=" + encodeURIComponent("Halo Developer OMEGA PLUS 2026, kami dari pihak panitia/sekolah ingin konfirmasi mengenai kelanjutan proyek dan aktivasi penuh sistem pendaftaran website."),
-    BADGE: "PREVIEW EKSKLUSIF SISTEM",
-    TITLE: "Sistem Pendaftaran Siap Diaktifkan",
-    DESCRIPTION: "Portal Pendaftaran Online, Cek Status Real-time, dan Dashboard Verifikasi Peserta OMEGA PLUS 2026 telah selesai dikembangkan dan saat ini dalam status <strong>Preview Terbatas</strong>.<br><br>Akses penuh ke formulir dan database akan langsung diaktifkan segera setelah konfirmasi kesepakatan kerjasama (deal) dengan pihak sekolah/panitia difinalisasi."
+    BADGE: "AKSES SISTEM DIKUNCI",
+    TITLE: "Website Sedang Dikunci",
+    DESCRIPTION: "Akses ke seluruh portal informasi, pendaftaran online, dan dashboard OMEGA PLUS 2026 saat ini dinonaktifkan oleh developer.<br><br>Silakan hubungi developer untuk proses aktivasi dan pembukaan sistem."
   }
 };
 

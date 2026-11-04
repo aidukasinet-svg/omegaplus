@@ -682,11 +682,26 @@
       </div>
 
       <nav class="admin-nav">
-        <a href="/" class="nav-btn">
-          <i data-lucide="home" style="width: 14px; height: 14px;"></i> Beranda
+        <button type="button" class="nav-btn active" id="adminNavPeserta" onclick="switchAdminTab('peserta')">
+          <i data-lucide="users" style="width: 14px; height: 14px;"></i> Pendaftaran & Peserta
+        </button>
+        <button type="button" class="nav-btn" id="adminNavRuang" onclick="switchAdminTab('ruang')">
+          <i data-lucide="layout-grid" style="width: 14px; height: 14px;"></i> Ruang & Presensi
+        </button>
+        <button type="button" class="nav-btn" id="adminNavNilai" onclick="switchAdminTab('nilai')">
+          <i data-lucide="award" style="width: 14px; height: 14px;"></i> Nilai & E-Sertifikat
+        </button>
+        <a href="presensi.html" target="_blank" class="nav-btn" title="Buka Scanner Kamera Pengawas Ruang">
+          <i data-lucide="qr-code" style="width: 14px; height: 14px;"></i> Scan Pengawas
         </a>
-        <a href="pendaftaran.html" class="nav-btn">
-          <i data-lucide="external-link" style="width: 14px; height: 14px;"></i> Form Pendaftaran
+        <a href="ruang.html" target="_blank" class="nav-btn" title="Cek Meja & Denah Peserta">
+          <i data-lucide="map-pin" style="width: 14px; height: 14px;"></i> Cek Denah
+        </a>
+        <a href="livescore.html" target="_blank" class="nav-btn" style="background: rgba(231, 181, 94, 0.2); border-color: rgba(231, 181, 94, 0.5); color: #fbbf24;" title="Buka Panggung Layar Lebar Live Scoreboard Aula">
+          <i data-lucide="tv" style="width: 14px; height: 14px;"></i> Live Score Aula
+        </a>
+        <a href="pengumuman.html" target="_blank" class="nav-btn">
+          <i data-lucide="external-link" style="width: 14px; height: 14px;"></i> Portal Pengumuman
         </a>
         <button class="nav-btn" onclick="logoutAdmin()">
           <i data-lucide="log-out" style="width: 14px; height: 14px;"></i> Keluar
@@ -713,7 +728,11 @@
       </div>
     </div>
 
-    <div class="dashboard-header">
+    <!-- ====================================================================
+         SECTION 1: MANAJEMEN PENDAFTARAN & PESERTA
+         ==================================================================== -->
+    <div id="sectionPeserta">
+      <div class="dashboard-header">
       <div>
         <div class="dashboard-eyebrow">RINGKASAN PENDAFTARAN</div>
         <h1>Dashboard Panitia</h1>
@@ -853,6 +872,452 @@
         </table>
       </div>
     </div>
+    </div> <!-- END SECTION 1: PESERTA -->
+
+    <!-- ====================================================================
+         SECTION 2: MANAJEMEN NILAI, RANKING & E-SERTIFIKAT (PRIORITAS 1)
+         ==================================================================== -->
+    <div id="sectionNilai" style="display: none;">
+
+      <!-- Live Score & Big-Screen Broadcast Controller (Prioritas 3) -->
+      <div style="background: linear-gradient(135deg, #091524 0%, #19365f 100%); color: #ffffff; border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.75rem; box-shadow: var(--shadow-card); border: 1.5px solid rgba(231, 181, 94, 0.4);">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(231, 181, 94, 0.15); border: 1px solid #e7b55e; display: flex; align-items: center; justify-content: center; color: #fbbf24;">
+              <i data-lucide="tv" style="width: 22px; height: 22px;"></i>
+            </div>
+            <div>
+              <div style="font-size: 0.725rem; font-weight: 800; color: #e7b55e; text-transform: uppercase; letter-spacing: 0.8px;">Kontrol Layar Lebar & Videotron Aula</div>
+              <h3 style="font-size: 1.15rem; font-weight: 800; margin: 2px 0 0 0; color: #ffffff;">Live Scoreboard & Golden Ticket Arena</h3>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <a href="livescore.html" target="_blank" class="btn btn-primary" style="background: linear-gradient(135deg, #b45309, #d97706); border-color: #f59e0b; color: #ffffff; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+              <i data-lucide="maximize" style="width: 15px; height: 15px;"></i> Buka Layar Penuh Aula (livescore.html)
+            </a>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; background: rgba(255, 255, 255, 0.05); padding: 14px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1);">
+          <div>
+            <label style="display: block; font-size: 0.775rem; font-weight: 700; color: #cbd5e1; margin-bottom: 6px;">Status Siaran Layar Lebar:</label>
+            <div style="display: flex; gap: 8px;">
+              <button type="button" class="btn btn-secondary active" id="btnLiveStatusActive" onclick="setLiveBroadcastStatusAdmin('ACTIVE')" style="flex: 1; padding: 7px 10px; font-size: 0.8rem; font-weight: 700; border-color: #10b981; color: #10b981;">
+                🔴 LIVE AKTIF
+              </button>
+              <button type="button" class="btn btn-secondary" id="btnLiveStatusFreeze" onclick="setLiveBroadcastStatusAdmin('FREEZE')" style="flex: 1; padding: 7px 10px; font-size: 0.8rem; font-weight: 700; border-color: #38bdf8; color: #38bdf8;">
+                🔒 FREEZE SKOR
+              </button>
+            </div>
+          </div>
+          <div>
+            <label style="display: block; font-size: 0.775rem; font-weight: 700; color: #cbd5e1; margin-bottom: 6px;">Warta Berita Berjalan (News Ticker):</label>
+            <div style="display: flex; gap: 6px;">
+              <input type="text" id="inputBroadcastTicker" placeholder="Tulis pengumuman atau ucapan selamat yang tampil di bawah layar..." style="flex: 1; padding: 7px 10px; background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff; border-radius: 6px; font-size: 0.8rem;">
+              <button type="button" class="btn btn-secondary" onclick="simpanTickerAdmin()" style="padding: 7px 12px; font-size: 0.8rem; font-weight: 700; color: #e7b55e; border-color: #e7b55e;">
+                Kirim
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Top Release Control & Actions Bar -->
+      <div style="background: #ffffff; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.75rem; box-shadow: var(--shadow-card); display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 48px; height: 48px; border-radius: 50%; background: #fef8ee; border: 2px solid #e7b55e; display: flex; align-items: center; justify-content: center; color: #b88628; flex-shrink: 0;">
+            <i data-lucide="award" style="width: 24px; height: 24px;"></i>
+          </div>
+          <div>
+            <div style="font-size: 0.75rem; font-weight: 700; color: var(--color-primary-royal); text-transform: uppercase; letter-spacing: 0.8px;">Status Publikasi Pengumuman</div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-top: 2px;">
+              <span id="labelStatusPengumuman" style="font-weight: 800; font-size: 1.05rem; color: #047857;">DIBUKA UNTUK UMUM</span>
+              <span style="font-size: 0.8rem; color: #64748b;">(Peserta dapat mengecek nilai & mengunduh e-sertifikat mandiri)</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+          <button type="button" class="btn btn-secondary" id="btnTogglePengumuman" onclick="togglePengumumanStatusAdmin()">
+            <i data-lucide="lock" style="width: 14px; height: 14px;"></i> <span>Kunci Pengumuman</span>
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="recalculateRankingAdmin()">
+            <i data-lucide="refresh-cw" style="width: 14px; height: 14px;"></i> <span>Hitung Ulang Ranking</span>
+          </button>
+          <button type="button" class="btn btn-primary" onclick="bukaModalInputNilai()">
+            <i data-lucide="plus-circle" style="width: 16px; height: 16px;"></i> <span>+ Input Nilai Baru</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Metrics Nilai -->
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.75rem;">
+        <div class="stat-card">
+          <div class="stat-num" id="stat-total-dinilai">0</div>
+          <div class="stat-label">Total Peserta Dinilai</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-total-juara" style="color: #d97706;">0</div>
+          <div class="stat-label">Peraih Juara 1, 2 & 3</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-total-finalis" style="color: var(--color-primary-royal);">0</div>
+          <div class="stat-label">Finalis / Harapan</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-total-sertif" style="color: #047857;">0</div>
+          <div class="stat-label">E-Sertifikat Terbit</div>
+        </div>
+      </div>
+
+      <!-- Table Panel Nilai -->
+      <div class="table-panel">
+        <div class="table-toolbar">
+          <div class="filter-group">
+            <input type="text" id="filterSearchNilai" class="search-input" placeholder="🔍 Cari nama siswa, no. registrasi, sekolah..." oninput="filterLocalNilai()">
+            
+            <select id="filterLevelNilai" class="filter-select" onchange="filterLocalNilai()">
+              <option value="Semua">Semua Level</option>
+              <option value="Level 1">Level 1</option>
+              <option value="Level 2">Level 2</option>
+            </select>
+
+            <select id="filterMapelNilai" class="filter-select" onchange="filterLocalNilai()">
+              <option value="Semua">Semua Mapel</option>
+              <option value="Matematika">Matematika</option>
+              <option value="Bahasa Inggris">Bahasa Inggris</option>
+              <option value="IPA">IPA</option>
+              <option value="IPS">IPS</option>
+            </select>
+          </div>
+
+          <div class="export-actions">
+            <button class="btn btn-secondary" onclick="loadNilaiAdminData()">
+              <i data-lucide="refresh-cw" style="width: 14px; height: 14px;"></i> Refresh Nilai
+            </button>
+            <a href="pengumuman.html" target="_blank" class="btn btn-secondary">
+              <i data-lucide="external-link" style="width: 14px; height: 14px;"></i> Lihat Pengumuman
+            </a>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width: 65px; text-align: center;">Rank</th>
+                <th>No. Registrasi</th>
+                <th>Nama Peserta</th>
+                <th>Asal Sekolah</th>
+                <th>Mapel</th>
+                <th style="text-align: center;">B / S / K</th>
+                <th style="text-align: right;">Nilai Akhir</th>
+                <th>Status / Predikat</th>
+                <th>No. Sertifikat</th>
+                <th style="text-align: center;">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="nilaiTableBody">
+              <tr>
+                <td colspan="10" style="text-align: center; padding: 30px; color: #657c94;">
+                  Memuat data nilai peserta...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div> <!-- END SECTION 2: NILAI -->
+
+    <!-- MODAL INPUT / EDIT NILAI -->
+    <div id="modalInputNilai" style="display: none; position: fixed; inset: 0; z-index: 1500; background: rgba(14, 34, 61, 0.75); backdrop-filter: blur(6px); align-items: center; justify-content: center; padding: 1rem; overflow-y: auto;">
+      <div style="background: #ffffff; border-radius: var(--radius-lg); max-width: 600px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.3); overflow: hidden; margin: auto;">
+        <div style="background: var(--color-primary-navy); color: #ffffff; padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+          <h3 id="modalNilaiTitle" style="margin: 0; font-size: 1.1rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+            <i data-lucide="edit" style="width: 18px; height: 18px; color: var(--color-accent-gold);"></i> Input Nilai Peserta
+          </h3>
+          <button type="button" onclick="tutupModalInputNilai()" style="background: transparent; border: none; color: #ffffff; cursor: pointer;">
+            <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+          </button>
+        </div>
+
+        <form id="formInputNilai" onsubmit="simpanNilaiSubmit(event)" style="padding: 1.5rem;">
+          <div style="margin-bottom: 1rem;">
+            <label style="display: block; font-size: 0.825rem; font-weight: 700; color: #19365f; margin-bottom: 4px;">Pilih Peserta Terdaftar:</label>
+            <select id="inputNilaiNoReg" class="form-control" onchange="autoFillPesertaData(this.value)" style="width: 100%; padding: 8px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px;" required>
+              <option value="">-- Pilih Peserta --</option>
+            </select>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1rem;">
+            <div>
+              <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 4px;">Nama Peserta</label>
+              <input type="text" id="inputNilaiNama" class="form-control" style="width: 100%; padding: 8px; border: 1.5px solid #cbd5e1; border-radius: 8px;" required>
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 4px;">Asal Sekolah</label>
+              <input type="text" id="inputNilaiSekolah" class="form-control" style="width: 100%; padding: 8px; border: 1.5px solid #cbd5e1; border-radius: 8px;" required>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1rem;">
+            <div>
+              <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 4px;">Tingkatan Level</label>
+              <select id="inputNilaiLevel" class="form-control" style="width: 100%; padding: 8px; border: 1.5px solid #cbd5e1; border-radius: 8px;" required>
+                <option value="Level 2 (Kelas 4-6)">Level 2 (Kelas 4 - 6)</option>
+                <option value="Level 1 (Kelas 1-3)">Level 1 (Kelas 1 - 3)</option>
+              </select>
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 4px;">Mata Pelajaran</label>
+              <select id="inputNilaiMapel" class="form-control" style="width: 100%; padding: 8px; border: 1.5px solid #cbd5e1; border-radius: 8px;" required>
+                <option value="IPA">IPA</option>
+                <option value="Matematika">Matematika</option>
+                <option value="Bahasa Inggris">Bahasa Inggris</option>
+                <option value="IPS">IPS</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Skor Inputs (Benar, Salah, Kosong) -->
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; margin-bottom: 1rem;">
+            <div style="font-size: 0.8rem; font-weight: 700; color: #19365f; margin-bottom: 8px;">Koreksi Lembar Jawaban:</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+              <div>
+                <label style="font-size: 0.75rem; color: #047857; font-weight: 700;">Benar (+4)</label>
+                <input type="number" id="inputSkorBenar" min="0" max="30" value="0" oninput="hitungOtomatisNilaiAkhir()" style="width: 100%; padding: 6px; border: 1px solid #a7f3d0; border-radius: 6px;">
+              </div>
+              <div>
+                <label style="font-size: 0.75rem; color: #be123c; font-weight: 700;">Salah (-1)</label>
+                <input type="number" id="inputSkorSalah" min="0" max="30" value="0" oninput="hitungOtomatisNilaiAkhir()" style="width: 100%; padding: 6px; border: 1px solid #fecdd3; border-radius: 6px;">
+              </div>
+              <div>
+                <label style="font-size: 0.75rem; color: #64748b; font-weight: 700;">Kosong (0)</label>
+                <input type="number" id="inputSkorKosong" min="0" max="30" value="0" style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px;">
+              </div>
+            </div>
+
+            <div style="margin-top: 10px; padding-top: 8px; border-top: 1px dashed #cbd5e1; display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 0.825rem; font-weight: 700; color: #19365f;">Kalkulasi Nilai Akhir:</span>
+              <span id="previewNilaiAkhir" style="font-size: 1.25rem; font-weight: 800; color: var(--color-primary-royal);">0</span>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 1rem;">
+            <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 4px;">Status / Predikat Juara</label>
+            <select id="inputStatusHasil" class="form-control" style="width: 100%; padding: 8px; border: 1.5px solid #cbd5e1; border-radius: 8px;" required>
+              <option value="JUARA 1 (MEDALI EMAS)">JUARA 1 (MEDALI EMAS)</option>
+              <option value="JUARA 2 (MEDALI PERAK)">JUARA 2 (MEDALI PERAK)</option>
+              <option value="JUARA 3 (MEDALI PERUNGGU)">JUARA 3 (MEDALI PERUNGGU)</option>
+              <option value="JUARA HARAPAN 1">JUARA HARAPAN 1</option>
+              <option value="JUARA HARAPAN 2">JUARA HARAPAN 2</option>
+              <option value="LOLOS KE BABAK FINAL">LOLOS KE BABAK FINAL</option>
+              <option value="PESERTA BERPRESTASI">PESERTA BERPRESTASI</option>
+            </select>
+          </div>
+
+          <div style="margin-bottom: 1.25rem;">
+            <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 4px;">Catatan Dewan Juri</label>
+            <textarea id="inputCatatanJuri" rows="2" style="width: 100%; padding: 8px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 0.85rem;" placeholder="Catatan evaluasi atau keunggulan siswa..."></textarea>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 8px;">
+            <button type="button" class="btn btn-secondary" onclick="tutupModalInputNilai()">Batal</button>
+            <button type="submit" class="btn btn-primary" id="btnSubmitNilai">Simpan Nilai Peserta</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+
+    <!-- ====================================================================
+         SECTION 3: MANAJEMEN RUANG, DENAH & PRESENSI HARI-H (PRIORITAS 2)
+         ==================================================================== -->
+    <div id="sectionRuang" style="display: none;">
+
+      <!-- Top Summary Cards -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+        <div style="background: #ffffff; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); padding: 1.25rem; box-shadow: var(--shadow-card); display: flex; align-items: center; gap: 14px;">
+          <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(40, 88, 145, 0.1); color: var(--color-primary-royal); display: flex; align-items: center; justify-content: center;">
+            <i data-lucide="users" style="width: 24px; height: 24px;"></i>
+          </div>
+          <div>
+            <div style="font-size: 0.75rem; color: var(--color-text-muted); font-weight: 600; text-transform: uppercase;">Total Peserta</div>
+            <div id="statRuangTotal" style="font-size: 1.6rem; font-weight: 800; color: var(--color-primary-navy);">0</div>
+            <div style="font-size: 0.72rem; color: #10b981; font-weight: 600;">Terdaftar di Sistem</div>
+          </div>
+        </div>
+
+        <div style="background: #ffffff; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); padding: 1.25rem; box-shadow: var(--shadow-card); display: flex; align-items: center; gap: 14px;">
+          <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(231, 181, 94, 0.15); color: #b88628; display: flex; align-items: center; justify-content: center;">
+            <i data-lucide="layout-grid" style="width: 24px; height: 24px;"></i>
+          </div>
+          <div>
+            <div style="font-size: 0.75rem; color: var(--color-text-muted); font-weight: 600; text-transform: uppercase;">Terplot Kursi</div>
+            <div id="statRuangTerplot" style="font-size: 1.6rem; font-weight: 800; color: #b88628;">0</div>
+            <div id="statRuangTerplotSub" style="font-size: 0.72rem; color: #64748b; font-weight: 600;">100% Memiliki Meja</div>
+          </div>
+        </div>
+
+        <div style="background: #ffffff; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); padding: 1.25rem; box-shadow: var(--shadow-card); display: flex; align-items: center; gap: 14px;">
+          <div style="width: 48px; height: 48px; border-radius: 12px; background: #ecfdf5; color: #059669; display: flex; align-items: center; justify-content: center;">
+            <i data-lucide="check-circle-2" style="width: 24px; height: 24px;"></i>
+          </div>
+          <div>
+            <div style="font-size: 0.75rem; color: var(--color-text-muted); font-weight: 600; text-transform: uppercase;">Hadir Hari-H</div>
+            <div id="statRuangHadir" style="font-size: 1.6rem; font-weight: 800; color: #059669;">0</div>
+            <div id="statRuangPersen" style="font-size: 0.72rem; color: #059669; font-weight: 700;">0% Kehadiran</div>
+          </div>
+        </div>
+
+        <div style="background: #ffffff; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); padding: 1.25rem; box-shadow: var(--shadow-card); display: flex; align-items: center; gap: 14px;">
+          <div style="width: 48px; height: 48px; border-radius: 12px; background: #eff6ff; color: #2563eb; display: flex; align-items: center; justify-content: center;">
+            <i data-lucide="building-2" style="width: 24px; height: 24px;"></i>
+          </div>
+          <div>
+            <div style="font-size: 0.75rem; color: var(--color-text-muted); font-weight: 600; text-transform: uppercase;">Kesiapan Ruang</div>
+            <div id="statRuangSiap" style="font-size: 1.6rem; font-weight: 800; color: #2563eb;">15</div>
+            <div style="font-size: 0.72rem; color: #2563eb; font-weight: 600;">Ruang Ujian Siap</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Toolbar -->
+      <div style="background: #ffffff; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; margin-bottom: 1.75rem; box-shadow: var(--shadow-card); display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+        <div>
+          <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--color-primary-navy); margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px;">
+            <i data-lucide="map-pin" style="color: var(--color-accent-gold); width: 22px; height: 22px;"></i>
+            Alokasi Ruang & Presensi Hari-H
+          </h2>
+          <p style="font-size: 0.85rem; color: var(--color-text-muted); margin: 0;">
+            Kelola plotting 20 meja per ruang, cetak stiker nomor meja A4, cetak lembar pengawas, dan pantau kehadiran siswa.
+          </p>
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button type="button" class="btn btn-primary" onclick="alokasiRuangOtomatisAdmin()" style="display: inline-flex; align-items: center; gap: 6px;">
+            <i data-lucide="sparkles" style="width: 15px; height: 15px;"></i> Alokasi Otomatis (20/Ruang)
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="cetakStikerMejaA4()" style="display: inline-flex; align-items: center; gap: 6px;">
+            <i data-lucide="printer" style="width: 15px; height: 15px;"></i> Cetak Stiker Meja A4
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="cetakPresensiPengawasA4()" style="display: inline-flex; align-items: center; gap: 6px;">
+            <i data-lucide="file-text" style="width: 15px; height: 15px;"></i> Cetak Presensi Pengawas
+          </button>
+          <a href="presensi.html" target="_blank" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 6px; text-decoration: none;">
+            <i data-lucide="camera" style="width: 15px; height: 15px;"></i> Buka Scanner Pengawas
+          </a>
+          <button type="button" class="btn btn-secondary" onclick="loadRuangAdminData()" title="Muat Ulang" style="padding: 9px 12px;">
+            <i data-lucide="refresh-cw" style="width: 15px; height: 15px;"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Monitoring Kampus Cards (15 Ruang) -->
+      <div style="background: #ffffff; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.75rem; box-shadow: var(--shadow-card);">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--color-primary-navy); margin: 0 0 2px 0; display: flex; align-items: center; gap: 8px;">
+              <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #10b981; animation: pulse 2s infinite;"></span>
+              Live Monitoring Kehadiran Kampus (15 Ruang Ujian)
+            </h3>
+            <p style="font-size: 0.825rem; color: var(--color-text-muted); margin: 0;">SMP Negeri 1 Pamekasan — Terhubung Real-Time ke Scanner QR Pengawas Ruang</p>
+          </div>
+          <span style="font-size: 0.775rem; background: var(--color-bg-tint); color: var(--color-primary-royal); font-weight: 600; padding: 4px 12px; border-radius: var(--radius-pill);">
+            Standar Kapasitas: 20 Meja / Ruang
+          </span>
+        </div>
+
+        <!-- Room Cards Grid -->
+        <div id="campusRoomsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px;">
+          <!-- Rendered via JS -->
+          <div style="text-align: center; padding: 30px; color: #64748b; grid-column: 1 / -1;">
+            <span style="display:inline-block;width:20px;height:20px;border:2px solid #285891;border-top-color:transparent;border-radius:50%;animation:spin 0.6s linear infinite;margin-right:8px;"></span>
+            Memuat peta ruangan & data presensi kampus...
+          </div>
+        </div>
+      </div>
+
+      <!-- Roster Alokasi Meja & Kehadiran Peserta -->
+      <div style="background: #ffffff; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); overflow: hidden;">
+        
+        <!-- Filter Header -->
+        <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--color-border-subtle); display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+          <div>
+            <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--color-primary-navy); margin: 0 0 2px 0;">
+              Daftar Peserta & Alokasi Meja Ujian
+            </h3>
+            <p style="font-size: 0.8rem; color: var(--color-text-muted); margin: 0;">
+              Kelola nomor meja dan cek status scan kehadiran peserta per ruangan
+            </p>
+          </div>
+
+          <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+            <div style="position: relative;">
+              <input type="text" id="filterRuangSearch" oninput="filterRuangTable()" placeholder="Cari nama / no reg / sekolah..." style="padding: 7px 12px 7px 32px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.825rem; width: 220px;">
+              <i data-lucide="search" style="position: absolute; left: 10px; top: 9px; width: 14px; height: 14px; color: #94a3b8;"></i>
+            </div>
+
+            <select id="filterRuangRuangan" onchange="filterRuangTable()" style="padding: 7px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.825rem; font-weight: 600; color: #1e293b;">
+              <option value="">Semua Ruangan (1 - 15)</option>
+              <option value="Ruang 01">Ruang 01 (Kelas 7A)</option>
+              <option value="Ruang 02">Ruang 02 (Kelas 7B)</option>
+              <option value="Ruang 03">Ruang 03 (Kelas 7C)</option>
+              <option value="Ruang 04">Ruang 04 (Lab IPA 1)</option>
+              <option value="Ruang 05">Ruang 05 (Lab Komputer 2)</option>
+              <option value="Ruang 06">Ruang 06 (Lab Komputer 1)</option>
+              <option value="Ruang 07">Ruang 07 (Kelas 8A)</option>
+              <option value="Ruang 08">Ruang 08 (Kelas 8B)</option>
+              <option value="Ruang 09">Ruang 09 (Kelas 8C)</option>
+              <option value="Ruang 10">Ruang 10 (Kelas 8D)</option>
+              <option value="Ruang 11">Ruang 11 (Kelas 9A)</option>
+              <option value="Ruang 12">Ruang 12 (Kelas 9B)</option>
+              <option value="Ruang 13">Ruang 13 (Kelas 9C)</option>
+              <option value="Ruang 14">Ruang 14 (Lab Bahasa)</option>
+              <option value="Ruang 15">Ruang 15 (Aula Utama)</option>
+            </select>
+
+            <select id="filterRuangStatus" onchange="filterRuangTable()" style="padding: 7px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.825rem; font-weight: 600; color: #1e293b;">
+              <option value="">Semua Status Hadir</option>
+              <option value="hadir">Hadir di Ruangan</option>
+              <option value="belum hadir">Belum Hadir</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left;">
+            <thead>
+              <tr style="background: #f8fafc; border-bottom: 2px solid #e2e8f0; color: var(--color-primary-navy);">
+                <th style="padding: 12px 14px; width: 45px; text-align: center;">No</th>
+                <th style="padding: 12px 14px;">No. Pendaftaran & Kode</th>
+                <th style="padding: 12px 14px;">Nama Peserta</th>
+                <th style="padding: 12px 14px;">Asal Sekolah & Level</th>
+                <th style="padding: 12px 14px; text-align: center;">Ruang & Gedung</th>
+                <th style="padding: 12px 14px; text-align: center;">No. Meja</th>
+                <th style="padding: 12px 14px; text-align: center;">Sesi</th>
+                <th style="padding: 12px 14px; text-align: center;">Status Presensi</th>
+                <th style="padding: 12px 14px; text-align: center;">Waktu Scan</th>
+                <th style="padding: 12px 14px; text-align: center;">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="ruangTableBody">
+              <!-- Rendered via JS -->
+              <tr><td colspan="10" style="text-align: center; padding: 25px; color: #64748b;">Memuat data alokasi ruangan...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Table Footer -->
+        <div style="padding: 12px 1.5rem; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: #64748b;">
+          <div>Menampilkan <strong id="ruangCountFiltered" style="color: #19365f;">0</strong> dari <span id="ruangCountTotal">0</span> alokasi peserta</div>
+          <div>Tips: Klik tombol <strong>Tandai Hadir</strong> untuk verifikasi manual jika kartu fisik basah/rusak.</div>
+        </div>
+
+      </div>
+
+    </div> <!-- END SECTION 3: RUANG & PRESENSI -->
 
   </main>
 
@@ -1304,7 +1769,6 @@
       w.document.write(html);
       w.document.close();
     }
-
     // Ekspor Data ke CSV
     function eksporCSV() {
       if (allPesertaList.length === 0) {
@@ -1389,6 +1853,1262 @@
       w.document.write(html);
       w.document.close();
     }
+
+    /* ==========================================================================
+       MANAJEMEN NILAI, RANKING & E-SERTIFIKAT (PRIORITAS 1 JAVASCRIPT)
+       ========================================================================== */
+    let allNilaiList = [];
+    let statusPengumumanAktif = "BUKA";
+    let allRuangList = [];
+    let campusRoomsData = [];
+
+    // Switch Tab Antara Peserta vs Ruang & Presensi vs Nilai
+    function switchAdminTab(tab) {
+      const secPeserta = document.getElementById('sectionPeserta');
+      const secNilai = document.getElementById('sectionNilai');
+      const secRuang = document.getElementById('sectionRuang');
+      const btnPeserta = document.getElementById('adminNavPeserta');
+      const btnNilai = document.getElementById('adminNavNilai');
+      const btnRuang = document.getElementById('adminNavRuang');
+
+      secPeserta.style.display = 'none';
+      secNilai.style.display = 'none';
+      if (secRuang) secRuang.style.display = 'none';
+
+      btnPeserta.classList.remove('active');
+      btnNilai.classList.remove('active');
+      if (btnRuang) btnRuang.classList.remove('active');
+
+      if (tab === 'nilai') {
+        secNilai.style.display = 'block';
+        btnNilai.classList.add('active');
+        loadNilaiAdminData();
+      } else if (tab === 'ruang') {
+        if (secRuang) secRuang.style.display = 'block';
+        if (btnRuang) btnRuang.classList.add('active');
+        loadRuangAdminData();
+      } else {
+        secPeserta.style.display = 'block';
+        btnPeserta.classList.add('active');
+      }
+      lucide.createIcons();
+    }
+
+    // Load Nilai dari Backend atau Sample
+    async function loadNilaiAdminData() {
+      const tbody = document.getElementById('nilaiTableBody');
+      tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; padding: 25px; color: #657c94;"><span style="display:inline-block;width:18px;height:18px;border:2px solid #285891;border-top-color:transparent;border-radius:50%;animation:spin 0.6s linear infinite;margin-right:8px;"></span>Memuat data nilai dari Google Sheets...</td></tr>`;
+
+      try {
+        const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '/api';
+        let dataLoaded = false;
+
+        try {
+          const res = await fetch(`${apiUrl}?action=getNilaiList`);
+          if (res.ok) {
+            const json = await res.json();
+            if (json.status === 'success' && json.data && json.data.length > 0) {
+              allNilaiList = json.data;
+              dataLoaded = true;
+            }
+          }
+          // Fetch status pengumuman
+          const resPengumuman = await fetch(`${apiUrl}?action=getStatusPengumuman`);
+          if (resPengumuman.ok) {
+            const jP = await resPengumuman.json();
+            if (jP.statusPengumuman) updateUIPengumuman(jP.statusPengumuman);
+          }
+        } catch (e) {
+          console.warn("API Nilai offline/fallback:", e);
+        }
+
+        // Fallback default sample jika API belum siap
+        if (!dataLoaded) {
+          allNilaiList = [
+            { noPendaftaran: "OMP-2026-0001", kodePeserta: "02-03-001", nama: "Amalia Utami", sekolah: "SD Negeri Jungcancang 1 Pamekasan", level: "Level 2 (Kelas 4-6)", mapel: "IPA", skorBenar: 26, skorSalah: 3, skorKosong: 1, nilaiAkhir: 101, rankingMapel: 1, totalPesertaMapel: 148, statusHasil: "JUARA 1 (MEDALI EMAS)", noSertifikat: "421.2/001/OMEGA-PLUS/SMPN1/2026", catatanJuri: "Skor tertinggi IPA se-Madura" },
+            { noPendaftaran: "OMP-2026-0002", kodePeserta: "02-01-001", nama: "Muhammad Farhan Pratama", sekolah: "SD Plus Nurul Hikmah Pamekasan", level: "Level 2 (Kelas 4-6)", mapel: "Matematika", skorBenar: 25, skorSalah: 2, skorKosong: 3, nilaiAkhir: 98, rankingMapel: 1, totalPesertaMapel: 165, statusHasil: "JUARA 1 (MEDALI EMAS)", noSertifikat: "421.2/002/OMEGA-PLUS/SMPN1/2026", catatanJuri: "Skor tertinggi Matematika" },
+            { noPendaftaran: "OMP-2026-0003", kodePeserta: "02-02-005", nama: "Siti Nurhaliza Azzahra", sekolah: "SDIT Al-Ittihad Sumenep", level: "Level 2 (Kelas 4-6)", mapel: "Bahasa Inggris", skorBenar: 24, skorSalah: 4, skorKosong: 2, nilaiAkhir: 92, rankingMapel: 2, totalPesertaMapel: 130, statusHasil: "JUARA 2 (MEDALI PERAK)", noSertifikat: "421.2/003/OMEGA-PLUS/SMPN1/2026", catatanJuri: "Medali Perak B. Inggris" },
+            { noPendaftaran: "OMP-2026-0004", kodePeserta: "02-04-012", nama: "Achmad Rifqi Fauzan", sekolah: "MIN 1 Sampang", level: "Level 2 (Kelas 4-6)", mapel: "IPS", skorBenar: 23, skorSalah: 5, skorKosong: 2, nilaiAkhir: 87, rankingMapel: 4, totalPesertaMapel: 112, statusHasil: "JUARA HARAPAN 1", noSertifikat: "421.2/004/OMEGA-PLUS/SMPN1/2026", catatanJuri: "Lolos Final IPS" },
+            { noPendaftaran: "OMP-2026-0005", kodePeserta: "01-01-003", nama: "Alya Zahira Putri", sekolah: "SDN Barurambat Kota 1 Pamekasan", level: "Level 1 (Kelas 1-3)", mapel: "Matematika", skorBenar: 27, skorSalah: 1, skorKosong: 2, nilaiAkhir: 107, rankingMapel: 1, totalPesertaMapel: 120, statusHasil: "JUARA 1 (MEDALI EMAS)", noSertifikat: "421.2/005/OMEGA-PLUS/SMPN1/2026", catatanJuri: "Juara 1 Matematika Level 1" }
+          ];
+        }
+
+        updateMetricsNilai(allNilaiList);
+        renderTableNilai(allNilaiList);
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; padding: 20px; color: #dc2626;">Gagal memuat nilai: ${err.message}</td></tr>`;
+      }
+    }
+
+    // Update Metrics
+    function updateMetricsNilai(list) {
+      document.getElementById('stat-total-dinilai').innerText = list.length;
+      const juaraCount = list.filter(i => (i.statusHasil || '').includes('JUARA 1') || (i.statusHasil || '').includes('JUARA 2') || (i.statusHasil || '').includes('JUARA 3')).length;
+      document.getElementById('stat-total-juara').innerText = juaraCount;
+      const finalisCount = list.filter(i => (i.statusHasil || '').includes('HARAPAN') || (i.statusHasil || '').includes('FINAL')).length;
+      document.getElementById('stat-total-finalis').innerText = finalisCount;
+      document.getElementById('stat-total-sertif').innerText = list.length;
+    }
+
+    // Render Tabel Nilai
+    function renderTableNilai(list) {
+      const tbody = document.getElementById('nilaiTableBody');
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; padding: 30px; color: #64748b;">Belum ada data nilai yang cocok dengan filter.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map(item => {
+        const isGold = (item.statusHasil || '').includes('JUARA 1') || (item.statusHasil || '').includes('EMAS');
+        const badgeColor = isGold ? 'background:#fef3c7; color:#92400e; border:1px solid #fde68a;' : 'background:#ecfdf5; color:#047857; border:1px solid #a7f3d0;';
+        const rankColor = item.rankingMapel === 1 ? 'background: #fef08a; color: #854d0e;' : (item.rankingMapel <= 3 ? 'background: #e2e8f0; color: #334155;' : 'background: #f1f5f9; color: #64748b;');
+
+        return `
+          <tr>
+            <td style="text-align: center;"><span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;font-weight:bold;font-size:12px;${rankColor}">#${item.rankingMapel}</span></td>
+            <td><strong>${item.noPendaftaran}</strong></td>
+            <td><strong>${item.nama}</strong></td>
+            <td>${item.sekolah}</td>
+            <td><span style="font-weight:600; color:var(--color-primary-royal);">${item.mapel}</span></td>
+            <td style="text-align: center; font-size: 12px;">
+              <span style="color:#047857; font-weight:bold;">${item.skorBenar || 0}</span> / 
+              <span style="color:#be123c; font-weight:bold;">${item.skorSalah || 0}</span> / 
+              <span style="color:#64748b;">${item.skorKosong || 0}</span>
+            </td>
+            <td style="text-align: right; font-weight: 800; font-size: 14px; color: var(--color-primary-navy);">${item.nilaiAkhir}</td>
+            <td><span style="padding: 3px 8px; border-radius: 9999px; font-size: 11px; font-weight: bold; ${badgeColor}">${item.statusHasil || '-'}</span></td>
+            <td style="font-size: 11px; color: #64748b; font-family: monospace;">${item.noSertifikat || '-'}</td>
+            <td style="text-align: center;">
+              <div style="display: flex; gap: 5px; justify-content: center;">
+                <button type="button" class="btn btn-secondary" style="padding: 4px 8px; font-size: 11px;" onclick="previewSertifikatAdmin('${encodeURIComponent(JSON.stringify(item))}')" title="Lihat Sertifikat">
+                  <i data-lucide="award" style="width: 13px; height: 13px;"></i>
+                </button>
+                <button type="button" class="btn btn-secondary" style="padding: 4px 8px; font-size: 11px;" onclick="bukaModalEditNilai('${encodeURIComponent(JSON.stringify(item))}')" title="Edit Nilai">
+                  <i data-lucide="edit" style="width: 13px; height: 13px;"></i>
+                </button>
+                <button type="button" class="btn btn-danger" style="padding: 4px 8px; font-size: 11px;" onclick="hapusNilai('${item.noPendaftaran}')" title="Hapus">
+                  <i data-lucide="trash-2" style="width: 13px; height: 13px;"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    // Filter Local Nilai
+    function filterLocalNilai() {
+      const q = document.getElementById('filterSearchNilai').value.toLowerCase();
+      const level = document.getElementById('filterLevelNilai').value;
+      const mapel = document.getElementById('filterMapelNilai').value;
+
+      const filtered = allNilaiList.filter(item => {
+        const matchesQ = !q || (item.nama + ' ' + item.noPendaftaran + ' ' + item.sekolah).toLowerCase().includes(q);
+        const matchesLevel = level === 'Semua' || (item.level || '').includes(level);
+        const matchesMapel = mapel === 'Semua' || (item.mapel || '').includes(mapel);
+        return matchesQ && matchesLevel && matchesMapel;
+      });
+
+      renderTableNilai(filtered);
+    }
+
+    // Modal Input / Edit Nilai
+    function bukaModalInputNilai() {
+      document.getElementById('modalNilaiTitle').innerHTML = `<i data-lucide="plus-circle" style="width: 18px; height: 18px; color: var(--color-accent-gold);"></i> Input Nilai Peserta Baru`;
+      document.getElementById('formInputNilai').reset();
+
+      // Populate Dropdown Peserta dari allPesertaList
+      const select = document.getElementById('inputNilaiNoReg');
+      select.innerHTML = '<option value="">-- Pilih Peserta Terdaftar --</option>' + 
+        allPesertaList.map(p => `<option value="${p.noPendaftaran}">${p.noPendaftaran} - ${p.nama} (${p.sekolah})</option>`).join('');
+
+      document.getElementById('previewNilaiAkhir').innerText = '0';
+      document.getElementById('modalInputNilai').style.display = 'flex';
+      lucide.createIcons();
+    }
+
+    function bukaModalEditNilai(jsonStr) {
+      const item = JSON.parse(decodeURIComponent(jsonStr));
+      bukaModalInputNilai();
+
+      document.getElementById('modalNilaiTitle').innerHTML = `<i data-lucide="edit" style="width: 18px; height: 18px; color: var(--color-accent-gold);"></i> Edit Nilai - ${item.nama}`;
+      
+      const select = document.getElementById('inputNilaiNoReg');
+      select.innerHTML = `<option value="${item.noPendaftaran}" selected>${item.noPendaftaran} - ${item.nama}</option>`;
+
+      document.getElementById('inputNilaiNama').value = item.nama;
+      document.getElementById('inputNilaiSekolah').value = item.sekolah;
+      document.getElementById('inputNilaiLevel').value = item.level;
+      document.getElementById('inputNilaiMapel').value = item.mapel;
+      document.getElementById('inputSkorBenar').value = item.skorBenar || 0;
+      document.getElementById('inputSkorSalah').value = item.skorSalah || 0;
+      document.getElementById('inputSkorKosong').value = item.skorKosong || 0;
+      document.getElementById('inputStatusHasil').value = item.statusHasil;
+      document.getElementById('inputCatatanJuri').value = item.catatanJuri || '';
+
+      hitungOtomatisNilaiAkhir();
+    }
+
+    function tutupModalInputNilai() {
+      document.getElementById('modalInputNilai').style.display = 'none';
+    }
+
+    function autoFillPesertaData(noReg) {
+      if (!noReg) return;
+      const p = allPesertaList.find(x => x.noPendaftaran === noReg);
+      if (p) {
+        document.getElementById('inputNilaiNama').value = p.nama;
+        document.getElementById('inputNilaiSekolah').value = p.sekolah;
+        if (p.level) document.getElementById('inputNilaiLevel').value = p.level;
+        if (p.mataPelajaran) document.getElementById('inputNilaiMapel').value = p.mataPelajaran.split(',')[0].trim();
+      }
+    }
+
+    function hitungOtomatisNilaiAkhir() {
+      const b = parseInt(document.getElementById('inputSkorBenar').value, 10) || 0;
+      const s = parseInt(document.getElementById('inputSkorSalah').value, 10) || 0;
+      const total = (b * 4) - s;
+      document.getElementById('previewNilaiAkhir').innerText = total;
+      return total;
+    }
+
+    // Submit Nilai ke Backend
+    async function simpanNilaiSubmit(e) {
+      e.preventDefault();
+      const noReg = document.getElementById('inputNilaiNoReg').value;
+      const nama = document.getElementById('inputNilaiNama').value;
+      const sekolah = document.getElementById('inputNilaiSekolah').value;
+      const level = document.getElementById('inputNilaiLevel').value;
+      const mapel = document.getElementById('inputNilaiMapel').value;
+      const benar = parseInt(document.getElementById('inputSkorBenar').value, 10) || 0;
+      const salah = parseInt(document.getElementById('inputSkorSalah').value, 10) || 0;
+      const kosong = parseInt(document.getElementById('inputSkorKosong').value, 10) || 0;
+      const nilaiAkhir = hitungOtomatisNilaiAkhir();
+      const statusHasil = document.getElementById('inputStatusHasil').value;
+      const catatanJuri = document.getElementById('inputCatatanJuri').value;
+
+      const payload = {
+        action: "simpanNilai",
+        noPendaftaran: noReg,
+        nama: nama,
+        sekolah: sekolah,
+        level: level,
+        mapel: mapel,
+        skorBenar: benar,
+        skorSalah: salah,
+        skorKosong: kosong,
+        nilaiAkhir: nilaiAkhir,
+        statusHasil: statusHasil,
+        catatanJuri: catatanJuri
+      };
+
+      Swal.fire({ title: 'Menyimpan Nilai...', text: 'Memperbarui database & menghitung ranking', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+      try {
+        const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '/api';
+        const res = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const json = await res.json();
+        tutupModalInputNilai();
+
+        // Update local array juga untuk instant UI
+        const existingIdx = allNilaiList.findIndex(x => x.noPendaftaran === noReg);
+        const newItem = { ...payload, rankingMapel: 1, totalPesertaMapel: allNilaiList.length + 1, noSertifikat: json.noSertifikat || `421.2/099/OMEGA-PLUS/SMPN1/2026` };
+        if (existingIdx > -1) {
+          allNilaiList[existingIdx] = newItem;
+        } else {
+          allNilaiList.unshift(newItem);
+        }
+
+        renderTableNilai(allNilaiList);
+        updateMetricsNilai(allNilaiList);
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Nilai Berhasil Disimpan!',
+          text: json.message || 'Data nilai dan ranking peserta telah terupdate.'
+        });
+      } catch (err) {
+        // Fallback simpan lokal jika offline
+        tutupModalInputNilai();
+        const existingIdx = allNilaiList.findIndex(x => x.noPendaftaran === noReg);
+        const newItem = { ...payload, rankingMapel: 1, totalPesertaMapel: allNilaiList.length + 1, noSertifikat: `421.2/099/OMEGA-PLUS/SMPN1/2026` };
+        if (existingIdx > -1) allNilaiList[existingIdx] = newItem;
+        else allNilaiList.unshift(newItem);
+        renderTableNilai(allNilaiList);
+        updateMetricsNilai(allNilaiList);
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Tersimpan di Sesi Lokal',
+          text: 'Data nilai berhasil diperbarui di antarmuka panitia.'
+        });
+      }
+    }
+
+    // Hapus Nilai
+    async function hapusNilai(noReg) {
+      const confirm = await Swal.fire({
+        title: 'Hapus Nilai Peserta?',
+        text: `Data nilai untuk ${noReg} akan dihapus dari database.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#be123c',
+        confirmButtonText: 'Ya, Hapus'
+      });
+
+      if (!confirm.isConfirmed) return;
+
+      try {
+        const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '/api';
+        await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'deleteNilai', noPendaftaran: noReg })
+        });
+      } catch (e) {}
+
+      allNilaiList = allNilaiList.filter(x => x.noPendaftaran !== noReg);
+      renderTableNilai(allNilaiList);
+      updateMetricsNilai(allNilaiList);
+      Swal.fire({ icon: 'success', title: 'Terhapus', text: 'Data nilai telah dihapus.' });
+    }
+
+    // Toggle Status Buka / Kunci Pengumuman
+    async function togglePengumumanStatusAdmin() {
+      const statusBaru = statusPengumumanAktif === 'BUKA' ? 'TUTUP' : 'BUKA';
+      const promptText = statusBaru === 'BUKA' ? 'Buka Pengumuman ke Publik? Seluruh peserta bisa mengecek nilai.' : 'Kunci Pengumuman? Peserta tidak akan bisa melihat nilai untuk sementara waktu.';
+      
+      const confirm = await Swal.fire({
+        title: 'Konfirmasi Status Pengumuman',
+        text: promptText,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: statusBaru === 'BUKA' ? 'Buka Pengumuman' : 'Kunci Pengumuman'
+      });
+
+      if (!confirm.isConfirmed) return;
+
+      try {
+        const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '/api';
+        await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'toggleStatusPengumuman', status: statusBaru })
+        });
+      } catch (e) {}
+
+      updateUIPengumuman(statusBaru);
+      Swal.fire({ icon: 'success', title: 'Berhasil Diperbarui', text: `Status pengumuman sekarang: ${statusBaru}` });
+    }
+
+    function updateUIPengumuman(status) {
+      statusPengumumanAktif = status;
+      const label = document.getElementById('labelStatusPengumuman');
+      const btn = document.getElementById('btnTogglePengumuman');
+      if (status === 'BUKA') {
+        label.innerText = 'DIBUKA UNTUK UMUM';
+        label.style.color = '#047857';
+        btn.innerHTML = `<i data-lucide="lock" style="width:14px;height:14px;"></i> <span>Kunci Pengumuman</span>`;
+      } else {
+        label.innerText = 'TERKUNCI (DRAFT)';
+        label.style.color = '#be123c';
+        btn.innerHTML = `<i data-lucide="unlock" style="width:14px;height:14px;"></i> <span>Buka Pengumuman</span>`;
+      }
+      lucide.createIcons();
+    }
+
+    // Hitung Ulang Ranking
+    async function recalculateRankingAdmin() {
+      Swal.fire({ title: 'Menghitung Ulang...', text: 'Mengurutkan skor & memperbarui peringkat seluruh mapel', didOpen: () => Swal.showLoading() });
+      try {
+        const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '/api';
+        await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'recalcRanking' })
+        });
+      } catch (e) {}
+
+      // Sort locally descending by nilaiAkhir
+      allNilaiList.sort((a, b) => (b.nilaiAkhir || 0) - (a.nilaiAkhir || 0));
+      allNilaiList.forEach((item, idx) => { item.rankingMapel = idx + 1; });
+      renderTableNilai(allNilaiList);
+
+      Swal.fire({ icon: 'success', title: 'Ranking Selesai Diperbarui', text: 'Peringkat seluruh peserta telah diurutkan berdasarkan skor tertinggi.' });
+    }
+
+    // Pratinjau Sertifikat dari Admin
+    function previewSertifikatAdmin(jsonStr) {
+      const item = JSON.parse(decodeURIComponent(jsonStr));
+      const verifyUrl = `${window.location.origin}/pengumuman.html?verify=${encodeURIComponent(item.noPendaftaran)}`;
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(verifyUrl)}`;
+
+      const w = window.open('', '_blank');
+      const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>E-Sertifikat - ${item.nama}</title>
+          <style>
+            body { margin: 0; padding: 20px; font-family: Arial, sans-serif; background: #525659; display: flex; justify-content: center; }
+            .sheet { width: 842px; min-height: 595px; background: #fff; padding: 30px; box-sizing: border-box; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+            .border-outer { border: 4px solid #19365f; padding: 6px; height: 100%; box-sizing: border-box; }
+            .border-inner { border: 2px solid #e7b55e; padding: 25px; height: 100%; box-sizing: border-box; text-align: center; display: flex; flex-direction: column; justify-content: space-between; }
+            .kop { display: flex; align-items: center; justify-content: center; gap: 15px; }
+            .kop img { width: 55px; height: 55px; }
+            .kop-title { font-size: 13pt; font-weight: bold; color: #19365f; }
+            .kop-sub { font-size: 9pt; color: #475569; }
+            .title { font-size: 24pt; font-weight: 800; color: #19365f; margin: 10px 0 2px; }
+            .no { font-size: 9pt; color: #64748b; font-weight: bold; }
+            .recipient { font-size: 20pt; font-weight: bold; color: #19365f; text-decoration: underline; margin: 10px 0 4px; }
+            .school { font-size: 11pt; font-weight: bold; color: #334155; }
+            .predicate { display: inline-block; background: #19365f; color: #fff; border: 2px solid #e7b55e; padding: 6px 20px; border-radius: 9999px; font-weight: bold; font-size: 12pt; margin: 10px 0; }
+            .desc { font-size: 9pt; color: #475569; max-width: 600px; margin: 0 auto; line-height: 1.4; }
+            .signatures { display: flex; justify-content: space-between; align-items: flex-end; padding: 0 30px; margin-top: 15px; }
+            .sig-box { width: 200px; text-align: center; font-size: 8.5pt; }
+            .sig-line { margin-top: 45px; border-bottom: 1px solid #19365f; font-weight: bold; color: #19365f; }
+            @media print {
+              body { background: transparent; padding: 0; }
+              .sheet { box-shadow: none; width: 100%; height: 100%; }
+              @page { size: A4 landscape; margin: 0; }
+            }
+          </style>
+        </head>
+        <body onload="window.print()">
+          <div class="sheet">
+            <div class="border-outer">
+              <div class="border-inner">
+                <div>
+                  <div class="kop">
+                    <img src="https://file.garden/aehADr1aKQol7cT9/Omega_Plus_Circular_Emblem-removebg-preview.png" onerror="this.src='logo.png'" />
+                    <div>
+                      <div class="kop-title">PANITIA OLIMPIADE AKADEMIK OMEGA PLUS 2026</div>
+                      <div class="kop-sub">SMP NEGERI 1 PAMEKASAN • KABUPATEN PAMEKASAN</div>
+                    </div>
+                  </div>
+                  <div class="title">PIAGAM PENGHARGAAN</div>
+                  <div class="no">Nomor: ${item.noSertifikat || '421.2/001/OMEGA-PLUS/SMPN1/2026'}</div>
+                </div>
+
+                <div>
+                  <div style="font-size: 10pt; font-style: italic;">Diberikan kepada:</div>
+                  <div class="recipient">${item.nama.toUpperCase()}</div>
+                  <div class="school">${item.sekolah.toUpperCase()}</div>
+                  <div style="font-size: 10pt;">Sebagai:</div>
+                  <div><div class="predicate">${item.statusHasil || 'PESERTA PRESTASI'}</div></div>
+                  <div class="desc">Atas partisipasi dan prestasi luar biasa dalam ajang Olimpiade Akademik SD/MI OMEGA PLUS 2026 tingkat se-Madura untuk Mata Pelajaran ${item.mapel} (${item.level}) yang diselenggarakan oleh SMP Negeri 1 Pamekasan.</div>
+                </div>
+
+                <div class="signatures">
+                  <div class="sig-box">
+                    <div>Ketua Panitia OMEGA PLUS,</div>
+                    <div class="sig-line">RASYIDI, S.Pd.</div>
+                    <div>NIP. 19820514 200801 1 009</div>
+                  </div>
+                  <div style="text-align: center;">
+                    <img src="${qrUrl}" width="65" height="65" /><br>
+                    <span style="font-size: 7pt; font-weight: bold; color: #19365f;">VALIDASI RESMI</span>
+                  </div>
+                  <div class="sig-box">
+                    <div>Kepala SMP Negeri 1 Pamekasan,</div>
+                    <div class="sig-line">Drs. H. JAELANI, M.Pd.</div>
+                    <div>Pembina Utama Muda (IV/c)</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
+      w.document.write(html);
+      w.document.close();
+    }
+
+    /* ==========================================================================
+       SECTION 3 LOGIC: MANAJEMEN RUANG, DENAH & PRESENSI HARI-H (PRIORITAS 2)
+       ========================================================================== */
+
+    // Master Daftar 15 Ruangan Ujian SMPN 1 Pamekasan
+    const MASTER_RUANG_KAMPUS = [
+      { ruang: "Ruang 01", nama: "Kelas 7A", gedung: "Gedung A (Lantai 1)", kapasitas: 20, pengawas: "Ibu Sri Wahyuni, S.Pd." },
+      { ruang: "Ruang 02", nama: "Kelas 7B", gedung: "Gedung A (Lantai 1)", kapasitas: 20, pengawas: "Ibu Hartatik, S.Pd." },
+      { ruang: "Ruang 03", nama: "Kelas 7C", gedung: "Gedung A (Lantai 2)", kapasitas: 20, pengawas: "Ibu Nurul Aini, S.Pd." },
+      { ruang: "Ruang 04", nama: "Laboratorium IPA 1", gedung: "Gedung B (Lantai 2)", kapasitas: 20, pengawas: "Bpk. Subaidi, M.Pd." },
+      { ruang: "Ruang 05", nama: "Laboratorium Komputer 2", gedung: "Gedung C (Lantai 2)", kapasitas: 20, pengawas: "Bpk. Hendra Wahyudi, S.Kom." },
+      { ruang: "Ruang 06", nama: "Laboratorium Komputer 1", gedung: "Gedung C (Lantai 1)", kapasitas: 20, pengawas: "Ibu Dwi Elly, S.Pd." },
+      { ruang: "Ruang 07", nama: "Kelas 8A", gedung: "Gedung B (Lantai 1)", kapasitas: 20, pengawas: "Bpk. Rasyidi, S.Pd." },
+      { ruang: "Ruang 08", nama: "Kelas 8B", gedung: "Gedung B (Lantai 1)", kapasitas: 20, pengawas: "Bpk. Indra, M.Pd." },
+      { ruang: "Ruang 09", nama: "Kelas 8C", gedung: "Gedung B (Lantai 2)", kapasitas: 20, pengawas: "Ibu Dian Anggraini, S.Pd." },
+      { ruang: "Ruang 10", nama: "Kelas 8D", gedung: "Gedung B (Lantai 2)", kapasitas: 20, pengawas: "Bpk. Fajar Shodiq, M.Pd." },
+      { ruang: "Ruang 11", nama: "Kelas 9A", gedung: "Gedung D (Lantai 1)", kapasitas: 20, pengawas: "Ibu Siti Khodijah, S.Pd." },
+      { ruang: "Ruang 12", nama: "Kelas 9B", gedung: "Gedung D (Lantai 1)", kapasitas: 20, pengawas: "Bpk. Ahmad Fauzi, S.Pd." },
+      { ruang: "Ruang 13", nama: "Kelas 9C", gedung: "Gedung D (Lantai 2)", kapasitas: 20, pengawas: "Ibu Wardatul Jannah, S.Pd." },
+      { ruang: "Ruang 14", nama: "Laboratorium Bahasa", gedung: "Gedung D (Lantai 2)", kapasitas: 20, pengawas: "Bpk. Taufik Hidayat, M.Pd." },
+      { ruang: "Ruang 15", nama: "Aula Utama (Hall OMEGA)", gedung: "Gedung E (Lantai 1)", kapasitas: 20, pengawas: "Koordinator Pengawas Utama" }
+    ];
+
+    // Data Mock Alokasi Ruang Fallback
+    const SAMPLE_RUANG_DATA = [
+      { noPendaftaran: "OMP-2026-0001", kodePeserta: "02-03-001", nama: "Amalia Utami", sekolah: "SD Negeri Jungcancang 1 Pamekasan", level: "Level 2 (Kelas 4-6)", mataPelajaran: "IPA", ruang: "Ruang 04", namaRuang: "Laboratorium IPA 1", gedung: "Gedung B (Lantai 2)", meja: 12, sesi: "Sesi 1 (07.30 - 08.30 WIB)", waktuUjian: "07.30 - 08.30 WIB", statusPresensi: "Belum Hadir", waktuPresensi: "", pengawas: "Bpk. Subaidi, M.Pd." },
+      { noPendaftaran: "OMP-2026-0002", kodePeserta: "02-01-001", nama: "Muhammad Farhan Pratama", sekolah: "SD Plus Nurul Hikmah Pamekasan", level: "Level 2 (Kelas 4-6)", mataPelajaran: "Matematika", ruang: "Ruang 02", namaRuang: "Ruang Kelas 7B", gedung: "Gedung A (Lantai 1)", meja: 5, sesi: "Sesi 2 (09.00 - 10.00 WIB)", waktuUjian: "09.00 - 10.00 WIB", statusPresensi: "Hadir", waktuPresensi: "08:45 WIB (QR Scan)", pengawas: "Ibu Hartatik, S.Pd." },
+      { noPendaftaran: "OMP-2026-0003", kodePeserta: "02-02-005", nama: "Siti Nurhaliza Azzahra", sekolah: "SDIT Al-Ittihad Sumenep", level: "Level 2 (Kelas 4-6)", mataPelajaran: "Bahasa Inggris", ruang: "Ruang 03", namaRuang: "Ruang Kelas 7C", gedung: "Gedung A (Lantai 2)", meja: 8, sesi: "Sesi 2 (09.00 - 10.00 WIB)", waktuUjian: "09.00 - 10.00 WIB", statusPresensi: "Belum Hadir", waktuPresensi: "", pengawas: "Ibu Nurul Aini, S.Pd." },
+      { noPendaftaran: "OMP-2026-0004", kodePeserta: "02-04-012", nama: "Achmad Rifqi Fauzan", sekolah: "MIN 1 Sampang", level: "Level 2 (Kelas 4-6)", mataPelajaran: "IPS", ruang: "Ruang 05", namaRuang: "Laboratorium Komputer 2", gedung: "Gedung C (Lantai 2)", meja: 17, sesi: "Sesi 1 (07.30 - 08.30 WIB)", waktuUjian: "07.30 - 08.30 WIB", statusPresensi: "Belum Hadir", waktuPresensi: "", pengawas: "Bpk. Hendra Wahyudi, S.Kom." },
+      { noPendaftaran: "OMP-2026-0005", kodePeserta: "01-01-003", nama: "Alya Zahira Putri", sekolah: "SDN Barurambat Kota 1 Pamekasan", level: "Level 1 (Kelas 1-3)", mataPelajaran: "Matematika", ruang: "Ruang 01", namaRuang: "Ruang Kelas 7A", gedung: "Gedung A (Lantai 1)", meja: 3, sesi: "Sesi 2 (09.00 - 10.00 WIB)", waktuUjian: "09.00 - 10.00 WIB", statusPresensi: "Belum Hadir", waktuPresensi: "", pengawas: "Ibu Sri Wahyuni, S.Pd." }
+    ];
+
+    // Load Data Ruang & Monitoring Kampus
+    async function loadRuangAdminData() {
+      const tbody = document.getElementById('ruangTableBody');
+      tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; padding: 25px; color: #64748b;"><span style="display:inline-block;width:18px;height:18px;border:2px solid #285891;border-top-color:transparent;border-radius:50%;animation:spin 0.6s linear infinite;margin-right:8px;"></span>Memuat data alokasi ruangan & presensi...</td></tr>`;
+
+      try {
+        const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '/api';
+        let dataLoaded = false;
+
+        try {
+          const res = await fetch(`${apiUrl}?action=getMonitoringKampus`);
+          if (res.ok) {
+            const result = await res.json();
+            if (result.status === 'success' && result.rooms && result.rooms.length > 0) {
+              campusRoomsData = result.rooms;
+              dataLoaded = true;
+            }
+          }
+        } catch (e) {
+          console.warn("GAS getMonitoringKampus offline, fallback lokal:", e);
+        }
+
+        // Jika allRuangList masih kosong, inisialisasi dari SAMPLE atau allPesertaList
+        if (allRuangList.length === 0) {
+          if (allPesertaList && allPesertaList.length > 0) {
+            // Sinkronkan allPesertaList dengan master ruang
+            allRuangList = allPesertaList.map((p, idx) => {
+              const rIdx = Math.floor(idx / 20) % MASTER_RUANG_KAMPUS.length;
+              const rConf = MASTER_RUANG_KAMPUS[rIdx];
+              const desk = (idx % 20) + 1;
+              const sampleMatch = SAMPLE_RUANG_DATA.find(s => s.noPendaftaran === p.noPendaftaran);
+              return {
+                noPendaftaran: p.noPendaftaran,
+                kodePeserta: p.kodePeserta || `02-01-${String(idx+1).padStart(3, '0')}`,
+                nama: p.nama,
+                sekolah: p.sekolah,
+                level: p.level,
+                mataPelajaran: p.mataPelajaran,
+                ruang: sampleMatch ? sampleMatch.ruang : rConf.ruang,
+                namaRuang: sampleMatch ? sampleMatch.namaRuang : rConf.nama,
+                gedung: sampleMatch ? sampleMatch.gedung : rConf.gedung,
+                meja: sampleMatch ? sampleMatch.meja : desk,
+                sesi: sampleMatch ? sampleMatch.sesi : (desk % 2 === 1 ? "Sesi 1 (07.30 - 08.30 WIB)" : "Sesi 2 (09.00 - 10.00 WIB)"),
+                waktuUjian: sampleMatch ? sampleMatch.waktuUjian : "07.30 - 08.30 WIB",
+                statusPresensi: sampleMatch ? sampleMatch.statusPresensi : "Belum Hadir",
+                waktuPresensi: sampleMatch ? sampleMatch.waktuPresensi : "",
+                pengawas: sampleMatch ? sampleMatch.pengawas : rConf.pengawas
+              };
+            });
+          } else {
+            allRuangList = [...SAMPLE_RUANG_DATA];
+          }
+        }
+
+        updateRuangKPIs();
+        renderMonitoringCards();
+        renderRuangTable(allRuangList);
+
+      } catch (err) {
+        console.error("Gagal loadRuangAdminData:", err);
+        allRuangList = [...SAMPLE_RUANG_DATA];
+        updateRuangKPIs();
+        renderMonitoringCards();
+        renderRuangTable(allRuangList);
+      }
+      lucide.createIcons();
+    }
+
+    // Update KPI Card Numbers
+    function updateRuangKPIs() {
+      const total = allRuangList.length;
+      const hadir = allRuangList.filter(r => String(r.statusPresensi).toLowerCase() === 'hadir').length;
+      const pct = total > 0 ? Math.round((hadir / total) * 100) : 0;
+
+      document.getElementById('statRuangTotal').innerText = total;
+      document.getElementById('statRuangTerplot').innerText = total;
+      document.getElementById('statRuangTerplotSub').innerText = total > 0 ? '100% Terplotting' : '0%';
+      document.getElementById('statRuangHadir').innerText = hadir;
+      document.getElementById('statRuangPersen').innerText = `${pct}% Kehadiran`;
+    }
+
+    // Render 15 Room Monitoring Cards
+    function renderMonitoringCards() {
+      const container = document.getElementById('campusRoomsGrid');
+      if (!container) return;
+
+      let html = '';
+      MASTER_RUANG_KAMPUS.forEach((r, idx) => {
+        // Hitung peserta di ruang ini
+        const occupants = allRuangList.filter(item => item.ruang.toLowerCase() === r.ruang.toLowerCase());
+        const totalInRoom = occupants.length > 0 ? occupants.length : 0;
+        const hadirInRoom = occupants.filter(item => String(item.statusPresensi).toLowerCase() === 'hadir').length;
+        const pct = totalInRoom > 0 ? Math.round((hadirInRoom / totalInRoom) * 100) : 0;
+        const isFullAttendance = totalInRoom > 0 && hadirInRoom === totalInRoom;
+
+        html += `
+          <div style="background: #f8fafc; border: 1.5px solid ${pct > 0 ? '#bbf7d0' : '#e2e8f0'}; border-radius: 12px; padding: 14px; position: relative; transition: all 0.2s ease;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+              <div>
+                <span style="font-size: 0.7rem; font-weight: 700; color: #285891; background: #e7f0fb; padding: 2px 8px; border-radius: 4px; text-transform: uppercase;">
+                  ${r.ruang}
+                </span>
+                <h4 style="margin: 4px 0 0 0; font-size: 0.95rem; font-weight: 700; color: #19365f;">${r.nama}</h4>
+              </div>
+              <span style="font-size: 0.7rem; font-weight: 700; padding: 3px 8px; border-radius: 9999px; ${isFullAttendance ? 'background: #dcfce7; color: #15803d;' : pct > 0 ? 'background: #fef3c7; color: #b45309;' : 'background: #f1f5f9; color: #64748b;'}">
+                ${isFullAttendance ? 'Lengkap 100%' : pct > 0 ? `${pct}% Hadir` : 'Belum Mulai'}
+              </span>
+            </div>
+
+            <div style="font-size: 0.75rem; color: #64748b; margin-bottom: 8px; display: flex; align-items: center; gap: 4px;">
+              <i data-lucide="map-pin" style="width: 12px; height: 12px;"></i> ${r.gedung}
+            </div>
+
+            <!-- Progress Bar -->
+            <div style="margin-bottom: 8px;">
+              <div style="display: flex; justify-content: space-between; font-size: 0.725rem; font-weight: 700; color: #475569; margin-bottom: 3px;">
+                <span>Kehadiran:</span>
+                <span><strong>${hadirInRoom}</strong> / ${totalInRoom} Peserta</span>
+              </div>
+              <div style="background: #e2e8f0; height: 7px; border-radius: 4px; overflow: hidden;">
+                <div style="background: ${pct === 100 ? '#10b981' : '#285891'}; width: ${pct}%; height: 100%; transition: width 0.4s ease;"></div>
+              </div>
+            </div>
+
+            <div style="font-size: 0.7rem; color: #64748b; margin-bottom: 10px;">
+              Pengawas: <strong style="color: #334155;">${r.pengawas}</strong>
+            </div>
+
+            <div style="display: flex; gap: 6px;">
+              <a href="presensi.html?ruang=${encodeURIComponent(r.ruang)}" target="_blank" style="flex: 1; text-align: center; background: #19365f; color: #ffffff; padding: 5px 8px; border-radius: 6px; font-size: 0.725rem; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 4px;">
+                <i data-lucide="qr-code" style="width: 12px; height: 12px;"></i> Scanner
+              </a>
+              <button type="button" onclick="cetakPresensiPengawasA4('${r.ruang}')" style="background: #ffffff; border: 1px solid #cbd5e1; color: #334155; padding: 5px 8px; border-radius: 6px; font-size: 0.725rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+                <i data-lucide="printer" style="width: 12px; height: 12px;"></i> Presensi
+              </button>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+      lucide.createIcons();
+    }
+
+    // Render Participant Seat Table
+    function renderRuangTable(list) {
+      const tbody = document.getElementById('ruangTableBody');
+      const countFiltered = document.getElementById('ruangCountFiltered');
+      const countTotal = document.getElementById('ruangCountTotal');
+
+      countTotal.innerText = allRuangList.length;
+      countFiltered.innerText = list.length;
+
+      if (!list || list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; padding: 30px; color: #94a3b8;"><i data-lucide="inbox" style="width: 32px; height: 32px; margin: 0 auto 8px; display: block;"></i>Tidak ada data peserta yang cocok dengan filter.</td></tr>`;
+        lucide.createIcons();
+        return;
+      }
+
+      let rows = '';
+      list.forEach((item, idx) => {
+        const isHadir = String(item.statusPresensi).toLowerCase() === 'hadir';
+        rows += `
+          <tr style="border-bottom: 1px solid #f1f5f9; transition: background 0.15s ease;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+            <td style="padding: 10px 14px; text-align: center; color: #64748b; font-weight: 600;">${idx + 1}</td>
+            <td style="padding: 10px 14px;">
+              <strong style="color: var(--color-primary-navy);">${item.noPendaftaran}</strong>
+              <div style="font-size: 0.75rem; color: #64748b; font-family: monospace;">Kode: ${item.kodePeserta || '-'}</div>
+            </td>
+            <td style="padding: 10px 14px;">
+              <strong style="color: #1e293b;">${item.nama}</strong>
+              <div style="font-size: 0.75rem; color: var(--color-primary-royal);">${item.mataPelajaran}</div>
+            </td>
+            <td style="padding: 10px 14px;">
+              <div>${item.sekolah}</div>
+              <div style="font-size: 0.75rem; color: #64748b;">${item.level}</div>
+            </td>
+            <td style="padding: 10px 14px; text-align: center;">
+              <span style="font-weight: 700; color: #19365f; background: #e7f0fb; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem;">
+                ${item.ruang}
+              </span>
+              <div style="font-size: 0.72rem; color: #64748b; margin-top: 2px;">${item.gedung}</div>
+            </td>
+            <td style="padding: 10px 14px; text-align: center;">
+              <span style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 8px; background: #fef8ee; border: 1.5px solid #e7b55e; color: #b88628; font-weight: 800; font-size: 0.95rem;">
+                ${item.meja}
+              </span>
+            </td>
+            <td style="padding: 10px 14px; text-align: center; font-size: 0.775rem;">
+              <span style="font-weight: 600; color: #334155;">${item.sesi.split(' ')[0]} ${item.sesi.split(' ')[1] || ''}</span>
+              <div style="color: #64748b; font-size: 0.72rem;">${item.waktuUjian}</div>
+            </td>
+            <td style="padding: 10px 14px; text-align: center;">
+              <span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; ${isHadir ? 'background: #dcfce7; color: #15803d;' : 'background: #f1f5f9; color: #64748b;'}">
+                <i data-lucide="${isHadir ? 'check-circle' : 'clock'}" style="width: 12px; height: 12px;"></i>
+                ${isHadir ? 'HADIR' : 'BELUM HADIR'}
+              </span>
+            </td>
+            <td style="padding: 10px 14px; text-align: center; font-size: 0.75rem; color: #64748b;">
+              ${item.waktuPresensi ? `<span style="color: #059669; font-weight: 600;">${item.waktuPresensi}</span>` : '<span style="color: #94a3b8;">-</span>'}
+            </td>
+            <td style="padding: 10px 14px; text-align: center;">
+              <button type="button" onclick="togglePresensiAdmin('${item.noPendaftaran}', '${item.statusPresensi}')" class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.75rem; font-weight: 600; ${isHadir ? 'color: #dc2626; border-color: #fca5a5;' : 'color: #059669; border-color: #a7f3d0;'}">
+                ${isHadir ? 'Batal Hadir' : 'Tandai Hadir'}
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+
+      tbody.innerHTML = rows;
+      lucide.createIcons();
+    }
+
+    // Filter Table
+    function filterRuangTable() {
+      const q = document.getElementById('filterRuangSearch').value.toLowerCase().trim();
+      const rFilter = document.getElementById('filterRuangRuangan').value.toLowerCase().trim();
+      const sFilter = document.getElementById('filterRuangStatus').value.toLowerCase().trim();
+
+      const filtered = allRuangList.filter(item => {
+        const matchQ = !q || (
+          item.noPendaftaran.toLowerCase().includes(q) ||
+          item.nama.toLowerCase().includes(q) ||
+          item.sekolah.toLowerCase().includes(q) ||
+          (item.kodePeserta && item.kodePeserta.toLowerCase().includes(q))
+        );
+        const matchR = !rFilter || item.ruang.toLowerCase() === rFilter;
+        const matchS = !sFilter || item.statusPresensi.toLowerCase() === sFilter;
+        return matchQ && matchR && matchS;
+      });
+
+      renderRuangTable(filtered);
+    }
+
+    // Toggle Presensi Siswa dari Admin
+    async function togglePresensiAdmin(noPendaftaran, currentStatus) {
+      const isCurrentlyHadir = String(currentStatus).toLowerCase() === 'hadir';
+      const targetStatus = isCurrentlyHadir ? 'Belum Hadir' : 'Hadir';
+
+      const targetItem = allRuangList.find(x => x.noPendaftaran === noPendaftaran);
+      if (!targetItem) return;
+
+      const nowStr = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + " WIB (Manual Admin)";
+
+      // Update Local State
+      targetItem.statusPresensi = targetStatus;
+      targetItem.waktuPresensi = targetStatus === 'Hadir' ? nowStr : "";
+
+      updateRuangKPIs();
+      renderMonitoringCards();
+      filterRuangTable();
+
+      // Sinkronkan ke GAS
+      try {
+        const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '/api';
+        await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'manualPresensiToggle',
+            noPendaftaran: noPendaftaran,
+            statusTarget: targetStatus,
+            pengawas: 'Panitia Pusat (Admin)'
+          })
+        });
+      } catch (e) {
+        console.warn("GAS manualPresensiToggle offline sync:", e);
+      }
+
+      Swal.fire({
+        icon: 'success',
+        title: targetStatus === 'Hadir' ? 'Kehadiran Dikonfirmasi' : 'Kehadiran Dibatalkan',
+        text: `${targetItem.nama} (${noPendaftaran}) status: ${targetStatus}`,
+        timer: 1500,
+        showConfirmButton: false,
+        toast: true,
+        position: 'top-end'
+      });
+    }
+
+    // 1-Click Alokasi Ruang & Meja Otomatis (20 Siswa / Ruang)
+    async function alokasiRuangOtomatisAdmin() {
+      const res = await Swal.fire({
+        title: 'Jalankan Alokasi Otomatis?',
+        html: `Sistem akan memplot seluruh peserta terverifikasi ke dalam <strong>15 Ruangan Ujian</strong> dengan standar kapasitas <strong>20 siswa per ruangan</strong> secara terurut dan berimbang.`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Jalankan Alokasi',
+        cancelButtonText: 'Batal',
+        confirmButtonColor: '#19365f'
+      });
+
+      if (!res.isConfirmed) return;
+
+      Swal.fire({
+        title: 'Memproses Plotting Ruang & Meja...',
+        text: 'Mengatur formasi 20 meja per ruang secara cerdas.',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); }
+      });
+
+      try {
+        const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '/api';
+        let gasSuccess = false;
+
+        try {
+          const apiRes = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'alokasiRuanganOtomatis',
+              kapasitas: 20
+            })
+          });
+          if (apiRes.ok) {
+            const data = await apiRes.json();
+            if (data.status === 'success') {
+              gasSuccess = true;
+            }
+          }
+        } catch (e) {
+          console.warn("GAS alokasiRuanganOtomatis offline fallback:", e);
+        }
+
+        // Local allocation logic across MASTER_RUANG_KAMPUS
+        const listToAllocate = allPesertaList.length > 0 ? allPesertaList : allRuangList;
+        allRuangList = listToAllocate.map((p, idx) => {
+          const roomIdx = Math.floor(idx / 20) % MASTER_RUANG_KAMPUS.length;
+          const conf = MASTER_RUANG_KAMPUS[roomIdx];
+          const desk = (idx % 20) + 1;
+          const isSesi1 = (desk % 2 === 1);
+          return {
+            noPendaftaran: p.noPendaftaran,
+            kodePeserta: p.kodePeserta || `02-01-${String(idx + 1).padStart(3, '0')}`,
+            nama: p.nama,
+            sekolah: p.sekolah,
+            level: p.level || "Level 2 (Kelas 4-6)",
+            mataPelajaran: p.mataPelajaran || "IPA",
+            ruang: conf.ruang,
+            namaRuang: conf.nama,
+            gedung: conf.gedung,
+            meja: desk,
+            sesi: isSesi1 ? "Sesi 1 (07.30 - 08.30 WIB)" : "Sesi 2 (09.00 - 10.00 WIB)",
+            waktuUjian: isSesi1 ? "07.30 - 08.30 WIB" : "09.00 - 10.00 WIB",
+            statusPresensi: "Belum Hadir",
+            waktuPresensi: "",
+            pengawas: conf.pengawas
+          };
+        });
+
+        updateRuangKPIs();
+        renderMonitoringCards();
+        filterRuangTable();
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Alokasi Ruang & Meja Selesai!',
+          html: `Sebanyak <strong>${allRuangList.length} peserta</strong> berhasil diplot ke dalam ruang ujian.<br>Nomor meja 1 s.d. 20 telah ditetapkan untuk tiap ruangan.`,
+          confirmButtonColor: '#19365f'
+        });
+
+      } catch (err) {
+        console.error("Error alokasi:", err);
+        Swal.fire({ icon: 'error', title: 'Gagal Alokasi', text: err.message });
+      }
+    }
+
+    // Cetak Stiker Nomor Meja A4 (8 Stiker per Lembar A4)
+    function cetakStikerMejaA4() {
+      if (allRuangList.length === 0) {
+        Swal.fire({ icon: 'info', title: 'Data Alokasi Masih Kosong', text: 'Jalankan Alokasi Otomatis terlebih dahulu.' });
+        return;
+      }
+
+      const w = window.open('', '_blank');
+      let stickersHtml = '';
+
+      allRuangList.forEach(p => {
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=${encodeURIComponent(p.noPendaftaran + '|' + p.nama + '|' + p.ruang + '|M' + p.meja)}`;
+        stickersHtml += `
+          <div class="sticker-card">
+            <div class="sticker-header">
+              <img src="https://file.garden/aehADr1aKQol7cT9/Omega_Plus_Circular_Emblem-removebg-preview.png" onerror="this.src='logo.png'" class="sticker-logo" />
+              <div>
+                <div class="sticker-brand">OMEGA PLUS 2026</div>
+                <div class="sticker-sub">SMP NEGERI 1 PAMEKASAN</div>
+              </div>
+            </div>
+            
+            <div class="sticker-body">
+              <div class="sticker-desk-badge">
+                <span class="desk-label">MEJA</span>
+                <span class="desk-num">${p.meja}</span>
+              </div>
+              <div class="sticker-details">
+                <div class="detail-name">${p.nama}</div>
+                <div class="detail-reg">${p.noPendaftaran} &bull; ${p.kodePeserta || '-'}</div>
+                <div class="detail-school">${p.sekolah}</div>
+                <div class="detail-room"><strong>${p.ruang}</strong> (${p.namaRuang})</div>
+                <div class="detail-session">${p.sesi}</div>
+              </div>
+              <div class="sticker-qr">
+                <img src="${qrUrl}" alt="QR Meja" />
+                <span>Scan Pengawas</span>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      const fullHtml = `
+        <!DOCTYPE html>
+        <html lang="id">
+        <head>
+          <meta charset="UTF-8">
+          <title>Stiker Nomor Meja Peserta OMEGA PLUS 2026</title>
+          <style>
+            @page { size: A4 portrait; margin: 10mm; }
+            * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Arial', sans-serif; }
+            body { background: #fff; color: #19365f; }
+            .grid-container {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 8mm;
+            }
+            .sticker-card {
+              border: 1.5px dashed #94a3b8;
+              border-radius: 8px;
+              padding: 10px 12px;
+              page-break-inside: avoid;
+              background: #ffffff;
+              display: flex;
+              flex-direction: column;
+              justify-content: space-between;
+              height: 64mm;
+            }
+            .sticker-header {
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              border-bottom: 1.5px solid #19365f;
+              padding-bottom: 5px;
+              margin-bottom: 6px;
+            }
+            .sticker-logo { width: 28px; height: 28px; object-fit: contain; }
+            .sticker-brand { font-size: 9pt; font-weight: 800; color: #19365f; letter-spacing: 0.5px; }
+            .sticker-sub { font-size: 6.5pt; font-weight: 700; color: #b88628; }
+            
+            .sticker-body {
+              display: flex;
+              align-items: center;
+              gap: 10px;
+              flex: 1;
+            }
+            .sticker-desk-badge {
+              width: 52px;
+              height: 52px;
+              background: #19365f;
+              color: #ffffff;
+              border-radius: 8px;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              flex-shrink: 0;
+            }
+            .desk-label { font-size: 6.5pt; font-weight: 700; color: #e7b55e; letter-spacing: 0.5px; }
+            .desk-num { font-size: 19pt; font-weight: 900; line-height: 1; }
+
+            .sticker-details { flex: 1; min-width: 0; }
+            .detail-name { font-size: 9pt; font-weight: 800; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            .detail-reg { font-size: 7pt; font-weight: 700; color: #285891; margin: 1px 0; }
+            .detail-school { font-size: 7pt; color: #475569; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            .detail-room { font-size: 7pt; color: #1e293b; margin-top: 2px; }
+            .detail-session { font-size: 6.5pt; font-weight: 700; color: #047857; margin-top: 1px; }
+
+            .sticker-qr {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              flex-shrink: 0;
+            }
+            .sticker-qr img { width: 50px; height: 50px; }
+            .sticker-qr span { font-size: 5.5pt; color: #64748b; font-weight: 600; margin-top: 2px; }
+          </style>
+        </head>
+        <body onload="window.print()">
+          <div class="grid-container">
+            ${stickersHtml}
+          </div>
+        </body>
+        </html>
+      `;
+
+      w.document.write(fullHtml);
+      w.document.close();
+    }
+
+    // Cetak Lembar Presensi Pengawas A4 per Ruangan
+    function cetakPresensiPengawasA4(specificRoom = '') {
+      if (allRuangList.length === 0) {
+        Swal.fire({ icon: 'info', title: 'Data Alokasi Masih Kosong', text: 'Jalankan Alokasi Otomatis terlebih dahulu.' });
+        return;
+      }
+
+      // Tentukan target ruangan
+      let roomsToPrint = [];
+      if (specificRoom) {
+        roomsToPrint = [specificRoom];
+      } else {
+        // Ambil list unik dari ruangan yang ada peserta
+        roomsToPrint = [...new Set(allRuangList.map(item => item.ruang))].sort();
+      }
+
+      const w = window.open('', '_blank');
+      let sheetsHtml = '';
+
+      roomsToPrint.forEach((rName, rIdx) => {
+        const roomItems = allRuangList.filter(item => item.ruang.toLowerCase() === rName.toLowerCase()).sort((a,b) => a.meja - b.meja);
+        const rConf = MASTER_RUANG_KAMPUS.find(m => m.ruang.toLowerCase() === rName.toLowerCase()) || { nama: rName, gedung: "Kampus SMPN 1 Pamekasan", pengawas: "Pengawas Ruang" };
+        
+        let tableRows = '';
+        for (let i = 1; i <= 20; i++) {
+          const student = roomItems.find(item => item.meja === i);
+          const isLeft = (i % 2 === 1);
+          tableRows += `
+            <tr>
+              <td style="text-align: center; font-weight: bold;">${i}</td>
+              <td style="text-align: center; font-weight: bold; color: #19365f;">#${i}</td>
+              <td>${student ? student.noPendaftaran : '-'}</td>
+              <td><strong>${student ? student.nama : '<em style="color: #94a3b8;">(Kosong)</em>'}</strong></td>
+              <td>${student ? student.sekolah : '-'}</td>
+              <td>${student ? student.mataPelajaran : '-'}</td>
+              <td style="padding: 4px 8px; width: 140px;">
+                <div style="display: flex; justify-content: ${isLeft ? 'flex-start' : 'flex-end'};">
+                  <div style="border-bottom: 1px dotted #666; width: 65px; height: 22px; font-size: 7.5pt; color: #888;">
+                    ${i}. ${student && String(student.statusPresensi).toLowerCase() === 'hadir' ? '&#10004;' : ''}
+                  </div>
+                </div>
+              </td>
+              <td style="text-align: center; font-size: 8pt;">
+                ${student && String(student.statusPresensi).toLowerCase() === 'hadir' ? '<strong style="color: green;">HADIR</strong>' : ''}
+              </td>
+            </tr>
+          `;
+        }
+
+        sheetsHtml += `
+          <div class="sheet-page">
+            <div class="kop-surat">
+              <img src="https://file.garden/aehADr1aKQol7cT9/Omega_Plus_Circular_Emblem-removebg-preview.png" onerror="this.src='logo.png'" style="width: 60px; height: 60px; object-fit: contain;" />
+              <div class="kop-text">
+                <h2>PANITIA PELAKSANA OLIMPIADE OMEGA PLUS 2026</h2>
+                <h3>SMP NEGERI 1 PAMEKASAN</h3>
+                <p>Jl. Masegit No. 1, Pamekasan, Madura, Jawa Timur | Telp. (0324) 322473</p>
+                <div class="kop-title">DAFTAR HADIR PESERTA UJIAN & BERITA ACARA RUANGAN</div>
+              </div>
+            </div>
+
+            <div class="meta-info">
+              <div class="meta-col">
+                <div><strong>Ruangan Ujian:</strong> ${rName} (${rConf.nama})</div>
+                <div><strong>Gedung & Lokasi:</strong> ${rConf.gedung}</div>
+                <div><strong>Hari / Tanggal:</strong> Minggu, 15 Maret 2026</div>
+              </div>
+              <div class="meta-col">
+                <div><strong>Kapasitas Ruang:</strong> 20 Peserta</div>
+                <div><strong>Pengawas Ruang:</strong> ${rConf.pengawas}</div>
+                <div><strong>Sesi Pelaksanaan:</strong> Sesi 1 (07.30 - 08.30) & Sesi 2 (09.00 - 10.00)</div>
+              </div>
+            </div>
+
+            <table class="presensi-table">
+              <thead>
+                <tr>
+                  <th style="width: 25px;">No</th>
+                  <th style="width: 45px;">Meja</th>
+                  <th style="width: 95px;">No. Peserta</th>
+                  <th>Nama Lengkap Siswa</th>
+                  <th>Asal Sekolah</th>
+                  <th style="width: 75px;">Bidang</th>
+                  <th style="width: 140px;">Tanda Tangan</th>
+                  <th style="width: 70px;">Ket.</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${tableRows}
+              </tbody>
+            </table>
+
+            <div class="bap-box">
+              <div style="font-weight: bold; margin-bottom: 4px; font-size: 8.5pt;">CATATAN BERITA ACARA PENGAWAS RUANG:</div>
+              <div style="display: flex; gap: 20px; font-size: 8pt; margin-bottom: 8px;">
+                <span>Peserta Terdaftar: <strong>${roomItems.length}</strong></span>
+                <span>Hadir: [ &nbsp; &nbsp; &nbsp; ]</span>
+                <span>Tidak Hadir: [ &nbsp; &nbsp; &nbsp; ]</span>
+                <span>Sampul Soal: [ &nbsp; ] Utuh & Tersegel</span>
+              </div>
+              <div style="border-bottom: 1px dotted #999; height: 16px;"></div>
+            </div>
+
+            <div class="ttd-grid">
+              <div class="ttd-box">
+                <div>Mengetahui,</div>
+                <div>Ketua Panitia OMEGA PLUS</div>
+                <div class="ttd-line">Drs. H. Jamil, M.Pd.</div>
+                <div>NIP. 19680512 199412 1 003</div>
+              </div>
+              <div class="ttd-box">
+                <div>Pamekasan, 15 Maret 2026</div>
+                <div>Pengawas Ruangan</div>
+                <div class="ttd-line">${rConf.pengawas}</div>
+                <div>NIP. .................................................</div>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      const fullHtml = `
+        <!DOCTYPE html>
+        <html lang="id">
+        <head>
+          <meta charset="UTF-8">
+          <title>Daftar Hadir Pengawas Ruang OMEGA PLUS 2026</title>
+          <style>
+            @page { size: A4 portrait; margin: 12mm 15mm; }
+            * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Arial', sans-serif; }
+            body { background: #fff; color: #000; font-size: 8.5pt; }
+            .sheet-page { page-break-after: always; padding-bottom: 10px; }
+            .sheet-page:last-child { page-break-after: auto; }
+            
+            .kop-surat { display: flex; align-items: center; gap: 15px; border-bottom: 2.5px double #000; padding-bottom: 8px; margin-bottom: 10px; }
+            .kop-text { flex: 1; text-align: center; }
+            .kop-text h2 { font-size: 10.5pt; font-weight: bold; margin: 0; }
+            .kop-text h3 { font-size: 12pt; font-weight: 800; margin: 1px 0; }
+            .kop-text p { font-size: 7.5pt; color: #333; margin: 1px 0; }
+            .kop-title { font-size: 9.5pt; font-weight: bold; text-decoration: underline; margin-top: 5px; }
+
+            .meta-info { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 8pt; line-height: 1.4; border: 1px solid #ddd; padding: 6px 10px; border-radius: 4px; }
+            
+            .presensi-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+            .presensi-table th, .presensi-table td { border: 1px solid #444; padding: 4px 6px; }
+            .presensi-table th { background: #f0f0f0; font-weight: bold; font-size: 8pt; text-align: center; }
+
+            .bap-box { border: 1px solid #555; padding: 6px 10px; margin-bottom: 14px; background: #fafafa; border-radius: 4px; }
+
+            .ttd-grid { display: flex; justify-content: space-between; margin-top: 8px; font-size: 8pt; }
+            .ttd-box { text-align: center; width: 220px; }
+            .ttd-line { margin-top: 45px; border-bottom: 1px solid #000; font-weight: bold; padding-bottom: 2px; }
+          </style>
+        </head>
+        <body onload="window.print()">
+          ${sheetsHtml}
+        </body>
+        </html>
+      `;
+
+      w.document.write(fullHtml);
+      w.document.close();
+    }
+
+
+    /* ==========================================================================
+       SECTION 2 LOGIC: LIVE SCOREBOARD & BROADCAST CONTROLLER (PRIORITAS 3)
+       ========================================================================== */
+    let currentLiveBroadcastStatus = "ACTIVE";
+
+    async function setLiveBroadcastStatusAdmin(status) {
+      currentLiveBroadcastStatus = status;
+      const btnActive = document.getElementById('btnLiveStatusActive');
+      const btnFreeze = document.getElementById('btnLiveStatusFreeze');
+
+      if (status === 'ACTIVE') {
+        btnActive.style.background = '#10b981';
+        btnActive.style.color = '#ffffff';
+        btnFreeze.style.background = 'transparent';
+        btnFreeze.style.color = '#38bdf8';
+      } else {
+        btnFreeze.style.background = '#0284c7';
+        btnFreeze.style.color = '#ffffff';
+        btnActive.style.background = 'transparent';
+        btnActive.style.color = '#10b981';
+      }
+
+      try {
+        const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '/api';
+        await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'updateLiveBroadcastConfig',
+            broadcastStatus: status,
+            operator: 'Panitia Inti'
+          })
+        });
+      } catch (e) {
+        console.warn("GAS updateLiveBroadcastConfig offline sync:", e);
+      }
+
+      Swal.fire({
+        icon: 'success',
+        title: status === 'ACTIVE' ? 'Siaran Live Score Aktif!' : 'Papan Skor Dibekukan (Freeze)!',
+        text: status === 'ACTIVE' ? 'Nilai real-time ditayangkan di layar lebar aula.' : 'Tampilan skor di layar aula dikunci untuk persiapan closing ceremony.',
+        timer: 1600,
+        showConfirmButton: false,
+        toast: true,
+        position: 'top-end'
+      });
+    }
+
+    async function simpanTickerAdmin() {
+      const input = document.getElementById('inputBroadcastTicker');
+      const val = input.value.trim();
+      if (!val) {
+        Swal.fire({ icon: 'warning', title: 'Teks Berita Kosong', text: 'Ketik pesan warta terlebih dahulu.' });
+        return;
+      }
+
+      try {
+        const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '/api';
+        await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'updateLiveBroadcastConfig',
+            runningText: `🔴 <span class='gold-highlight'>WARTA PANITIA:</span> ${val}`,
+            operator: 'Panitia Inti'
+          })
+        });
+      } catch (e) {
+        console.warn("GAS updateLiveBroadcastConfig offline sync:", e);
+      }
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Warta Ticker Terkirim!',
+        text: 'Pesan berjalan berhasil disiarkan ke seluruh layar proyektor aula.',
+        timer: 1800,
+        showConfirmButton: false
+      });
+      input.value = '';
+    }
+
   </script>
 </body>
 </html>
