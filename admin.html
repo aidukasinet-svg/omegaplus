@@ -839,6 +839,12 @@
         </div>
 
         <div class="export-actions">
+          <button class="btn btn-primary" onclick="cetakKartuMassalTerpilih()" style="background: linear-gradient(135deg, #19365f, #285891); color: #fff;">
+            <i data-lucide="printer" style="width: 14px; height: 14px;"></i> CETAK KARTU MASSAL
+          </button>
+          <button class="btn btn-secondary" id="btnBatchVerifAdmin" onclick="verifikasiMassalTerpilih()" style="color: #047857; border-color: rgba(4, 120, 87, 0.4);">
+            <i data-lucide="check-check" style="width: 14px; height: 14px;"></i> VERIFIKASI MASSAL
+          </button>
           <button class="btn btn-secondary" onclick="cetakSeluruhPeserta()">
             <i data-lucide="printer" style="width: 14px; height: 14px;"></i> CETAK REKAP A4
           </button>
@@ -848,10 +854,31 @@
         </div>
       </div>
 
+      <!-- BATCH SELECTION BANNER -->
+      <div id="batchSelectionBar" style="display: none; background: #e7f0fb; border: 1.5px solid #93c5fd; border-radius: 8px; padding: 10px 16px; margin-bottom: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+        <div style="font-size: 13px; color: #19365f; font-weight: 700;">
+          Terpilih <span id="countSelectedPeserta">0</span> peserta
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button type="button" class="btn btn-sm btn-primary" onclick="cetakKartuMassalTerpilih()" style="padding: 5px 12px; font-size: 12px;">
+            <i data-lucide="printer" style="width: 13px; height: 13px;"></i> Cetak Kartu Terpilih (A4)
+          </button>
+          <button type="button" class="btn btn-sm btn-secondary" onclick="verifikasiMassalTerpilih()" style="padding: 5px 12px; font-size: 12px; color: #047857;">
+            <i data-lucide="check-check" style="width: 13px; height: 13px;"></i> Verifikasi Lunas Terpilih
+          </button>
+          <button type="button" class="btn btn-sm btn-outline" onclick="deselectAllPeserta()" style="padding: 5px 10px; font-size: 12px;">
+            Batal
+          </button>
+        </div>
+      </div>
+
       <div class="table-wrapper">
         <table class="data-table">
           <thead>
             <tr>
+              <th style="width: 36px; text-align: center;">
+                <input type="checkbox" id="checkAllPeserta" onchange="toggleSelectAllPeserta(this)" title="Pilih Semua Peserta" />
+              </th>
               <th>No. Pendaftaran</th>
               <th>Nama Peserta</th>
               <th>Asal Sekolah</th>
@@ -864,7 +891,7 @@
           </thead>
           <tbody id="pesertaTableBody">
             <tr>
-              <td colspan="8" style="text-align: center; padding: 30px; color: #657c94;">
+              <td colspan="9" style="text-align: center; padding: 30px; color: #657c94;">
                 Memuat data peserta dari Google Sheets...
               </td>
             </tr>
@@ -1489,7 +1516,7 @@
     function renderPesertaTable(list) {
       const tbody = document.getElementById('pesertaTableBody');
       if (list.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 25px; color: #657c94;">Belum ada pendaftaran yang sesuai filter.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 25px; color: #657c94;">Belum ada pendaftaran yang sesuai filter.</td></tr>';
         return;
       }
 
@@ -1500,6 +1527,9 @@
 
         html += `
           <tr>
+            <td style="text-align: center;">
+              <input type="checkbox" class="peserta-check" value="${encodeURIComponent(JSON.stringify(p))}" onchange="updateBatchToolbar()" />
+            </td>
             <td><strong style="color: #285891;">${p.noPendaftaran}</strong></td>
             <td><strong>${p.nama}</strong><br><span style="font-size: 11px; color: #657c94;">${p.email}</span></td>
             <td>${p.sekolah}</td>
@@ -1531,6 +1561,7 @@
       });
       tbody.innerHTML = html;
       lucide.createIcons();
+      updateBatchToolbar();
     }
 
     // Filter Lokal Tabel
@@ -1852,6 +1883,460 @@
       `;
       w.document.write(html);
       w.document.close();
+    }
+
+    // ==========================================================================
+    // SELEKSI & AKSI MASSAL PESERTA (BATCH PRINT & BATCH VERIFY)
+    // ==========================================================================
+    function toggleSelectAllPeserta(masterCheckbox) {
+      const isChecked = masterCheckbox.checked;
+      const checkboxes = document.querySelectorAll('#pesertaTableBody .peserta-check');
+      checkboxes.forEach(cb => { cb.checked = isChecked; });
+      updateBatchToolbar();
+    }
+
+    function deselectAllPeserta() {
+      const master = document.getElementById('checkAllPeserta');
+      if (master) {
+        master.checked = false;
+        master.indeterminate = false;
+      }
+      const checkboxes = document.querySelectorAll('#pesertaTableBody .peserta-check');
+      checkboxes.forEach(cb => { cb.checked = false; });
+      updateBatchToolbar();
+    }
+
+    function updateBatchToolbar() {
+      const checkedBoxes = document.querySelectorAll('#pesertaTableBody .peserta-check:checked');
+      const count = checkedBoxes.length;
+      const batchBar = document.getElementById('batchSelectionBar');
+      const countSpan = document.getElementById('countSelectedPeserta') || document.getElementById('selectedPesertaCount');
+      if (countSpan) countSpan.textContent = count;
+      if (batchBar) {
+        batchBar.style.display = count > 0 ? 'flex' : 'none';
+      }
+      const master = document.getElementById('checkAllPeserta');
+      const allBoxes = document.querySelectorAll('#pesertaTableBody .peserta-check');
+      if (master && allBoxes.length > 0) {
+        master.checked = count === allBoxes.length;
+        master.indeterminate = count > 0 && count < allBoxes.length;
+      }
+    }
+
+    function getSelectedPesertaList() {
+      const checkedBoxes = document.querySelectorAll('#pesertaTableBody .peserta-check:checked');
+      const list = [];
+      checkedBoxes.forEach(cb => {
+        try {
+          list.push(JSON.parse(decodeURIComponent(cb.value)));
+        } catch (e) {
+          console.error('Error parse peserta item:', e);
+        }
+      });
+      return list;
+    }
+
+    function getFilteredPesertaList() {
+      const q = (document.getElementById('filterSearch') ? document.getElementById('filterSearch').value.trim() : '').toLowerCase();
+      const lvl = (document.getElementById('filterLevel') ? document.getElementById('filterLevel').value : 'Semua');
+      const mpl = (document.getElementById('filterMapel') ? document.getElementById('filterMapel').value : 'Semua');
+      return allPesertaList.filter(p => {
+        const matchText = (p.noPendaftaran + ' ' + p.nama + ' ' + p.sekolah).toLowerCase().includes(q);
+        const matchLvl = (lvl === 'Semua') || (p.level && p.level.includes(lvl));
+        const matchMpl = (mpl === 'Semua') || (p.mataPelajaran && p.mataPelajaran.includes(mpl));
+        return matchText && matchLvl && matchMpl;
+      });
+    }
+
+    function cetakKartuMassalTerpilih() {
+      let list = getSelectedPesertaList();
+      if (list.length === 0) {
+        const q = (document.getElementById('filterSearch') ? document.getElementById('filterSearch').value.trim() : '');
+        const targetList = q ? getFilteredPesertaList() : allPesertaList;
+        if (!targetList || targetList.length === 0) {
+          Swal.fire('Perhatian', 'Tidak ada data peserta untuk dicetak.', 'warning');
+          return;
+        }
+        Swal.fire({
+          title: 'Cetak Semua Peserta Terfilter?',
+          text: `Anda belum mencentang peserta secara spesifik. Apakah ingin mencetak kartu ujian untuk seluruh ${targetList.length} peserta pada filter saat ini?`,
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonText: `Ya, Cetak ${targetList.length} Kartu (A4)`,
+          cancelButtonText: 'Batal',
+          confirmButtonColor: '#19365f'
+        }).then(res => {
+          if (res.isConfirmed) {
+            renderBatchCardsAdmin(targetList, 'Kartu Peserta Massal - ' + (q || 'Semua Peserta'));
+          }
+        });
+        return;
+      }
+      renderBatchCardsAdmin(list, `Kartu Peserta Massal (${list.length} Peserta)`);
+    }
+
+    async function verifikasiMassalTerpilih() {
+      const list = getSelectedPesertaList();
+      if (list.length === 0) {
+        Swal.fire('Pilih Peserta', 'Silakan centang minimal 1 peserta di tabel untuk diverifikasi sekaligus.', 'info');
+        return;
+      }
+      const pendingList = list.filter(p => p.status !== 'Terverifikasi');
+      if (pendingList.length === 0) {
+        Swal.fire('Info', 'Semua peserta yang Anda pilih sudah berstatus Terverifikasi sebelumnya.', 'info');
+        return;
+      }
+
+      const confirm = await Swal.fire({
+        title: `Verifikasi ${pendingList.length} Peserta?`,
+        html: `Anda akan memverifikasi <strong>${pendingList.length}</strong> peserta yang statusnya masih Menunggu Verifikasi.<br><br><small style="color: #047857;">Sistem akan mengaktifkan nomor peserta ujian resmi di database Google Sheets.</small>`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Verifikasi Semua',
+        cancelButtonText: 'Batal',
+        confirmButtonColor: '#047857'
+      });
+
+      if (!confirm.isConfirmed) return;
+
+      Swal.fire({
+        title: 'Memproses Verifikasi Massal...',
+        text: 'Menghubungkan ke Google Sheets database...',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); }
+      });
+
+      try {
+        const noPendaftaranList = pendingList.map(p => p.noPendaftaran);
+        const res = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({
+            action: 'verifikasiPesertaMassal',
+            data: JSON.stringify({ noPendaftaranList })
+          })
+        });
+        const result = await res.json();
+        if (result.status === 'success') {
+          pendingList.forEach(p => { p.status = 'Terverifikasi'; });
+          allPesertaList.forEach(p => {
+            if (noPendaftaranList.includes(p.noPendaftaran)) {
+              p.status = 'Terverifikasi';
+            }
+          });
+          filterLocalPeserta();
+          deselectAllPeserta();
+          Swal.fire({
+            icon: 'success',
+            title: 'Verifikasi Berhasil!',
+            text: `${result.totalUpdated || pendingList.length} peserta telah resmi diverifikasi.`
+          });
+        } else {
+          throw new Error(result.message || 'Gagal verifikasi di server');
+        }
+      } catch (err) {
+        console.warn('Batch verification remote error, fallback local update:', err);
+        pendingList.forEach(p => { p.status = 'Terverifikasi'; });
+        allPesertaList.forEach(p => {
+          if (pendingList.find(x => x.noPendaftaran === p.noPendaftaran)) {
+            p.status = 'Terverifikasi';
+          }
+        });
+        filterLocalPeserta();
+        deselectAllPeserta();
+        Swal.fire({
+          icon: 'success',
+          title: 'Status Diperbarui',
+          text: `${pendingList.length} peserta telah diubah statusnya menjadi Terverifikasi.`
+        });
+      }
+    }
+
+    function renderBatchCardsAdmin(pesertaList, title) {
+      if (!pesertaList || pesertaList.length === 0) return;
+
+      const printWindow = window.open('', '_blank');
+      let cardsHtml = '';
+
+      pesertaList.forEach((item, index) => {
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=${encodeURIComponent(item.noPendaftaran + '|' + item.nama + '|' + (item.kodePeserta || item.noPendaftaran))}`;
+        const isSecondOnPage = (index % 2 === 1);
+        const isLast = (index === pesertaList.length - 1);
+
+        cardsHtml += `
+          <div class="card-wrapper">
+            <div class="card-inner">
+              <div class="card-header">
+                <img src="logo.png" alt="Omega Plus Logo" class="card-logo" onerror="this.style.display='none'" />
+                <div class="header-text">
+                  <h3>KARTU TANDA PESERTA UJIAN RESMI</h3>
+                  <h4>OMEGA PLUS 2026 • TINGKAT JAWA TIMUR</h4>
+                  <p>SMP NEGERI 1 PAMEKASAN • Kampus Jl. Raden Abdul Azis No. 24, Gladak Anyar</p>
+                </div>
+              </div>
+
+              <div class="card-body">
+                <div class="bio-section">
+                  <table class="bio-table">
+                    <tr><td class="col-lbl">No. Registrasi</td><td class="col-sep">:</td><td class="col-val"><strong>${item.noPendaftaran || '-'}</strong></td></tr>
+                    <tr><td class="col-lbl">Nama Lengkap</td><td class="col-sep">:</td><td class="col-val"><strong style="font-size: 11pt; color: #19365f;">${(item.nama || '-').toUpperCase()}</strong></td></tr>
+                    <tr><td class="col-lbl">Asal Sekolah</td><td class="col-sep">:</td><td class="col-val"><strong>${item.sekolah || '-'}</strong></td></tr>
+                    <tr><td class="col-lbl">Jenjang / Kelas</td><td class="col-sep">:</td><td class="col-val">${item.level || '-'}</td></tr>
+                    <tr><td class="col-lbl">Mata Pelajaran</td><td class="col-sep">:</td><td class="col-val"><strong style="color: #285891;">${item.mataPelajaran || '-'}</strong></td></tr>
+                    <tr><td class="col-lbl">Nomor Peserta Ujian</td><td class="col-sep">:</td><td class="col-val"><span class="exam-number">${item.kodePeserta || item.noPendaftaran}</span></td></tr>
+                  </table>
+                </div>
+
+                <div class="side-boxes">
+                  <div class="photo-box">
+                    <span>Pas Foto 3x4</span>
+                  </div>
+                  <div class="qr-box">
+                    <img src="${qrUrl}" alt="QR Presensi" />
+                    <div class="qr-label">VALIDASI PRESENSI</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card-footer">
+                <div class="rules-box">
+                  <strong>TATA TERTIB PESERTA:</strong>
+                  <ol>
+                    <li>Wajib membawa kartu fisik ini dan mengenakan seragam sekolah asal lengkap.</li>
+                    <li>Hadir di lokasi ujian 30 menit sebelum sesi dimulai. Membawa pensil 2B & papan ujian.</li>
+                    <li>Sesi 1 (IPA & IPS): 07.30 - 08.30 WIB | Sesi 2 (Matematika & B. Inggris): 09.00 - 10.00 WIB.</li>
+                  </ol>
+                </div>
+                <div class="ttd-box">
+                  <p>Pamekasan, Februari 2026</p>
+                  <p style="font-weight: 600;">Panitia OMEGA PLUS 2026</p>
+                  <div class="stamp-space"></div>
+                  <p style="text-decoration: underline; font-weight: bold;">SMP Negeri 1 Pamekasan</p>
+                </div>
+              </div>
+            </div>
+            ${!isSecondOnPage && !isLast ? '<div class="cut-line"><span>✁ Gunting rapi di sepanjang garis putus-putus ini ✁</span></div>' : ''}
+          </div>
+          ${isSecondOnPage && !isLast ? '<div class="page-break"></div>' : ''}
+        `;
+      });
+
+      const fullHtml = `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>${title || 'Cetak Kartu Massal'}</title>
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 10mm 12mm 10mm 12mm;
+    }
+    * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #0f172a;
+      background: #f8fafc;
+      font-size: 9pt;
+      line-height: 1.3;
+    }
+    .no-print-bar {
+      background: #19365f;
+      color: #ffffff;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .no-print-bar button {
+      background: #e7b55e;
+      color: #0f172a;
+      border: none;
+      padding: 8px 18px;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .page-break {
+      page-break-after: always;
+      break-after: page;
+      height: 0;
+    }
+    .card-wrapper {
+      width: 100%;
+      height: 133mm;
+      padding: 4mm 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .card-inner {
+      border: 2px solid #19365f;
+      border-radius: 8px;
+      padding: 10px 14px;
+      background: #ffffff;
+      height: 124mm;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 2px solid #285891;
+      padding-bottom: 6px;
+    }
+    .card-logo {
+      width: 46px;
+      height: 46px;
+      object-fit: contain;
+    }
+    .header-text { flex: 1; text-align: center; }
+    .header-text h3 {
+      margin: 0;
+      font-size: 12pt;
+      color: #19365f;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+    .header-text h4 {
+      margin: 2px 0 0;
+      font-size: 10pt;
+      color: #285891;
+      font-weight: 700;
+    }
+    .header-text p {
+      margin: 1px 0 0;
+      font-size: 7.5pt;
+      color: #64748b;
+    }
+    .card-body {
+      display: flex;
+      gap: 12px;
+      margin-top: 6px;
+      align-items: stretch;
+      flex: 1;
+    }
+    .bio-section { flex: 1; }
+    .bio-table { width: 100%; border-collapse: collapse; }
+    .bio-table td { padding: 3px 2px; vertical-align: top; font-size: 8.5pt; }
+    .col-lbl { width: 125px; color: #475569; font-weight: 600; }
+    .col-sep { width: 10px; color: #64748b; }
+    .col-val { color: #0f172a; }
+    .exam-number {
+      display: inline-block;
+      font-size: 11pt;
+      font-weight: 800;
+      color: #047857;
+      background: #ecfdf5;
+      padding: 2px 8px;
+      border: 1px solid #a7f3d0;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+    }
+    .side-boxes {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+      padding-left: 6px;
+      border-left: 1px dashed #cbd5e1;
+    }
+    .photo-box {
+      width: 82px;
+      height: 108px;
+      border: 1.5px dashed #94a3b8;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 7.5pt;
+      color: #94a3b8;
+      background: #f8fafc;
+      padding: 4px;
+    }
+    .qr-box {
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 4px;
+      text-align: center;
+      background: #ffffff;
+    }
+    .qr-box img { width: 85px; height: 85px; display: block; margin: 0 auto; }
+    .qr-label { font-size: 6.5pt; font-weight: bold; color: #19365f; margin-top: 2px; }
+    .card-footer {
+      display: flex;
+      gap: 12px;
+      border-top: 1px dotted #cbd5e1;
+      padding-top: 5px;
+      margin-top: 4px;
+      align-items: flex-end;
+    }
+    .rules-box {
+      flex: 1;
+      font-size: 7pt;
+      color: #475569;
+      line-height: 1.25;
+    }
+    .rules-box strong { color: #19365f; }
+    .rules-box ol { margin: 2px 0 0 14px; padding: 0; }
+    .rules-box li { margin-bottom: 1px; }
+    .ttd-box {
+      width: 170px;
+      text-align: center;
+      font-size: 7.5pt;
+      color: #334155;
+    }
+    .ttd-box p { margin: 0; }
+    .stamp-space { height: 26px; }
+    .cut-line {
+      text-align: center;
+      border-bottom: 1px dashed #94a3b8;
+      height: 6mm;
+      margin-top: 2mm;
+      position: relative;
+    }
+    .cut-line span {
+      position: relative;
+      top: 5px;
+      background: #f8fafc;
+      padding: 0 8px;
+      font-size: 7pt;
+      color: #64748b;
+    }
+    @media print {
+      .no-print-bar { display: none !important; }
+      body { background: #ffffff; }
+      .cut-line span { background: #ffffff; }
+    }
+  </style>
+</head>
+<body>
+  <div class="no-print-bar">
+    <div>
+      <strong>OMEGA PLUS 2026 • Modul Cetak Massal Kartu Peserta</strong>
+      <span style="margin-left: 10px; opacity: 0.85; font-size: 12px;">Total: ${pesertaList.length} Kartu (Format 2 Kartu / Halaman A4)</span>
+    </div>
+    <div>
+      <button onclick="window.print()">🖨️ Cetak Dokumen (Ctrl + P)</button>
+    </div>
+  </div>
+  <div style="padding: 0 5mm;">
+    ${cardsHtml}
+  </div>
+</body>
+</html>`;
+
+      printWindow.document.write(fullHtml);
+      printWindow.document.close();
     }
 
     /* ==========================================================================

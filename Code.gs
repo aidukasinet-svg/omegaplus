@@ -459,12 +459,21 @@ function doPost(e) {
         result = handleDaftarPesertaTurbo(payload);
         break;
 
+      case "daftarKolektif":
+      case "registerKolektif":
+        result = handleDaftarKolektifTurbo(payload);
+        break;
+
       case "verifyAdminPin":
         result = handleVerifyAdminPin(payload.pin);
         break;
 
       case "verifikasiPeserta":
         result = handleVerifikasiPeserta(payload);
+        break;
+
+      case "verifikasiPesertaMassal":
+        result = handleVerifikasiPesertaMassal(payload);
         break;
 
       case "updatePeserta":
@@ -723,6 +732,166 @@ function handleDaftarPesertaTurbo(data) {
 }
 
 /**
+ * 4B. LOGIKA PENDAFTARAN KOLEKTIF SEKOLAH (TURBO BATCH INSERT)
+ * Menangani pendaftaran banyak siswa sekaligus dari satu sekolah SD/MI
+ */
+function handleDaftarKolektifTurbo(data) {
+  try {
+    var sekolah = String(data.sekolah || "").trim().toUpperCase();
+    var alamatSekolah = String(data.alamatSekolah || "-").trim();
+    var namaGuru = String(data.namaGuru || "").trim().toUpperCase();
+    var tglDaftar = data.tglDaftar || Utilities.formatDate(new Date(), "Asia/Jakarta", "yyyy-MM-dd");
+    var noHp = String(data.noHp || "").trim();
+    var email = String(data.email || "").trim().toLowerCase();
+    var pesertaList = Array.isArray(data.pesertaList) ? data.pesertaList : [];
+
+    if (!sekolah || !noHp || !email || pesertaList.length === 0) {
+      return { 
+        status: "error", 
+        message: "Nama sekolah, No. WhatsApp, email, dan minimal 1 data siswa wajib diisi!" 
+      };
+    }
+
+    var lock = LockService.getScriptLock();
+    lock.waitLock(10000); // 10 detik untuk batch
+
+    var yearStr = Utilities.formatDate(new Date(), "Asia/Jakarta", "yyyy");
+    var rowsToAppend = [];
+    var registeredList = [];
+
+    var mapelCodesMap = {
+      "Matematika": "01",
+      "Bahasa Inggris": "02",
+      "IPA": "03",
+      "IPS": "04"
+    };
+
+    try {
+      var props = PropertiesService.getScriptProperties();
+      var countersRaw = props.getProperty("OMEGA_COUNTERS");
+      var counters = countersRaw ? JSON.parse(countersRaw) : null;
+
+      if (!counters) {
+        recalculateCountersAndStats();
+        counters = JSON.parse(props.getProperty("OMEGA_COUNTERS"));
+      }
+
+      var statsRaw = props.getProperty("DASHBOARD_STATS");
+      var stats = statsRaw ? JSON.parse(statsRaw) : { total: 0, level1: 0, level2: 0, matematika: 0, bahasaInggris: 0, ipa: 0, ips: 0, verified: 0, pending: 0 };
+
+      var timestamp = new Date();
+      var statusVerif = "Menunggu Verifikasi";
+
+      for (var i = 0; i < pesertaList.length; i++) {
+        var p = pesertaList[i];
+        var pNama = String(p.nama || "").trim().toUpperCase();
+        var pLevel = String(p.level || "Level 1").trim();
+        var pMapelArray = Array.isArray(p.mapel) ? p.mapel : (p.mapel ? [p.mapel] : []);
+
+        if (!pNama || pMapelArray.length === 0) continue;
+
+        // Increment Master Counter
+        counters.master = (counters.master || 0) + 1;
+        var noPendaftaran = "OMP-" + yearStr + "-" + padZero(counters.master, 4);
+
+        var levelCode = (pLevel.indexOf("1") !== -1) ? "01" : "02";
+        var kodePesertaList = [];
+        var mapelCleanList = [];
+
+        for (var m = 0; m < pMapelArray.length; m++) {
+          var mapelName = pMapelArray[m].trim();
+          var codeYY = mapelCodesMap[mapelName];
+          if (!codeYY) continue;
+
+          mapelCleanList.push(mapelName);
+          var comboKey = levelCode + "-" + codeYY;
+          counters[comboKey] = (counters[comboKey] || 0) + 1;
+          var codeZZZ = padZero(counters[comboKey], 3);
+          kodePesertaList.push(levelCode + "-" + codeYY + "-" + codeZZZ);
+        }
+
+        var kodePesertaStr = kodePesertaList.join(", ");
+        var mapelStr = mapelCleanList.join(", ");
+
+        // Update stats
+        stats.total = (stats.total || 0) + 1;
+        if (levelCode === "01") stats.level1++; else stats.level2++;
+        for (var c = 0; c < mapelCleanList.length; c++) {
+          var nm = mapelCleanList[c];
+          if (nm === "Matematika") stats.matematika++;
+          if (nm === "Bahasa Inggris") stats.bahasaInggris++;
+          if (nm === "IPA") stats.ipa++;
+          if (nm === "IPS") stats.ips++;
+        }
+        stats.pending++;
+
+        // Add to spreadsheet rows
+        rowsToAppend.push([
+          timestamp,
+          noPendaftaran,
+          pNama,
+          sekolah,
+          tglDaftar,
+          noHp,
+          email,
+          pLevel,
+          mapelStr,
+          kodePesertaStr,
+          statusVerif,
+          "Kolektif: " + (namaGuru || "Guru Pendamping") + " | " + alamatSekolah,
+          "-",
+          "Terkirim"
+        ]);
+
+        registeredList.push({
+          noPendaftaran: noPendaftaran,
+          nama: pNama,
+          sekolah: sekolah,
+          level: pLevel,
+          mapel: mapelStr,
+          kodePeserta: kodePesertaStr,
+          statusVerifikasi: statusVerif
+        });
+      }
+
+      props.setProperty("OMEGA_COUNTERS", JSON.stringify(counters));
+      props.setProperty("DASHBOARD_STATS", JSON.stringify(stats));
+      CacheService.getScriptCache().put("DASHBOARD_STATS", JSON.stringify(stats), 21600);
+
+    } finally {
+      lock.releaseLock();
+    }
+
+    if (rowsToAppend.length > 0) {
+      var ss = getDatabase();
+      var sheet = ss.getSheetByName(SHEET_NAMES.PESERTA);
+      var startRow = sheet.getLastRow() + 1;
+      sheet.getRange(startRow, 1, rowsToAppend.length, rowsToAppend[0].length).setValues(rowsToAppend);
+      SpreadsheetApp.flush();
+    }
+
+    return {
+      status: "success",
+      message: "Pendaftaran kolektif berhasil disimpan untuk " + registeredList.length + " siswa!",
+      sekolah: sekolah,
+      namaGuru: namaGuru,
+      noHp: noHp,
+      email: email,
+      tglDaftar: tglDaftar,
+      totalSiswa: registeredList.length,
+      totalBiaya: registeredList.length * 40000,
+      peserta: registeredList
+    };
+  } catch (err) {
+    Logger.log("Error handleDaftarKolektifTurbo: " + err.toString());
+    return {
+      status: "error",
+      message: "Gagal menyimpan pendaftaran kolektif: " + err.toString()
+    };
+  }
+}
+
+/**
  * 5. GET DASHBOARD STATS (TURBO 30ms - ZERO SPREADSHEET READS)
  */
 function handleGetDashboardStats() {
@@ -935,6 +1104,58 @@ function handleVerifikasiPeserta(payload) {
   } catch (err) {
     Logger.log("Error in handleVerifikasiPeserta: " + err.toString());
     return { status: "error", message: "Gagal memproses verifikasi: " + err.message };
+  }
+}
+
+/**
+ * 8B. VERIFIKASI PESERTA MASSAL / KOLEKTIF
+ */
+function handleVerifikasiPesertaMassal(payload) {
+  try {
+    var ss = getDatabase();
+    var sheet = ss.getSheetByName(SHEET_NAMES.PESERTA);
+    var noList = Array.isArray(payload.noPendaftaranList) ? payload.noPendaftaranList : [];
+    var statusBaru = payload.status || "Terverifikasi";
+    var catatan = payload.catatan || "Verifikasi Massal Panitia OMEGA PLUS";
+
+    if (noList.length === 0) {
+      return { status: "error", message: "Daftar nomor pendaftaran kosong!" };
+    }
+
+    var lastRow = sheet.getLastRow();
+    if (lastRow < 2) return { status: "error", message: "Database masih kosong!" };
+
+    var dataRange = sheet.getRange(2, 2, lastRow - 1, 1).getValues();
+    var targetRows = [];
+    var noSet = {};
+    for (var n = 0; n < noList.length; n++) {
+      noSet[String(noList[n]).trim()] = true;
+    }
+
+    for (var i = 0; i < dataRange.length; i++) {
+      var curNo = String(dataRange[i][0]).trim();
+      if (noSet[curNo]) {
+        targetRows.push(i + 2);
+      }
+    }
+
+    for (var t = 0; t < targetRows.length; t++) {
+      var r = targetRows[t];
+      sheet.getRange(r, 11).setValue(statusBaru); // Kolom 11: Status_Verifikasi
+      sheet.getRange(r, 12).setValue(catatan);
+    }
+
+    SpreadsheetApp.flush();
+    recalculateCountersAndStats();
+
+    return {
+      status: "success",
+      message: "Berhasil memverifikasi " + targetRows.length + " peserta!",
+      totalUpdated: targetRows.length
+    };
+  } catch (err) {
+    Logger.log("Error handleVerifikasiPesertaMassal: " + err.toString());
+    return { status: "error", message: "Gagal verifikasi massal: " + err.message };
   }
 }
 

@@ -540,6 +540,82 @@
       text-decoration: underline;
     }
 
+    /* Kolektif Section Styles */
+    .kolektif-section-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--color-primary-navy);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 1rem;
+      border-bottom: 1.5px solid var(--color-bg-tint);
+      padding-bottom: 0.5rem;
+    }
+    .form-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+    @media (max-width: 768px) {
+      .form-grid-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+    .table-kolektif {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: #ffffff;
+    }
+    .table-kolektif th {
+      background: var(--color-bg-tint-light);
+      color: var(--color-primary-navy);
+      padding: 10px 12px;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--color-border-subtle);
+    }
+    .table-kolektif td {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--color-border-subtle);
+      vertical-align: middle;
+      font-size: 0.875rem;
+    }
+    .table-kolektif tr:last-child td {
+      border-bottom: none;
+    }
+    .table-kolektif input.form-control,
+    .table-kolektif select.form-control {
+      padding: 7px 10px;
+      font-size: 0.85rem;
+      border-radius: 6px;
+    }
+    .btn-del-row {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      border-radius: 6px;
+      width: 32px;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      padding: 0;
+    }
+    .btn-del-row:hover {
+      background: #ef4444;
+      color: #ffffff;
+    }
+
     /* Print Stylesheet */
     @media print {
       body {
@@ -605,10 +681,13 @@
         <!-- Tab Switcher -->
         <div class="hero-tabs-wrap">
           <button type="button" class="tab-pill active" id="tabBtnForm" onclick="switchTab('form')">
-            <i data-lucide="user-plus" style="width: 16px; height: 16px;"></i> Formulir Pendaftaran
+            <i data-lucide="user-plus" style="width: 16px; height: 16px;"></i> Pendaftaran Individu
+          </button>
+          <button type="button" class="tab-pill" id="tabBtnKolektif" onclick="switchTab('kolektif')">
+            <i data-lucide="users" style="width: 16px; height: 16px;"></i> Kolektif Satu Sekolah
           </button>
           <button type="button" class="tab-pill" id="tabBtnStatus" onclick="switchTab('status')">
-            <i data-lucide="search" style="width: 16px; height: 16px;"></i> Cek Status Peserta
+            <i data-lucide="search" style="width: 16px; height: 16px;"></i> Cek Status & Cetak Kartu
           </button>
           <a href="ruang.html" class="tab-pill" style="text-decoration: none; color: #93c5fd; border-color: rgba(147, 197, 253, 0.35);">
             <i data-lucide="map-pin" style="width: 16px; height: 16px;"></i> Cari Ruang & Meja &rarr;
@@ -771,7 +850,152 @@
       </form>
     </div>
 
-    <!-- PANEL 2: CEK STATUS PENDAFTARAN MANDIRI -->
+    <!-- PANEL 2: FORMULIR PENDAFTARAN KOLEKTIF SATU SEKOLAH -->
+    <div id="panelKolektif" class="card-panel" style="display: none;">
+      <div class="card-header-box">
+        <div class="card-eyebrow" style="color: #285891;">Pendaftaran Rombongan Sekolah</div>
+        <h2 class="card-title">Pendaftaran Kolektif Satu Sekolah (SD/MI)</h2>
+        <p class="card-intro">
+          Daftarkan banyak siswa sekaligus dari satu sekolah dalam 1 formulir terpadu dan 1 bukti transfer pembayaran. 
+          Sistem otomatis mengalokasikan nomor peserta resmi, kwitansi kolektif, dan kartu ujian seluruh siswa.
+        </p>
+      </div>
+
+      <form id="omegaKolektifForm" onsubmit="handleKolektifSubmit(event)">
+        
+        <div class="kolektif-section-title">
+          <i data-lucide="building" style="width: 18px; height: 18px;"></i>
+          <span>1. Identitas Sekolah & Guru Pendamping</span>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="kolektifSekolah">
+              Asal Sekolah (SD/MI) <span class="req">*</span>
+            </label>
+            <input type="text" id="kolektifSekolah" class="form-control" placeholder="Contoh: SDN Lawangan Daya 2 Pamekasan" required />
+            <span class="form-hint">Nama resmi sekolah asal seluruh rombongan peserta.</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="kolektifAlamat">
+              Alamat Lengkap Sekolah <span class="req">*</span>
+            </label>
+            <input type="text" id="kolektifAlamat" class="form-control" placeholder="Contoh: Jl. Slamet Riyadi No. 15, Pamekasan" required />
+            <span class="form-hint">Kecamatan dan Kabupaten sekolah.</span>
+          </div>
+        </div>
+
+        <div class="form-grid-3">
+          <div class="form-group">
+            <label class="form-label" for="kolektifGuru">
+              Nama Guru Pendamping / Koordinator <span class="req">*</span>
+            </label>
+            <input type="text" id="kolektifGuru" class="form-control" placeholder="Contoh: Bapak Agus Hariyadi, S.Pd" required />
+            <span class="form-hint">Penanggung jawab rombongan sekolah.</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="kolektifNoHp">
+              Nomor WhatsApp Guru <span class="req">*</span>
+            </label>
+            <input type="tel" id="kolektifNoHp" class="form-control" placeholder="Contoh: 081234567890" required />
+            <span class="form-hint">Untuk menerima kwitansi resmi & koordinasi panitia.</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="kolektifEmail">
+              Email Guru / Sekolah <span class="req">*</span>
+            </label>
+            <input type="email" id="kolektifEmail" class="form-control" placeholder="Contoh: guru.sdn@gmail.com" required />
+            <span class="form-hint">Arsip surat konfirmasi kolektif resmi.</span>
+          </div>
+        </div>
+
+        <div class="kolektif-section-title" style="margin-top: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <i data-lucide="users" style="width: 18px; height: 18px;"></i>
+            <span>2. Daftar Siswa Peserta (<span id="countKolektifSiswa">1</span> Siswa)</span>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" class="btn btn-sm btn-outline" onclick="downloadTemplateCsv()" title="Unduh format tabel Excel/CSV" style="font-size: 0.8rem; padding: 6px 12px;">
+              <i data-lucide="download" style="width: 14px; height: 14px;"></i> Unduh Template CSV
+            </button>
+            <label class="btn btn-sm btn-outline" style="cursor: pointer; margin: 0; font-size: 0.8rem; padding: 6px 12px;" title="Impor dari file CSV">
+              <i data-lucide="upload" style="width: 14px; height: 14px;"></i> Impor CSV
+              <input type="file" id="inputCsvKolektif" accept=".csv, .txt" style="display: none;" onchange="handleImportCsv(event)" />
+            </label>
+          </div>
+        </div>
+
+        <div style="overflow-x: auto; margin-top: 10px;">
+          <table class="table-kolektif" id="tableKolektif">
+            <thead>
+              <tr>
+                <th style="width: 45px; text-align: center;">No</th>
+                <th style="min-width: 220px;">Nama Lengkap Siswa *</th>
+                <th style="min-width: 170px;">Tingkatan Level *</th>
+                <th style="min-width: 220px;">Pilihan Mata Pelajaran *</th>
+                <th style="width: 50px; text-align: center;">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyKolektif">
+              <!-- Baris siswa dinamis dimasukkan di sini via JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <button type="button" class="btn btn-secondary" onclick="addKolektifRow()">
+            <i data-lucide="plus-circle" style="width: 16px; height: 16px;"></i> Tambah Siswa (+1)
+          </button>
+          <span style="font-size: 0.85rem; color: #64748b;">
+            💡 Anda dapat menambah siswa sebanyak yang dibutuhkan sekolah.
+          </span>
+        </div>
+
+        <div class="kolektif-biaya-card" style="margin-top: 2rem; background: #0f233d; border: 1.5px solid rgba(231, 181, 94, 0.4); border-radius: 14px; padding: 1.5rem; color: #ffffff;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.12); padding-bottom: 1rem; margin-bottom: 1rem;">
+            <div>
+              <span style="font-size: 0.8rem; color: rgba(226, 232, 240, 0.7); text-transform: uppercase; letter-spacing: 0.5px;">Rincian Total Biaya Rombongan</span>
+              <div style="font-size: 1.6rem; font-weight: 800; color: #e7b55e; margin-top: 2px;" id="kolektifTotalBiayaText">
+                Rp 40.000,-
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <span style="font-size: 0.85rem; color: #cbd5e1;">Jumlah Siswa: <strong id="kolektifSiswaCountText" style="color: #ffffff; font-size: 1.1rem;">1</strong> Siswa</span><br>
+              <span style="font-size: 0.8rem; color: rgba(226, 232, 240, 0.6);">(@ Rp 40.000,- / peserta)</span>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; align-items: center;">
+            <div style="background: rgba(255, 255, 255, 0.06); padding: 12px 16px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1);">
+              <div style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase;">Rekening Transfer Resmi BCA</div>
+              <div style="font-size: 1.05rem; font-weight: 800; color: #ffffff; margin-top: 3px;">1921605205</div>
+              <div style="font-size: 0.8rem; color: #e7b55e;">a.n Norma Dewi (BCA)</div>
+            </div>
+            <div style="font-size: 0.85rem; color: #cbd5e1; line-height: 1.45;">
+              Silakan lakukan transfer 1 kali sejumlah total biaya di atas ke rekening BCA resmi, lalu simpan bukti transfer untuk verifikasi rombongan.
+            </div>
+          </div>
+        </div>
+
+        <div class="button-group-row" style="margin-top: 2rem;">
+          <button type="submit" id="btnSubmitKolektif" class="btn btn-primary" style="padding: 12px 28px; font-size: 0.95rem;">
+            <i data-lucide="send" style="width: 18px; height: 18px;"></i>
+            <span>Kirim Pendaftaran Kolektif Sekolah</span>
+          </button>
+          
+          <button type="button" id="btnCetakKolektifTerakhir" class="btn btn-outline" onclick="cetakUlangKolektifTerakhir()" style="display: none;">
+            <i data-lucide="printer" style="width: 16px; height: 16px;"></i> Cetak Kwitansi Kolektif
+          </button>
+
+          <button type="button" id="btnCetakKartuMassalTerakhir" class="btn btn-outline" onclick="cetakKartuMassalTerakhir()" style="display: none; border-color: rgba(40, 88, 145, 0.45); color: #285891;">
+            <i data-lucide="award" style="width: 16px; height: 16px;"></i> Cetak Semua Kartu Peserta (A4)
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- PANEL 3: CEK STATUS PENDAFTARAN MANDIRI -->
     <div id="panelStatus" class="card-panel" style="display: none;">
       <div class="card-header-box">
         <div class="card-eyebrow">Pencarian Mandiri</div>
@@ -818,8 +1042,8 @@
         </div>
         <ul>
           <li><strong>Biaya:</strong> Rp 40.000,- / peserta / mapel</li>
-          <li><strong>Bank BRI:</strong> 0055-01-012345-50-1</li>
-          <li><strong>Atas Nama:</strong> PANITIA OMEGA PLUS</li>
+          <li><strong>Bank BCA:</strong> 1921605205</li>
+          <li><strong>Atas Nama:</strong> Norma Dewi (BCA)</li>
           <li>Verifikasi otomatis diperbarui panitia setelah konfirmasi pembayaran.</li>
         </ul>
       </div>
@@ -867,6 +1091,17 @@
 
     // Data Pendaftaran Terakhir
     let lastSubmissionData = null;
+    let lastKolektifSubmission = null;
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
 
     // Set Default Tanggal Hari Ini & Cek URL Hash
     document.addEventListener("DOMContentLoaded", function() {
@@ -874,34 +1109,46 @@
       const tglInput = document.getElementById("tglPendaftaran");
       if (tglInput) tglInput.value = today;
 
-      // Cek apakah ada hash #status di URL
+      // Inisialisasi baris pertama kolektif
+      if (kolektifRows.length === 0) {
+        addKolektifRow();
+      }
+
+      // Cek apakah ada hash di URL
       if (window.location.hash === '#status') {
         switchTab('status');
+      } else if (window.location.hash === '#kolektif') {
+        switchTab('kolektif');
+      } else {
+        switchTab('form');
       }
     });
 
-    // Switch Tab: Formulir vs Cek Status
+    // Switch Tab: Formulir Individu vs Kolektif vs Cek Status
     function switchTab(tab) {
       const panelForm = document.getElementById("panelForm");
+      const panelKolektif = document.getElementById("panelKolektif");
       const panelStatus = document.getElementById("panelStatus");
       const tabBtnForm = document.getElementById("tabBtnForm");
+      const tabBtnKolektif = document.getElementById("tabBtnKolektif");
       const tabBtnStatus = document.getElementById("tabBtnStatus");
 
-      if (tab === 'form') {
-        panelForm.style.display = "block";
-        panelStatus.style.display = "none";
-        tabBtnForm.classList.add("active");
-        tabBtnStatus.classList.remove("active");
-        window.location.hash = 'form';
-      } else {
-        panelForm.style.display = "none";
-        panelStatus.style.display = "block";
-        tabBtnForm.classList.remove("active");
-        tabBtnStatus.classList.add("active");
-        window.location.hash = 'status';
+      if (panelForm) panelForm.style.display = (tab === 'form') ? "block" : "none";
+      if (panelKolektif) panelKolektif.style.display = (tab === 'kolektif') ? "block" : "none";
+      if (panelStatus) panelStatus.style.display = (tab === 'status') ? "block" : "none";
+
+      if (tabBtnForm) tabBtnForm.classList.toggle("active", tab === 'form');
+      if (tabBtnKolektif) tabBtnKolektif.classList.toggle("active", tab === 'kolektif');
+      if (tabBtnStatus) tabBtnStatus.classList.toggle("active", tab === 'status');
+
+      window.location.hash = tab;
+      if (tab === 'status') {
         setTimeout(() => {
-          document.getElementById('inputCariStatus').focus();
+          const input = document.getElementById('inputCariStatus');
+          if (input) input.focus();
         }, 150);
+      } else if (tab === 'kolektif') {
+        renderKolektifTable();
       }
     }
 
@@ -1231,49 +1478,68 @@
         const result = await response.json();
 
         if (result.status === 'success' && result.data) {
-          const item = Array.isArray(result.data) ? result.data[0] : result.data;
-          if (!item) {
+          const list = Array.isArray(result.data) ? result.data : [result.data];
+          if (list.length === 0) {
             throw new Error('Data tidak ditemukan');
           }
-          const isVerified = (item.status === 'Terverifikasi');
-          const badgeClass = isVerified ? 'background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0;' : 'background: #fef3c7; color: #b45309; border: 1px solid #fde68a;';
-          
-          container.innerHTML = `
-            <div style="background: #ffffff; border: 1.5px solid var(--color-border-subtle); border-radius: 12px; padding: 1.75rem; box-shadow: var(--shadow-sm); margin-top: 1rem;">
-              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 14px;">
+
+          let batchHeader = '';
+          if (list.length > 1) {
+            batchHeader = `
+              <div style="background: #e7f0fb; border: 1.5px solid #93c5fd; border-radius: 12px; padding: 14px 18px; margin-top: 1rem; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                 <div>
-                  <span style="font-size: 11px; font-weight: bold; color: #657c94; text-transform: uppercase;">Nomor Registrasi</span>
-                  <h3 style="font-size: 1.25rem; font-weight: 800; color: #19365f; margin: 0;">${item.noPendaftaran}</h3>
+                  <strong style="color: #19365f; font-size: 15px;">Ditemukan ${list.length} Peserta Terdaftar</strong>
+                  <div style="font-size: 13px; color: #475569;">Pencarian: ${escapeHtml(keyword)}</div>
                 </div>
-                <div style="padding: 6px 14px; border-radius: 9999px; font-size: 12px; font-weight: bold; ${badgeClass}">
-                  ${item.status}
-                </div>
+                <button type="button" class="btn btn-primary" onclick="cetakKartuMassalDariList('${encodeURIComponent(JSON.stringify(list))}')" style="box-shadow: 0 4px 12px rgba(40, 88, 145, 0.3);">
+                  <i data-lucide="printer" style="width: 16px; height: 16px;"></i> Cetak Semua Kartu Peserta Sekaligus (Batch A4)
+                </button>
               </div>
+            `;
+          }
 
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; font-size: 14px;">
-                <div><span style="color: #64748b; display: block; font-size: 12px;">Nama Lengkap:</span><strong>${item.nama}</strong></div>
-                <div><span style="color: #64748b; display: block; font-size: 12px;">Asal Sekolah:</span><strong>${item.sekolah}</strong></div>
-                <div><span style="color: #64748b; display: block; font-size: 12px;">Tingkatan Level:</span><strong>${item.level}</strong></div>
-                <div><span style="color: #64748b; display: block; font-size: 12px;">Mata Pelajaran:</span><strong>${item.mataPelajaran}</strong></div>
-                <div style="grid-column: 1 / -1;"><span style="color: #64748b; display: block; font-size: 12px;">Nomor Peserta Ujian:</span><strong style="color: #047857; font-size: 15px;">${item.kodePeserta}</strong></div>
+          const itemsHtml = list.map(item => {
+            const isVerified = (item.status === 'Terverifikasi');
+            const badgeClass = isVerified ? 'background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0;' : 'background: #fef3c7; color: #b45309; border: 1px solid #fde68a;';
+            return `
+              <div style="background: #ffffff; border: 1.5px solid var(--color-border-subtle); border-radius: 12px; padding: 1.75rem; box-shadow: var(--shadow-sm); margin-top: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 14px;">
+                  <div>
+                    <span style="font-size: 11px; font-weight: bold; color: #657c94; text-transform: uppercase;">Nomor Registrasi</span>
+                    <h3 style="font-size: 1.25rem; font-weight: 800; color: #19365f; margin: 0;">${escapeHtml(item.noPendaftaran)}</h3>
+                  </div>
+                  <div style="padding: 6px 14px; border-radius: 9999px; font-size: 12px; font-weight: bold; ${badgeClass}">
+                    ${escapeHtml(item.status)}
+                  </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; font-size: 14px;">
+                  <div><span style="color: #64748b; display: block; font-size: 12px;">Nama Lengkap:</span><strong>${escapeHtml(item.nama)}</strong></div>
+                  <div><span style="color: #64748b; display: block; font-size: 12px;">Asal Sekolah:</span><strong>${escapeHtml(item.sekolah)}</strong></div>
+                  <div><span style="color: #64748b; display: block; font-size: 12px;">Tingkatan Level:</span><strong>${escapeHtml(item.level)}</strong></div>
+                  <div><span style="color: #64748b; display: block; font-size: 12px;">Mata Pelajaran:</span><strong>${escapeHtml(item.mataPelajaran || item.mapel || '-')}</strong></div>
+                  <div style="grid-column: 1 / -1;"><span style="color: #64748b; display: block; font-size: 12px;">Nomor Peserta Ujian:</span><strong style="color: #047857; font-size: 15px;">${escapeHtml(item.kodePeserta)}</strong></div>
+                </div>
+
+                ${isVerified ? `
+                  <div style="margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+                    <span style="font-size: 13px; color: #047857; font-weight: 600;">
+                      ✓ Selamat! Pendaftaran telah disetujui panitia.
+                    </span>
+                    <button type="button" class="btn btn-primary" onclick="cetakKartuDariStatus('${encodeURIComponent(JSON.stringify(item))}')">
+                      <i data-lucide="printer" style="width: 16px; height: 16px;"></i> Cetak Kartu Peserta Resmi PDF
+                    </button>
+                  </div>
+                ` : `
+                  <div style="margin-top: 1.25rem; padding: 12px; background: #fffbeb; border-radius: 8px; font-size: 13px; color: #92400e;">
+                    ⏳ <strong>Menunggu Konfirmasi:</strong> Pembayaran atau data formulir Anda sedang dalam tahap verifikasi panitia. Kartu Ujian Resmi akan aktif setelah diverifikasi.
+                  </div>
+                `}
               </div>
+            `;
+          }).join('');
 
-              ${isVerified ? `
-                <div style="margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
-                  <span style="font-size: 13px; color: #047857; font-weight: 600;">
-                    ✓ Selamat! Pendaftaran telah disetujui panitia.
-                  </span>
-                  <button type="button" class="btn btn-primary" onclick="cetakKartuDariStatus('${encodeURIComponent(JSON.stringify(item))}')">
-                    <i data-lucide="printer" style="width: 16px; height: 16px;"></i> Cetak Kartu Peserta Resmi PDF
-                  </button>
-                </div>
-              ` : `
-                <div style="margin-top: 1.25rem; padding: 12px; background: #fffbeb; border-radius: 8px; font-size: 13px; color: #92400e;">
-                  ⏳ <strong>Menunggu Konfirmasi:</strong> Pembayaran atau data formulir Anda sedang dalam tahap verifikasi panitia. Kartu Ujian Resmi akan aktif setelah diverifikasi.
-                </div>
-              `}
-            </div>
-          `;
+          container.innerHTML = batchHeader + itemsHtml;
           lucide.createIcons();
         } else {
           container.innerHTML = `
@@ -1286,6 +1552,577 @@
       } catch (e) {
         container.innerHTML = `<div style="text-align: center; padding: 1.5rem; color: #dc2626;">Gagal memuat status pendaftaran. Silakan coba kembali.</div>`;
       }
+    }
+
+    // =========================================================================
+    // MODUL PENDAFTARAN KOLEKTIF SATU SEKOLAH & BATCH PRINT KARTU
+    // =========================================================================
+    let kolektifRows = [
+      { id: 1, nama: '', level: 'Level 1', mapel: 'Matematika' }
+    ];
+
+    function renderKolektifTable() {
+      const tbody = document.getElementById('tbodyKolektif');
+      if (!tbody) return;
+
+      tbody.innerHTML = kolektifRows.map((row, idx) => `
+        <tr id="kolektifRow_${row.id}">
+          <td style="text-align: center; font-weight: bold; color: #64748b;">${idx + 1}</td>
+          <td>
+            <input type="text" class="form-control" value="${escapeHtml(row.nama)}" 
+              placeholder="Nama lengkap siswa" 
+              oninput="updateKolektifRow(${row.id}, 'nama', this.value)" required />
+          </td>
+          <td>
+            <select class="form-control" onchange="updateKolektifRow(${row.id}, 'level', this.value)">
+              <option value="Level 1" ${row.level === 'Level 1' ? 'selected' : ''}>Level 1 (Kelas 1-3 SD/MI)</option>
+              <option value="Level 2" ${row.level === 'Level 2' ? 'selected' : ''}>Level 2 (Kelas 4-6 SD/MI)</option>
+            </select>
+          </td>
+          <td>
+            <select class="form-control" onchange="updateKolektifRow(${row.id}, 'mapel', this.value)">
+              <option value="Matematika" ${row.mapel === 'Matematika' ? 'selected' : ''}>Matematika (Sesi 2)</option>
+              <option value="IPA" ${row.mapel === 'IPA' ? 'selected' : ''}>IPA (Sesi 1)</option>
+              <option value="Bahasa Inggris" ${row.mapel === 'Bahasa Inggris' ? 'selected' : ''}>Bahasa Inggris (Sesi 2)</option>
+              <option value="IPS" ${row.mapel === 'IPS' ? 'selected' : ''}>IPS (Sesi 1)</option>
+            </select>
+          </td>
+          <td style="text-align: center;">
+            ${kolektifRows.length > 1 ? `
+              <button type="button" class="btn-del-row" onclick="removeKolektifRow(${row.id})" title="Hapus Siswa">
+                <i data-lucide="trash-2" style="width: 15px; height: 15px;"></i>
+              </button>
+            ` : `<span style="color: #cbd5e1;">-</span>`}
+          </td>
+        </tr>
+      `).join('');
+
+      updateKolektifSummary();
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function addKolektifRow(initialData) {
+      const nextId = kolektifRows.length > 0 ? Math.max(...kolektifRows.map(r => r.id)) + 1 : 1;
+      kolektifRows.push(initialData || { id: nextId, nama: '', level: 'Level 1', mapel: 'Matematika' });
+      renderKolektifTable();
+    }
+
+    function removeKolektifRow(id) {
+      if (kolektifRows.length <= 1) return;
+      kolektifRows = kolektifRows.filter(r => r.id !== id);
+      renderKolektifTable();
+    }
+
+    function updateKolektifRow(id, field, value) {
+      const row = kolektifRows.find(r => r.id === id);
+      if (row) {
+        row[field] = value;
+        updateKolektifSummary();
+      }
+    }
+
+    function updateKolektifSummary() {
+      const count = kolektifRows.length;
+      const totalBiaya = count * 40000;
+      const countEl = document.getElementById('countKolektifSiswa');
+      const countTextEl = document.getElementById('kolektifSiswaCountText');
+      const biayaEl = document.getElementById('kolektifTotalBiayaText');
+      if (countEl) countEl.innerText = count;
+      if (countTextEl) countTextEl.innerText = count;
+      if (biayaEl) biayaEl.innerText = 'Rp ' + totalBiaya.toLocaleString('id-ID') + ',-';
+    }
+
+    function downloadTemplateCsv() {
+      const csvContent = "Nama Lengkap Siswa,Tingkatan Level,Pilihan Mata Pelajaran\n" +
+        "Ahmad Farhan,Level 1,Matematika\n" +
+        "Siti Nur Aisyah,Level 1,IPA\n" +
+        "Rizki Pratama,Level 2,Bahasa Inggris\n" +
+        "Dewi Sartika,Level 2,IPS\n";
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = "Template_Pendaftaran_Kolektif_OMEGA2026.csv";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function handleImportCsv(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const text = evt.target.result;
+        const lines = text.split(/\r\n|\n/);
+        let imported = [];
+        let idCounter = 1;
+
+        for (let i = 1; i < lines.length; i++) {
+          const line = lines[i].trim();
+          if (!line) continue;
+          const cols = line.split(',').map(c => c.trim().replace(/^["']|["']$/g, ''));
+          if (cols.length >= 1 && cols[0]) {
+            let nama = cols[0];
+            let level = cols[1] && cols[1].toLowerCase().includes('2') ? 'Level 2' : 'Level 1';
+            let mapelRaw = cols[2] || 'Matematika';
+            let mapel = 'Matematika';
+            if (/ipa/i.test(mapelRaw)) mapel = 'IPA';
+            else if (/inggris/i.test(mapelRaw)) mapel = 'Bahasa Inggris';
+            else if (/ips/i.test(mapelRaw)) mapel = 'IPS';
+
+            imported.push({ id: idCounter++, nama, level, mapel });
+          }
+        }
+
+        if (imported.length > 0) {
+          kolektifRows = imported;
+          renderKolektifTable();
+          Swal.fire({
+            icon: 'success',
+            title: 'Impor CSV Berhasil',
+            text: `Berhasil memuat ${imported.length} data siswa dari berkas CSV!`,
+            timer: 2000,
+            showConfirmButton: false
+          });
+        } else {
+          Swal.fire({ icon: 'error', title: 'Format Tidak Sesuai', text: 'Pastikan file CSV memiliki isi data siswa.' });
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = '';
+    }
+
+    async function handleKolektifSubmit(e) {
+      e.preventDefault();
+
+      const sekolah = document.getElementById('kolektifSekolah').value.trim();
+      const alamat = document.getElementById('kolektifAlamat').value.trim();
+      const guru = document.getElementById('kolektifGuru').value.trim();
+      const noHp = document.getElementById('kolektifNoHp').value.trim();
+      const email = document.getElementById('kolektifEmail').value.trim();
+
+      const emptyRow = kolektifRows.find(r => !r.nama.trim());
+      if (emptyRow) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Nama Siswa Kosong',
+          text: 'Harap lengkapi nama seluruh siswa pada tabel peserta.'
+        });
+        return;
+      }
+
+      const submitBtn = document.getElementById('btnSubmitKolektif');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span class="spinner" style="display:inline-block;width:16px;height:16px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin 0.6s linear infinite;margin-right:8px;"></span> Mendaftarkan ${kolektifRows.length} Siswa...`;
+
+      const payload = {
+        action: 'daftarKolektif',
+        sekolah: sekolah,
+        alamatSekolah: alamat,
+        namaGuru: guru,
+        noHp: noHp,
+        email: email,
+        tglDaftar: new Date().toISOString().split('T')[0],
+        pesertaList: kolektifRows.map(r => ({
+          nama: r.nama.trim().toUpperCase(),
+          level: r.level,
+          mapel: [r.mapel]
+        }))
+      };
+
+      try {
+        const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '/api';
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
+        const result = await response.json();
+
+        if (result.status === 'success') {
+          lastKolektifSubmission = result;
+          
+          document.getElementById('btnCetakKolektifTerakhir').style.display = 'inline-flex';
+          document.getElementById('btnCetakKartuMassalTerakhir').style.display = 'inline-flex';
+
+          Swal.fire({
+            icon: 'success',
+            title: 'Pendaftaran Kolektif Berhasil!',
+            html: `
+              <div style="text-align: left; font-size: 14px; line-height: 1.6; margin-top: 10px;">
+                <p>Selamat, <strong>${result.totalSiswa} siswa</strong> dari <strong>${escapeHtml(sekolah)}</strong> berhasil didaftarkan.</p>
+                <div style="background: #e7f0fb; padding: 12px; border-radius: 8px; margin: 12px 0;">
+                  <strong>Koordinator / Guru:</strong> ${escapeHtml(guru)}<br>
+                  <strong>Total Biaya:</strong> <span style="color: #285891; font-weight: bold;">Rp ${(result.totalBiaya).toLocaleString('id-ID')},-</span><br>
+                  <strong>No. WhatsApp:</strong> ${escapeHtml(noHp)}
+                </div>
+                <p style="font-size: 13px; color: #475569;">
+                  Kwitansi kolektif dan seluruh kartu peserta siap dicetak sekarang.
+                </p>
+              </div>
+            `,
+            showDenyButton: true,
+            confirmButtonText: '📇 Cetak Semua Kartu Peserta (A4)',
+            denyButtonText: '🖨️ Cetak Kwitansi Kolektif',
+            confirmButtonColor: '#285891',
+            denyButtonColor: '#b88628'
+          }).then((res) => {
+            if (res.isConfirmed) {
+              cetakKartuMassal(result.peserta, sekolah);
+            } else if (res.isDenied) {
+              cetakKwitansiKolektif(result);
+            }
+          });
+
+        } else {
+          Swal.fire({ icon: 'error', title: 'Gagal', text: result.message || 'Terjadi kesalahan sistem.' });
+        }
+      } catch (err) {
+        Swal.fire({ icon: 'error', title: 'Koneksi Gagal', text: err.message });
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<i data-lucide="send" style="width: 18px; height: 18px;"></i><span>Kirim Pendaftaran Kolektif Sekolah</span>`;
+        if (window.lucide) lucide.createIcons();
+      }
+    }
+
+    function cetakUlangKolektifTerakhir() {
+      if (lastKolektifSubmission) {
+        cetakKwitansiKolektif(lastKolektifSubmission);
+      }
+    }
+
+    function cetakKartuMassalTerakhir() {
+      if (lastKolektifSubmission && lastKolektifSubmission.peserta) {
+        cetakKartuMassal(lastKolektifSubmission.peserta, lastKolektifSubmission.sekolah);
+      }
+    }
+
+    function cetakKartuMassalDariList(jsonStr) {
+      const list = JSON.parse(decodeURIComponent(jsonStr));
+      const sekolahName = list.length > 0 ? list[0].sekolah : 'OMEGA PLUS 2026';
+      cetakKartuMassal(list, sekolahName);
+    }
+
+    function cetakKartuMassal(pesertaList, namaSekolah) {
+      if (!pesertaList || pesertaList.length === 0) {
+        Swal.fire({ icon: 'info', title: 'Data Kosong', text: 'Tidak ada data peserta untuk dicetak.' });
+        return;
+      }
+
+      const w = window.open('', '_blank');
+      let sheetsHtml = '';
+      for (let i = 0; i < pesertaList.length; i += 2) {
+        const p1 = pesertaList[i];
+        const p2 = pesertaList[i + 1] || null;
+
+        sheetsHtml += `
+          <div class="card-sheet">
+            ${renderSingleCardHtml(p1)}
+            ${p2 ? renderSingleCardHtml(p2) : '<div style="height: 130mm;"></div>'}
+          </div>
+        `;
+      }
+
+      const fullHtml = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Kartu Peserta Massal - ${escapeHtml(namaSekolah || 'OMEGA PLUS 2026')}</title>
+          <style>
+            @page {
+              size: A4 portrait;
+              margin: 8mm 12mm;
+            }
+            * { box-sizing: border-box; margin: 0; padding: 0; }
+            body {
+              font-family: Arial, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+              color: #193047;
+              background: #ffffff;
+            }
+            .card-sheet {
+              page-break-after: always;
+              display: flex;
+              flex-direction: column;
+              gap: 12mm;
+              height: 275mm;
+              justify-content: flex-start;
+              position: relative;
+            }
+            .card-sheet:last-child {
+              page-break-after: auto;
+            }
+            .kartu-peserta {
+              height: 130mm;
+              border: 2px dashed #19365f;
+              border-radius: 12px;
+              padding: 18px 22px;
+              position: relative;
+              display: flex;
+              flex-direction: column;
+              justify-content: space-between;
+              background: #ffffff;
+            }
+            .kartu-header {
+              display: flex;
+              align-items: center;
+              gap: 14px;
+              border-bottom: 2px solid #19365f;
+              padding-bottom: 10px;
+            }
+            .kartu-logo {
+              width: 55px;
+              height: 55px;
+              object-fit: contain;
+            }
+            .kartu-instansi h2 {
+              font-size: 13.5pt;
+              color: #19365f;
+              font-weight: 800;
+              line-height: 1.15;
+            }
+            .kartu-instansi h3 {
+              font-size: 10.5pt;
+              color: #285891;
+              font-weight: 700;
+              margin-top: 2px;
+            }
+            .kartu-instansi p {
+              font-size: 8pt;
+              color: #64748b;
+              margin-top: 1px;
+            }
+            .kartu-body {
+              display: flex;
+              gap: 16px;
+              align-items: flex-start;
+              margin: 10px 0;
+              flex: 1;
+            }
+            .kartu-table {
+              flex: 1;
+              border-collapse: collapse;
+              font-size: 9.5pt;
+            }
+            .kartu-table td {
+              padding: 4px 6px;
+              vertical-align: top;
+            }
+            .kartu-table .label {
+              width: 32%;
+              color: #475569;
+              font-weight: bold;
+            }
+            .badge-no-ujian {
+              font-size: 12pt;
+              font-weight: 800;
+              color: #19365f;
+              background: #e7f0fb;
+              padding: 2px 8px;
+              border-radius: 4px;
+              border: 1px solid #93c5fd;
+              display: inline-block;
+            }
+            .kartu-right-box {
+              width: 105px;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              gap: 6px;
+            }
+            .photo-box {
+              width: 28mm;
+              height: 38mm;
+              border: 1.5px dashed #94a3b8;
+              border-radius: 6px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 8pt;
+              color: #94a3b8;
+              text-align: center;
+              background: #f8fafc;
+            }
+            .qr-img {
+              width: 60px;
+              height: 60px;
+              border: 1px solid #cbd5e1;
+              border-radius: 4px;
+              padding: 2px;
+              background: #ffffff;
+            }
+            .kartu-footer {
+              border-top: 1px dashed #cbd5e1;
+              padding-top: 8px;
+              display: flex;
+              justify-content: space-between;
+              font-size: 8pt;
+              color: #64748b;
+              align-items: flex-end;
+            }
+            .ttd-box {
+              text-align: center;
+              font-size: 8pt;
+            }
+            .cut-notice {
+              font-size: 7.5pt;
+              color: #94a3b8;
+              letter-spacing: 1px;
+            }
+          </style>
+        </head>
+        <body onload="window.print();">
+          ${sheetsHtml}
+        </body>
+        </html>
+      `;
+
+      w.document.write(fullHtml);
+      w.document.close();
+    }
+
+    function renderSingleCardHtml(item) {
+      const qrData = encodeURIComponent((item.noPendaftaran || '') + '|' + (item.nama || '') + '|' + (item.kodePeserta || ''));
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${qrData}`;
+
+      return `
+        <div class="kartu-peserta">
+          <div class="kartu-header">
+            <img src="https://file.garden/aehADr1aKQol7cT9/Omega_Plus_Circular_Emblem-removebg-preview.png" class="kartu-logo" onerror="this.src='logo.png'" alt="Logo" />
+            <div class="kartu-instansi">
+              <h2>KARTU PESERTA RESMI OMEGA PLUS 2026</h2>
+              <h3>SMP NEGERI 1 PAMEKASAN</h3>
+              <p>Olimpiade Matematika, Bahasa Inggris, IPA & IPS SD/MI Se-Madura</p>
+            </div>
+          </div>
+
+          <div class="kartu-body">
+            <table class="kartu-table">
+              <tr><td class="label">No. Registrasi</td><td>: <strong>${escapeHtml(item.noPendaftaran || '-')}</strong></td></tr>
+              <tr><td class="label">Nama Peserta</td><td>: <strong style="font-size: 11pt; color: #19365f;">${escapeHtml(item.nama || '-')}</strong></td></tr>
+              <tr><td class="label">Asal Sekolah</td><td>: ${escapeHtml(item.sekolah || '-')}</td></tr>
+              <tr><td class="label">Tingkat Level</td><td>: <strong>${escapeHtml(item.level || '-')}</strong></td></tr>
+              <tr><td class="label">Mata Pelajaran</td><td>: <strong style="color: #047857;">${escapeHtml(item.mataPelajaran || item.mapel || '-')}</strong></td></tr>
+              <tr><td class="label">Nomor Peserta</td><td>: <span class="badge-no-ujian">${escapeHtml(item.kodePeserta || '-')}</span></td></tr>
+            </table>
+
+            <div class="kartu-right-box">
+              <div class="photo-box">Pasfoto<br>3 x 4</div>
+              <img src="${qrUrl}" class="qr-img" alt="QR Presensi" />
+            </div>
+          </div>
+
+          <div class="kartu-footer">
+            <div class="ttd-box">
+              Tanda Tangan Peserta,<br><br><br>
+              ( ____________________ )
+            </div>
+            <div class="cut-notice">✁ Gunting sepanjang garis putus-putus</div>
+            <div class="ttd-box">
+              Pamekasan, Panitia Ujian<br><br><br>
+              ( <strong>PANITIA OMEGA PLUS</strong> )
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function cetakKwitansiKolektif(result) {
+      const w = window.open('', '_blank');
+      const tableRows = (result.peserta || []).map((p, idx) => `
+        <tr>
+          <td style="text-align: center;">${idx + 1}</td>
+          <td><strong>${escapeHtml(p.nama)}</strong></td>
+          <td style="color: #285891; font-weight: bold;">${escapeHtml(p.noPendaftaran)}</td>
+          <td>${escapeHtml(p.level)}</td>
+          <td>${escapeHtml(p.mapel)}</td>
+          <td style="text-align: center; color: #047857; font-weight: bold;">${escapeHtml(p.kodePeserta)}</td>
+        </tr>
+      `).join('');
+
+      const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Kwitansi Kolektif - ${escapeHtml(result.sekolah)}</title>
+          <style>
+            @page { size: A4 portrait; margin: 15mm; }
+            body { font-family: Arial, sans-serif; padding: 20px; color: #1e293b; font-size: 10pt; }
+            .box { border: 2px solid #19365f; border-radius: 10px; padding: 22px; }
+            .header { display: flex; align-items: center; justify-content: center; gap: 15px; border-bottom: 2px solid #285891; padding-bottom: 12px; margin-bottom: 18px; text-align: center; }
+            .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; background: #f8fafc; padding: 12px; border-radius: 6px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+            th { background: #19365f; color: #ffffff; padding: 8px 10px; text-align: left; font-size: 9pt; }
+            td { padding: 7px 10px; border-bottom: 1px solid #e2e8f0; font-size: 9pt; }
+            .total-bar { display: flex; justify-content: space-between; align-items: center; background: #e7f0fb; padding: 12px 16px; border-radius: 6px; margin-top: 16px; font-size: 11pt; }
+          </style>
+        </head>
+        <body onload="window.print();">
+          <div class="box">
+            <div class="header">
+              <img src="https://file.garden/aehADr1aKQol7cT9/Omega_Plus_Circular_Emblem-removebg-preview.png" width="60" height="60" style="object-fit: contain;" />
+              <div>
+                <h2 style="margin: 0; color: #19365f; font-size: 14pt;">TANDA BUKTI PENDAFTARAN KOLEKTIF RESMI</h2>
+                <h3 style="margin: 2px 0; color: #285891; font-size: 11pt;">OMEGA PLUS 2026 — SMP NEGERI 1 PAMEKASAN</h3>
+              </div>
+            </div>
+
+            <div class="info-grid">
+              <div>
+                <strong>Asal Sekolah:</strong> ${escapeHtml(result.sekolah)}<br>
+                <strong>Guru Pendamping:</strong> ${escapeHtml(result.namaGuru || '-')}<br>
+                <strong>No. WhatsApp:</strong> ${escapeHtml(result.noHp)}
+              </div>
+              <div style="text-align: right;">
+                <strong>Tanggal Pendaftaran:</strong> ${escapeHtml(result.tglDaftar || '-')}<br>
+                <strong>Total Peserta:</strong> ${result.totalSiswa} Siswa<br>
+                <strong>Status Verifikasi:</strong> <span style="color: #b45309; font-weight: bold;">Tercatat (Menunggu Verifikasi)</span>
+              </div>
+            </div>
+
+            <h4>Daftar Peserta Rombongan:</h4>
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 30px; text-align: center;">No</th>
+                  <th>Nama Lengkap Peserta</th>
+                  <th>No. Registrasi</th>
+                  <th>Tingkat</th>
+                  <th>Mata Pelajaran</th>
+                  <th style="text-align: center;">No. Peserta Ujian</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${tableRows}
+              </tbody>
+            </table>
+
+            <div class="total-bar">
+              <span>Total Pembayaran (${result.totalSiswa} Siswa @ Rp 40.000,-):</span>
+              <strong style="color: #19365f; font-size: 13pt;">Rp ${(result.totalBiaya).toLocaleString('id-ID')},-</strong>
+            </div>
+
+            <div style="margin-top: 25px; display: flex; justify-content: space-between; font-size: 9pt;">
+              <div style="text-align: center;">
+                Mengetahui,<br>Kepala Sekolah / Guru Pendamping<br><br><br><br>
+                ( <strong>${escapeHtml(result.namaGuru || 'Guru Pendamping')}</strong> )
+              </div>
+              <div style="text-align: center;">
+                Pamekasan, Panitia Pendaftaran<br>OMEGA PLUS 2026<br><br><br><br>
+                ( <strong>PANITIA OMEGA PLUS</strong> )
+              </div>
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
+      w.document.write(html);
+      w.document.close();
     }
 
     // Cetak Kartu Ujian Resmi dari Status
