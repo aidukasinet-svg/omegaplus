@@ -69,8 +69,15 @@
       --shadow-lift: 0 12px 28px rgba(25, 54, 95, 0.12);
     }
 
-    * {
+    html {
       box-sizing: border-box;
+      max-width: 100vw;
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    *, *:before, *:after {
+      box-sizing: inherit;
       margin: 0;
       padding: 0;
       font-family: 'Work Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -82,6 +89,8 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      max-width: 100%;
+      width: 100%;
       overflow-x: hidden;
       line-height: 1.5;
     }
@@ -95,11 +104,14 @@
       padding: 2rem 1.5rem 1.75rem;
       position: relative;
       box-shadow: 0 4px 20px rgba(25, 54, 95, 0.2);
+      width: 100%;
+      overflow: hidden;
     }
 
     .header-container {
       max-width: 1100px;
       margin: 0 auto;
+      width: 100%;
     }
 
     .header-top {
@@ -117,6 +129,7 @@
       gap: 1rem;
       text-decoration: none;
       color: inherit;
+      max-width: 100%;
     }
 
     .school-logo-badge {
@@ -130,6 +143,7 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
       border: 2px solid var(--color-accent-gold);
       overflow: hidden;
+      flex-shrink: 0;
     }
 
     .school-logo-badge img {
@@ -157,19 +171,20 @@
     .header-nav {
       display: flex;
       align-items: center;
+      flex-wrap: wrap;
       gap: 0.5rem;
     }
 
     .btn-back-home {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 7px;
       background: rgba(255, 255, 255, 0.12);
       border: 1px solid rgba(255, 255, 255, 0.25);
       color: #ffffff;
-      padding: 8px 18px;
+      padding: 7px 15px;
       border-radius: var(--radius-pill);
-      font-size: 0.875rem;
+      font-size: 0.8125rem;
       font-weight: 600;
       text-decoration: none;
       white-space: nowrap;
@@ -218,28 +233,39 @@
       line-height: 1.45;
     }
 
-    /* Tab Switcher in Hero */
+    /* Tab Switcher in Hero (Mobile-Friendly Smooth Scroll) */
     .hero-tabs-wrap {
       display: flex;
       gap: 8px;
       margin-top: 1.5rem;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding: 4px 2px 8px;
+      max-width: 100%;
+      width: 100%;
+    }
+
+    .hero-tabs-wrap::-webkit-scrollbar {
+      display: none;
     }
 
     .tab-pill {
-      padding: 10px 22px;
+      padding: 9px 18px;
       border-radius: var(--radius-pill);
-      font-size: 0.875rem;
+      font-size: 0.8125rem;
       font-weight: 700;
       text-decoration: none;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 7px;
       cursor: pointer;
-      border: none;
+      border: 1px solid rgba(255, 255, 255, 0.2);
       transition: all 0.2s ease;
       background: rgba(255, 255, 255, 0.12);
       color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .tab-pill:hover {
@@ -616,6 +642,105 @@
       color: #ffffff;
     }
 
+    /* ==========================================================================
+       RESPONSIVE BREAKPOINTS (SMARTPHONE & TABLET ADAPTATION)
+       ========================================================================== */
+    @media (max-width: 768px) {
+      .header-hero {
+        padding: 1.5rem 1rem 1.25rem;
+      }
+      .header-top {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.85rem;
+        margin-bottom: 1.25rem;
+      }
+      .school-identity {
+        gap: 0.75rem;
+      }
+      .school-logo-badge {
+        width: 44px;
+        height: 44px;
+      }
+      .school-logo-badge img {
+        width: 38px;
+        height: 38px;
+      }
+      .school-text h3 {
+        font-size: 0.95rem;
+      }
+      .school-text p {
+        font-size: 0.725rem;
+      }
+      .header-nav {
+        width: 100%;
+        gap: 6px;
+      }
+      .btn-back-home {
+        padding: 6px 11px;
+        font-size: 0.75rem;
+      }
+      .hero-title {
+        font-size: 1.5rem;
+      }
+      .hero-desc {
+        font-size: 0.875rem;
+      }
+      .main-content {
+        margin: -0.75rem auto 2rem;
+        padding: 0 0.75rem;
+      }
+      .card-panel {
+        padding: 1.35rem 1rem;
+        border-radius: var(--radius-md);
+        margin-bottom: 1.5rem;
+      }
+      .card-title {
+        font-size: 1.25rem;
+      }
+      .card-intro {
+        font-size: 0.85rem;
+      }
+      .form-grid-2, .form-grid-3 {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      .subjects-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+      }
+      .info-boxes-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .button-group-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.65rem;
+      }
+      .button-group-row .btn {
+        width: 100%;
+        justify-content: center;
+      }
+      .status-search-box {
+        flex-direction: column !important;
+      }
+      .status-search-box .btn {
+        width: 100% !important;
+      }
+      .kolektif-biaya-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 8px !important;
+      }
+      .kolektif-biaya-header > div:last-child {
+        text-align: left !important;
+      }
+    }
+
     /* Print Stylesheet */
     @media print {
       body {
@@ -952,7 +1077,7 @@
         </div>
 
         <div class="kolektif-biaya-card" style="margin-top: 2rem; background: #0f233d; border: 1.5px solid rgba(231, 181, 94, 0.4); border-radius: 14px; padding: 1.5rem; color: #ffffff;">
-          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.12); padding-bottom: 1rem; margin-bottom: 1rem;">
+          <div class="kolektif-biaya-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.12); padding-bottom: 1rem; margin-bottom: 1rem;">
             <div>
               <span style="font-size: 0.8rem; color: rgba(226, 232, 240, 0.7); text-transform: uppercase; letter-spacing: 0.5px;">Rincian Total Biaya Rombongan</span>
               <div style="font-size: 1.6rem; font-weight: 800; color: #e7b55e; margin-top: 2px;" id="kolektifTotalBiayaText">
@@ -1003,7 +1128,7 @@
         <p class="card-intro">Masukkan Nomor Pendaftaran (misal: OMP-2026-0001) atau Nomor WhatsApp yang didaftarkan.</p>
       </div>
 
-      <div style="display: flex; gap: 10px; max-width: 600px; margin-bottom: 1.5rem;">
+      <div class="status-search-box" style="display: flex; gap: 10px; max-width: 600px; margin-bottom: 1.5rem;">
         <input type="text" id="inputCariStatus" class="form-control" placeholder="Nomor Pendaftaran / Nomor HP / Email" onkeypress="if(event.key==='Enter') cariStatusPeserta()" />
         <button type="button" class="btn btn-primary" onclick="cariStatusPeserta()">
           <i data-lucide="search" style="width: 18px; height: 18px;"></i> Cari
