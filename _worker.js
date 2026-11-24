@@ -19,7 +19,7 @@ const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbwsvjH5vK-g5UJF
 // PENGATURAN KUNCI WEBSITE (LOCKDOWN SWITCH)
 // =========================================================================
 // Ubah SITE_LOCKED ke 'false' untuk membuka kembali website secara normal untuk semua pengunjung.
-const SITE_LOCKED = true;
+const SITE_LOCKED = false;
 
 // Kunci bypass rahasia untuk developer/owner agar tetap bisa mengecek website:
 // Buka di browser: https://domain-anda.pages.dev/?unlock=omega2026 (aktif 24 jam)
